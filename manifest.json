@@ -1,0 +1,14 @@
+{
+  "name": "สิงห์ทองทรัคทรานสปอร์ต",
+  "short_name": "Singthong",
+  "description": "ระบบทะเบียนพนักงานขับรถและรถบรรทุก",
+  "start_url": "/singthongtruck/",
+  "display": "standalone",
+  "background_color": "#16263a",
+  "theme_color": "#16263a",
+  "orientation": "any",
+  "icons": [
+    { "src": "logo.jpeg", "sizes": "192x192", "type": "image/jpeg" },
+    { "src": "logo.jpeg", "sizes": "512x512", "type": "image/jpeg" }
+  ]
+}
