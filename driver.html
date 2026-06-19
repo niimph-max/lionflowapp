@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>บันทึกงานขนส่ง</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; min-height: 100vh; color: #1d2b3a; }
+    .header { background: #16263a; color: #fff; padding: 16px 20px 18px; }
+    .header-logo { font-size: 11px; color: #6f8499; margin-bottom: 4px; letter-spacing: .06em; text-transform: uppercase; }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .header-sub { font-size: 13px; color: #9fb2c4; margin-top: 3px; }
+    .card { background: #fff; margin: 14px 14px 0; border-radius: 14px; border: 1px solid #e4e7ec; overflow: hidden; }
+    .card-head { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; display: flex; align-items: center; justify-content: space-between; }
+    .job-no { font-size: 17px; font-weight: 700; }
+    .job-plate { font-size: 12px; color: #667085; margin-top: 2px; }
+    .status-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+    .job-rows { padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; }
+    .job-row { display: flex; gap: 10px; font-size: 14px; }
+    .job-lbl { color: #98a2b3; font-size: 12px; min-width: 72px; padding-top: 1px; flex: none; }
+    .job-val { color: #1d2b3a; font-weight: 500; }
+    .stages-wrap { margin: 14px 14px 0; }
+    .stage { background: #fff; border-radius: 12px; border: 2px solid #e4e7ec; padding: 14px 16px; margin-bottom: 10px; transition: border-color .2s, background .2s; }
+    .stage.done { border-color: #abefc6; background: #f0fdf4; }
+    .stage.active { border-color: #fedf89; background: #fffbeb; }
+    .stage-row { display: flex; align-items: center; gap: 12px; }
+    .stage-icon { width: 40px; height: 40px; border-radius: 50%; background: #f4f6f8; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; }
+    .stage.done .stage-icon { background: #dcfce7; }
+    .stage.active .stage-icon { background: #fef3c7; }
+    .stage-info { flex: 1; min-width: 0; }
+    .stage-label { font-size: 15px; font-weight: 700; }
+    .stage-time { font-size: 12px; color: #667085; margin-top: 3px; }
+    .stage-check { font-size: 22px; flex: none; }
+    .mark-btn { margin-top: 12px; width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; background: #2f6fb0; color: #fff; letter-spacing: .02em; }
+    .mark-btn:active { background: #1d5a96; }
+    .map-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: #2f6fb0; text-decoration: none; margin-top: 8px; font-weight: 600; }
+    .no-gps { font-size: 12px; color: #98a2b3; margin-top: 6px; }
+    .getting-gps { font-size: 13px; color: #b54708; margin-top: 8px; }
+    .share-wrap { margin: 14px; }
+    .share-card { background: #fff; border-radius: 14px; border: 1px solid #e4e7ec; padding: 16px; }
+    .share-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .share-text { font-size: 12px; color: #475467; background: #f8fafc; padding: 12px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; line-height: 1.6; }
+    .copy-btn { margin-top: 10px; width: 100%; padding: 12px; border: 1px solid #d0d5dd; border-radius: 8px; background: #fff; font-size: 14px; color: #475467; cursor: pointer; font-weight: 600; }
+    .copy-btn:active { background: #f0f2f5; }
+    .copied-msg { text-align: center; color: #067647; font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
+    .error-box { margin: 40px 20px; padding: 24px; background: #fef3f2; border: 1px solid #f5c9c2; border-radius: 14px; text-align: center; color: #b42318; }
+    .error-box .icon { font-size: 36px; margin-bottom: 10px; }
+    .footer { height: 32px; }
+    .gps-loading { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #b54708; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 14px; height: 14px; border: 2px solid #fedf89; border-top-color: #b54708; border-radius: 50%; animation: spin .8s linear infinite; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header"><div class="header-title">กำลังโหลด...</div></div>
+</div>
+
+<script>
+const THM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBAc_lObCRDqBiRRuzQP7Ber8S6BXUFZE2H86mT2ZrKiBpBpS2PHy2RTigrU8gigQb/exec';
+
+const STAGES = [
+  { key: 'pickup',     label: 'รับสินค้า',  icon: '📦', latKey: 'pickupLat',     lngKey: 'pickupLng' },
+  { key: 'arrival',    label: 'ถึงลูกค้า',   icon: '📍', latKey: 'arrivalLat',    lngKey: 'arrivalLng' },
+  { key: 'completion', label: 'ส่งสำเร็จ',  icon: '✅', latKey: 'completionLat', lngKey: 'completionLng' },
+  { key: 'document',   label: 'ส่งเอกสาร',  icon: '📄', latKey: null,            lngKey: null },
+];
+
+function fmtDT(dt) {
+  if (!dt) return '—';
+  const d = new Date(dt.includes('T') ? dt : dt.replace(' ','T'));
+  if (isNaN(d)) return dt;
+  const pad = n => String(n).padStart(2,'0');
+  return d.getDate() + ' ' + THM[d.getMonth()] + ' ' + (d.getFullYear()+543) +
+    ' เวลา ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' น.';
+}
+
+function nowLocal() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
+    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function loadJob() {
+  const p = new URLSearchParams(location.search);
+  const d = p.get('d');
+  if (!d) return null;
+  try { return JSON.parse(decodeURIComponent(escape(atob(d)))); } catch(e) { return null; }
+}
+
+function lsKey(id) { return 'drvUpdate_' + id; }
+
+function loadUpdates(id) {
+  try { const s = localStorage.getItem(lsKey(id)); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+}
+
+function saveUpdates(id, upd) {
+  try { localStorage.setItem(lsKey(id), JSON.stringify(upd)); } catch(e) {}
+}
+
+function getGps() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) { resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  });
+}
+
+function postToSheets(jobId, jobNo, upd) {
+  try {
+    fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({ type: 'driverUpdate', jobId, jobNo, updates: upd })
+    }).catch(() => {});
+  } catch(e) {}
+}
+
+function stageStatus(stageKey, idx, upd) {
+  const timeKey = stageKey + 'Time';
+  if (upd[timeKey]) return 'done';
+  const prevDone = idx === 0 || !!upd[STAGES[idx-1].key + 'Time'];
+  return prevDone ? 'active' : 'pending';
+}
+
+function shareText(job, upd) {
+  const lines = [
+    '📋 รายงานงาน ' + (job.jobNo || '—'),
+    '🚛 รถ: ' + (job.truckPlate || '—'),
+    '👤 พขร.: ' + (job.driverName || job.driverCode || '—'),
+    '📅 วันที่: ' + (job.date || '—'),
+    '🏭 ต้นทาง: ' + (job.origin || '—'),
+    '🏢 ปลายทาง: ' + (job.destination || '—'),
+    '─────────────────',
+  ];
+  if (job.dispatchTime) lines.push('🚀 จ่ายงาน: ' + fmtDT(job.dispatchTime));
+  STAGES.forEach(s => {
+    const k = s.key + 'Time';
+    if (upd[k]) {
+      const gps = (s.latKey && upd[s.latKey] && s.lngKey && upd[s.lngKey])
+        ? '\n   📍 ' + Number(upd[s.latKey]).toFixed(5) + ', ' + Number(upd[s.lngKey]).toFixed(5)
+        : '';
+      lines.push(s.icon + ' ' + s.label + ': ' + fmtDT(upd[k]) + gps);
+    }
+  });
+  return lines.join('\n');
+}
+
+let job = null;
+let upd = {};
+let gettingGps = {};
+
+async function markStage(stageKey, latKey, lngKey) {
+  const timeKey = stageKey + 'Time';
+  if (upd[timeKey]) return; // already done
+  upd[timeKey] = nowLocal();
+  saveUpdates(job.id, upd);
+
+  if (latKey) {
+    gettingGps[stageKey] = true;
+    render();
+    const pos = await getGps();
+    gettingGps[stageKey] = false;
+    if (pos) {
+      upd[latKey] = pos.lat;
+      upd[lngKey] = pos.lng;
+      saveUpdates(job.id, upd);
+    }
+  }
+
+  postToSheets(job.id, job.jobNo, upd);
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (!job) {
+    app.innerHTML = `
+      <div class="header">
+        <div class="header-logo">ระบบงานขนส่ง</div>
+        <div class="header-title">ไม่พบข้อมูลงาน</div>
+      </div>
+      <div class="error-box">
+        <div class="icon">🔍</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">ไม่พบใบงาน</div>
+        <div style="font-size:13px;">กรุณาสแกน QR Code จากระบบ<br>หรือติดต่อหัวหน้างาน</div>
+      </div>`;
+    return;
+  }
+
+  const dispatchDone = !!job.dispatchTime;
+  const allDone = STAGES.every(s => !!upd[s.key + 'Time']);
+
+  const stageCards = STAGES.map((s, i) => {
+    const status = stageStatus(s.key, i, upd);
+    const timeKey = s.key + 'Time';
+    const timeVal = upd[timeKey] || '';
+    const lat = s.latKey ? (upd[s.latKey] || '') : '';
+    const lng = s.lngKey ? (upd[s.lngKey] || '') : '';
+    const hasGps = !!(lat && lng);
+    const isGetting = gettingGps[s.key];
+
+    let timeInfo = '';
+    if (timeVal) {
+      timeInfo = '<div class="stage-time">' + fmtDT(timeVal) + '</div>';
+      if (hasGps) {
+        timeInfo += '<a class="map-link" href="https://maps.google.com/?q=' + lat + ',' + lng + '" target="_blank">📍 ดูตำแหน่งบน Google Maps</a>';
+      } else if (s.latKey && isGetting) {
+        timeInfo += '<div class="gps-loading"><span class="spinner"></span> กำลังดึง GPS...</div>';
+      } else if (s.latKey) {
+        timeInfo += '<div class="no-gps">ไม่ได้รับสัญญาณ GPS</div>';
+      }
+    } else if (status === 'active') {
+      timeInfo = '<div class="stage-time">กดปุ่มเพื่อบันทึกเวลา' + (s.latKey ? ' + ตำแหน่ง' : '') + '</div>';
+    } else {
+      timeInfo = '<div class="stage-time" style="color:#d0d5dd;">รอขั้นตอนก่อนหน้า</div>';
+    }
+
+    const btn = (status === 'active' && !timeVal)
+      ? `<button class="mark-btn" onclick="markStage('${s.key}', ${s.latKey ? "'"+s.latKey+"'" : 'null'}, ${s.lngKey ? "'"+s.lngKey+"'" : 'null'})">บันทึก${s.label}${s.latKey ? ' + GPS' : ''}</button>`
+      : '';
+
+    return `
+      <div class="stage ${status === 'done' ? 'done' : status === 'active' ? 'active' : ''}">
+        <div class="stage-row">
+          <div class="stage-icon">${s.icon}</div>
+          <div class="stage-info">
+            <div class="stage-label">${s.label}</div>
+            ${timeInfo}
+          </div>
+          <div class="stage-check">${timeVal ? '✅' : ''}</div>
+        </div>
+        ${btn}
+      </div>`;
+  }).join('');
+
+  const dispatchCard = `
+    <div class="stage ${dispatchDone ? 'done' : 'active'}">
+      <div class="stage-row">
+        <div class="stage-icon">🚀</div>
+        <div class="stage-info">
+          <div class="stage-label">จ่ายงาน</div>
+          <div class="stage-time">${job.dispatchTime ? fmtDT(job.dispatchTime) : 'รอหัวหน้าจ่ายงาน'}</div>
+        </div>
+        <div class="stage-check">${dispatchDone ? '✅' : ''}</div>
+      </div>
+    </div>`;
+
+  const shareSection = allDone ? `
+    <div class="share-wrap">
+      <div class="share-card">
+        <div class="share-title">📊 รายงานสถานะ</div>
+        <div class="share-text" id="share-text-content">${shareText(job, upd)}</div>
+        <button class="copy-btn" onclick="copyReport()">📋 คัดลอกรายงานส่งหัวหน้า</button>
+        <div class="copied-msg" id="copied-msg">✓ คัดลอกแล้ว!</div>
+      </div>
+    </div>` : '';
+
+  app.innerHTML = `
+    <div class="header">
+      <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
+      <div class="header-title">${job.jobNo || 'ใบงาน'}</div>
+      <div class="header-sub">${job.date || ''} · ${job.driverName || job.driverCode || ''}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="job-no">${job.jobNo || '—'}</div>
+          <div class="job-plate">${job.truckPlate || ''}</div>
+        </div>
+        <div class="status-badge" style="background:${allDone?'#ecfdf3':'#fffaeb'};color:${allDone?'#067647':'#b54708'};">
+          ${allDone ? '✅ เสร็จสิ้น' : '🔄 กำลังดำเนินการ'}
+        </div>
+      </div>
+      <div class="job-rows">
+        <div class="job-row"><span class="job-lbl">เลขที่เอกสาร</span><span class="job-val">${job.deliveryNo || '—'}</span></div>
+        <div class="job-row"><span class="job-lbl">รับสินค้าที่</span><span class="job-val">${job.origin || '—'}</span></div>
+        <div class="job-row"><span class="job-lbl">ปลายทาง</span><span class="job-val">${job.destination || '—'}</span></div>
+        <div class="job-row"><span class="job-lbl">ลูกค้า</span><span class="job-val">${job.customer || '—'}</span></div>
+        <div class="job-row"><span class="job-lbl">จุดจ่ายงาน</span><span class="job-val">${job.dispatchPoint || '—'}</span></div>
+      </div>
+    </div>
+
+    <div class="stages-wrap">
+      ${dispatchCard}
+      ${stageCards}
+    </div>
+
+    ${shareSection}
+    <div class="footer"></div>`;
+}
+
+function copyReport() {
+  const text = shareText(job, upd);
+  const doFallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {}).catch(doFallback);
+  } else { doFallback(); }
+  const el = document.getElementById('copied-msg');
+  if (el) { el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2500); }
+}
+
+// --- Init ---
+job = loadJob();
+if (job && job.id != null) {
+  upd = loadUpdates(job.id);
+  if (job.dispatchTime) upd.dispatchTime = job.dispatchTime;
+  document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
+}
+render();
+</script>
+</body>
+</html>
