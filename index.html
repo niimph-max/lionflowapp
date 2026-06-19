@@ -1360,7 +1360,7 @@ function normTruck(t){
   const boolParse=(v)=>v===true||v==='true'||v==='TRUE';
   // normalize date fields: ตัด timestamp ออก เหลือแค่ YYYY-MM-DD
   const normDate=(v)=>{if(!v)return '';return String(v).slice(0,10);}
-  const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',makerOther:'',...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
+  const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',makerOther:'',...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม','รถผู้บริหาร',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
 function normJob(j){return{id:j.id||0,jobNo:j.jobNo||'',date:j.date||'',time:j.time||'',driverCode:j.driverCode||'',truckPlate:j.truckPlate||'',origin:j.origin||'',destination:j.destination||'',customer:j.customer||'',deliveryNo:j.deliveryNo||'',weight:j.weight||'',revenue:j.revenue||'',dispatchPoint:j.dispatchPoint||'ระยอง',status:j.status||'รับงาน',fuelLiters:j.fuelLiters||'',fuelBaht:j.fuelBaht||'',toll:j.toll||'',allowance:j.allowance||'',tire:j.tire||'',repair:j.repair||'',police:j.police||'',misc:j.misc||'',remark:j.remark||'',createdAt:j.createdAt||'',dispatchTime:j.dispatchTime||'',pickupTime:j.pickupTime||'',pickupLat:j.pickupLat||'',pickupLng:j.pickupLng||'',arrivalTime:j.arrivalTime||'',arrivalLat:j.arrivalLat||'',arrivalLng:j.arrivalLng||'',completionTime:j.completionTime||'',completionLat:j.completionLat||'',completionLng:j.completionLng||'',documentTime:j.documentTime||'',dispatcher:j.dispatcher||'',dispatcherOther:j.dispatcherOther||''};}
 const DISPATCHERS=['ปกรณ์ สิ้นทอง','วารี ภักดีวาณิช','นันทนา สุขศิลา','สมศักดิ์ ชนะวงษ์','จารพรรณ ขาวสุข','คศิมาภรณ์ ชนะวงศ์','อื่นๆ'];
 const DISPATCH_POINTS=['ระยอง','ชลบุรี','สระบุรี','อื่นๆ'];
@@ -1412,16 +1412,33 @@ class Component extends DCLogic {
         if(data.error)throw new Error(data.error);
         const hasDrivers=data.drivers&&Array.isArray(data.drivers)&&data.drivers.length>0;
         const hasTrucks=data.trucks&&Array.isArray(data.trucks)&&data.trucks.length>0;
-        // ดึงจาก Sheets เสมอถ้ามีข้อมูล (ให้ Sheets เป็น source of truth ระหว่างอุปกรณ์)
+        // merge: ถ้ามี pending local changes ให้ local ชนะ Sheets จนกว่า Sheets จะมีข้อมูลใหม่
         if(hasDrivers){
-          const d=data.drivers.map(normDriver);
-          this.setState({drivers:d});
-          try{localStorage.setItem('driverReg_v2',JSON.stringify(d));}catch(e){}
+          const pendingCodes=new Set(JSON.parse(localStorage.getItem('driverPendingCodes')||'[]'));
+          const localDriversRaw=JSON.parse(localStorage.getItem('driverReg_v2')||'[]');
+          const localMap={};localDriversRaw.forEach(d=>{localMap[String(d.code)]=normDriver(d);});
+          const merged=data.drivers.map(normDriver).map(sd=>{
+            const ck=String(sd.code);
+            if(pendingCodes.has(ck)){const loc=localMap[ck];if(loc&&JSON.stringify(normDriver(sd))===JSON.stringify(loc)){pendingCodes.delete(ck);return sd;}return loc||sd;}
+            return sd;
+          });
+          Object.keys(localMap).forEach(c=>{if(!merged.find(d=>String(d.code)===c))merged.push(localMap[c]);});
+          try{localStorage.setItem('driverPendingCodes',JSON.stringify([...pendingCodes]));}catch(e){}
+          this.setState({drivers:merged});
+          try{localStorage.setItem('driverReg_v2',JSON.stringify(merged));}catch(e){}
         }
         if(hasTrucks){
-          const t=data.trucks.map(normTruck);
-          this.setState({trucks:t});
-          try{localStorage.setItem('truckReg_v1',JSON.stringify(t));}catch(e){}
+          const pendingPlates=new Set(JSON.parse(localStorage.getItem('truckPendingPlates')||'[]'));
+          const localTrucksRaw=JSON.parse(localStorage.getItem('truckReg_v1')||'[]');
+          const localMap={};localTrucksRaw.forEach(t=>{localMap[t.plate]=normTruck(t);});
+          const merged=data.trucks.map(normTruck).map(st=>{
+            if(pendingPlates.has(st.plate)){const loc=localMap[st.plate];if(loc&&JSON.stringify(normTruck(st))===JSON.stringify(loc)){pendingPlates.delete(st.plate);return st;}return loc||st;}
+            return st;
+          });
+          Object.keys(localMap).forEach(p=>{if(!merged.find(t=>t.plate===p))merged.push(localMap[p]);});
+          try{localStorage.setItem('truckPendingPlates',JSON.stringify([...pendingPlates]));}catch(e){}
+          this.setState({trucks:merged});
+          try{localStorage.setItem('truckReg_v1',JSON.stringify(merged));}catch(e){}
         }
         // Sheets ว่าง → push ข้อมูลปัจจุบันขึ้น
         const hasJobs=data.jobs&&Array.isArray(data.jobs)&&data.jobs.length>0;
@@ -1463,8 +1480,8 @@ class Component extends DCLogic {
       this.setState({lastBackup:new Date().toLocaleTimeString('th-TH')});
     }catch(e){}
   }
-  persist(drivers,changedCode){try{localStorage.setItem('driverReg_v2',JSON.stringify(drivers));}catch(e){}const toSend=changedCode?drivers.filter(d=>String(d.code)===String(changedCode)):drivers;this.pushToSheets(toSend,undefined,undefined);}
-  persistTrucks(trucks,changedPlate){try{localStorage.setItem('truckReg_v1',JSON.stringify(trucks));}catch(e){}const toSend=changedPlate?trucks.filter(t=>t.plate===changedPlate):trucks;this.pushToSheets(undefined,toSend,undefined);}
+  persist(drivers,changedCode){try{localStorage.setItem('driverReg_v2',JSON.stringify(drivers));}catch(e){}if(changedCode){try{const p=new Set(JSON.parse(localStorage.getItem('driverPendingCodes')||'[]'));p.add(String(changedCode));localStorage.setItem('driverPendingCodes',JSON.stringify([...p]));}catch(e){}}const toSend=changedCode?drivers.filter(d=>String(d.code)===String(changedCode)):drivers;this.pushToSheets(toSend,undefined,undefined);}
+  persistTrucks(trucks,changedPlate){try{localStorage.setItem('truckReg_v1',JSON.stringify(trucks));}catch(e){}if(changedPlate){try{const p=new Set(JSON.parse(localStorage.getItem('truckPendingPlates')||'[]'));p.add(changedPlate);localStorage.setItem('truckPendingPlates',JSON.stringify([...p]));}catch(e){}}const toSend=changedPlate?trucks.filter(t=>t.plate===changedPlate):trucks;this.pushToSheets(undefined,toSend,undefined);}
   persistJobs(jobs,changedId){try{localStorage.setItem('jobReg_v1',JSON.stringify(jobs));}catch(e){}const toSend=changedId?jobs.filter(j=>String(j.id)===String(changedId)):jobs;this.pushToSheets(undefined,undefined,toSend);}
   scrollMain(){try{document.querySelector('main').scrollTo({top:0});}catch(e){}}
 
