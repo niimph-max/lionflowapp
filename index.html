@@ -61,6 +61,11 @@
         </div>
       </sc-if>
 
+      <div style="font-size:10.5px;letter-spacing:.08em;color:#6f8499;font-weight:600;padding:16px 8px 7px;">ระบบรายงานและวิเคราะห์</div>
+      <button onClick="{{ onGoEff }}" style="{{ navEffStyle }}">
+        <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">📊</span>ประสิทธิภาพรถบริษัท</span>
+      </button>
+
       <div style="font-size:10.5px;letter-spacing:.08em;color:#6f8499;font-weight:600;padding:16px 8px 7px;">ระบบทะเบียนรถและพขร.</div>
       <button onClick="{{ onGoTrucks }}" style="{{ navTrucksStyle }}">
         <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">🚛</span>รถบรรทุก</span>
@@ -649,6 +654,7 @@
               <option value="">-- เลือกแผนก --</option>
               <option value="รถบริษัท">รถบริษัท</option>
               <option value="รถร่วม">รถร่วม</option>
+              <option value="รถผู้บริหาร">รถผู้บริหาร</option>
             </select>
           </div>
           <div>
@@ -662,7 +668,12 @@
               <option value="HONDA">HONDA</option>
               <option value="PANUS">PANUS</option>
               <option value="YAMAHA">YAMAHA</option>
+              <option value="GWM">GWM</option>
+              <option value="อื่นๆ">อื่นๆ</option>
             </select>
+            <sc-if value="{{ isMakerOther }}" hint-placeholder-val="{{ false }}">
+              <input value="{{ draft.makerOther }}" onInput="{{ onTruckMakerOther }}" placeholder="ระบุผู้ผลิต" style="width:100%;padding:8px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;margin-top:6px;" />
+            </sc-if>
           </div>
           <div>
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ปีที่ผลิต (พ.ศ.)</label>
@@ -770,6 +781,20 @@
           <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;background:#f4f6f8;border:1px solid #e0e4e9;border-radius:8px;font-size:13px;color:#475467;font-weight:600;cursor:pointer;white-space:nowrap;">
             <span>{{ contractFileLabel }}</span><input type="file" onChange="{{ onContractFile }}" style="display:none;" />
           </label>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:20px 22px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:14px;">💰 ข้อมูลการเงิน (รถบริษัท)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div>
+            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">เงินเดือน พขร. (บาท/เดือน)</label>
+            <input type="number" value="{{ draft.salary }}" onInput="{{ onTruckSalary }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ค่างวดรถ (บาท/เดือน) — 0 ถ้าไม่มี</label>
+            <input type="number" value="{{ draft.installment }}" onInput="{{ onTruckInstallment }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
+          </div>
         </div>
       </div>
 
@@ -1047,7 +1072,7 @@
           <div style="text-align:center;padding:20px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e4e7ec;margin-bottom:18px;">
             <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:3px;">QR Code สำหรับพขร.</div>
             <div style="font-size:12px;color:#667085;margin-bottom:12px;">ให้พขร.สแกนเพื่อบันทึกสถานะจากมือถือ</div>
-            <img src="{{ jobQrImgUrl }}" alt="QR" style="width:180px;height:180px;border-radius:8px;border:1px solid #e4e7ec;" />
+            {{ jobQrImgNode }}
             <div style="font-size:11px;color:#98a2b3;margin-top:8px;word-break:break-all;max-width:360px;margin-left:auto;margin-right:auto;">{{ jobQrText }}</div>
             <button onClick="{{ onHideQr }}" style="margin-top:12px;padding:7px 20px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#475467;cursor:pointer;">ปิด</button>
           </div>
@@ -1124,6 +1149,129 @@
     </div>
     </sc-if>
 
+    <!-- ===== EFFICIENCY: MONTHLY VIEW ===== -->
+    <sc-if value="{{ isEffMonthly }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:26px 30px 60px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <h1 style="margin:0;font-size:22px;font-weight:700;color:#16263a;">📊 ประสิทธิภาพรถบริษัท</h1>
+          <div style="font-size:13px;color:#667085;margin-top:3px;">รวมจากใบงานอัตโนมัติ</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+          <input type="month" value="{{ effMonth }}" onInput="{{ onEffMonth }}" style="padding:8px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:#f8fafc;border-bottom:2px solid #e4e7ec;">
+                <th style="padding:11px 14px;text-align:left;font-weight:600;color:#475467;white-space:nowrap;">ทะเบียนรถ</th>
+                <th style="padding:11px 14px;text-align:left;font-weight:600;color:#475467;white-space:nowrap;">พขร.</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">เที่ยว</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#175cd3;white-space:nowrap;">ค่าขนส่ง</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">น้ำมัน</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">%นม.</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">เบี้ยเลี้ยง</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">%บล.</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ยาง</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ซ่อม</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ผ่านทาง</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">เบ็ดเตล็ด</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">เงินเดือน</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ค่างวด</th>
+                <th style="padding:11px 8px;text-align:right;font-weight:600;color:#b54708;white-space:nowrap;">รวมค่าใช้จ่าย</th>
+                <th style="padding:11px 14px;text-align:right;font-weight:600;color:#067647;white-space:nowrap;">คงเหลือสุทธิ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ effTruckRows }}" as="r" hint-placeholder-count="5">
+                <tr onClick="{{ r.onClickRow }}" style="border-bottom:1px solid #f0f2f5;cursor:pointer;" style-hover="background:#f8fafc;">
+                  <td style="padding:10px 14px;font-weight:600;color:#16263a;white-space:nowrap;">{{ r.plate }}</td>
+                  <td style="padding:10px 14px;color:#475467;white-space:nowrap;">{{ r.driver }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#667085;">{{ r.trips }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#175cd3;font-weight:600;">{{ r.revenue }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.fuel }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#667085;">{{ r.pctFuel }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.allowance }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#667085;">{{ r.pctAllow }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.tire }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.repair }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.toll }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.misc }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.salary }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#667085;">{{ r.installment }}</td>
+                  <td style="padding:10px 8px;text-align:right;color:#b54708;font-weight:600;">{{ r.totalExp }}</td>
+                  <td style="padding:10px 14px;text-align:right;" style="{{ r.netStyle }}">{{ r.net }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+            <tfoot>
+              <tr style="background:#f8fafc;border-top:2px solid #e4e7ec;">
+                <td colspan="3" style="padding:11px 14px;font-weight:700;color:#16263a;">รวมทั้งหมด</td>
+                <td style="padding:11px 8px;text-align:right;font-weight:700;color:#175cd3;">{{ effTotalRev }}</td>
+                <td colspan="10"></td>
+                <td style="padding:11px 8px;text-align:right;font-weight:700;color:#b54708;">{{ effTotalExp }}</td>
+                <td style="padding:11px 14px;text-align:right;" style="{{ effTotalNetStyle }}">{{ effTotalNet }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===== EFFICIENCY: TRUCK VIEW ===== -->
+    <sc-if value="{{ isEffTruck }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:26px 30px 60px;max-width:900px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <h1 style="margin:0;font-size:22px;font-weight:700;color:#16263a;">📈 ประวัติรายเดือน</h1>
+          <div style="font-size:13px;color:#667085;margin-top:3px;">{{ effTruckTitle }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+          <select value="{{ effSelectedTruck }}" onChange="{{ onEffTruckSelect }}" style="padding:8px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;">
+            <sc-for list="{{ effTruckOptions }}" as="to" hint-placeholder-count="5">
+              <option value="{{ to.value }}">{{ to.label }}</option>
+            </sc-for>
+          </select>
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#f8fafc;border-bottom:2px solid #e4e7ec;">
+              <th style="padding:11px 16px;text-align:left;font-weight:600;color:#475467;">เดือน</th>
+              <th style="padding:11px 10px;text-align:right;font-weight:600;color:#475467;">เที่ยว</th>
+              <th style="padding:11px 10px;text-align:right;font-weight:600;color:#175cd3;">ค่าขนส่ง</th>
+              <th style="padding:11px 10px;text-align:right;font-weight:600;color:#475467;">น้ำมัน</th>
+              <th style="padding:11px 10px;text-align:right;font-weight:600;color:#667085;">%น้ำมัน</th>
+              <th style="padding:11px 10px;text-align:right;font-weight:600;color:#b54708;">รวมค่าใช้จ่าย</th>
+              <th style="padding:11px 16px;text-align:right;font-weight:600;color:#067647;">คงเหลือสุทธิ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ effTruckMonthRows }}" as="mr" hint-placeholder-count="6">
+              <tr style="border-bottom:1px solid #f0f2f5;">
+                <td style="padding:10px 16px;font-weight:600;color:#16263a;">{{ mr.month }}</td>
+                <td style="padding:10px 10px;text-align:right;color:#667085;">{{ mr.trips }}</td>
+                <td style="padding:10px 10px;text-align:right;color:#175cd3;font-weight:600;">{{ mr.revenue }}</td>
+                <td style="padding:10px 10px;text-align:right;color:#475467;">{{ mr.fuel }}</td>
+                <td style="padding:10px 10px;text-align:right;color:#667085;">{{ mr.pctFuel }}</td>
+                <td style="padding:10px 10px;text-align:right;color:#b54708;font-weight:600;">{{ mr.totalExp }}</td>
+                <td style="padding:10px 16px;text-align:right;" style="{{ mr.netStyle }}">{{ mr.net }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </sc-if>
+
     <!-- ===== PIN MODAL ===== -->
     <sc-if value="{{ pinModalOpen }}" hint-placeholder-val="{{ false }}">
       <div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;">
@@ -1152,7 +1300,7 @@
           <div style="font-size:13px;color:#667085;margin-bottom:6px;">ให้พขร.สแกน QR เพื่อบันทึกสถานะจากมือถือ</div>
           <div style="display:inline-block;padding:4px 14px;background:#eaf1fb;color:#2f6fb0;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;">{{ savedJobNo }}</div>
           <div style="display:flex;justify-content:center;margin-bottom:10px;">
-            <img src="{{ savedJobQrImgUrl }}" alt="QR" style="width:210px;height:210px;border-radius:12px;border:1px solid #e4e7ec;" />
+            {{ savedJobQrImgNode }}
           </div>
           <div style="font-size:11px;color:#b0b8c2;word-break:break-all;margin-bottom:18px;padding:0 8px;">{{ savedJobQrText }}</div>
           <button onClick="{{ onCloseSavedQr }}" style="width:100%;padding:13px;background:#2f6fb0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">รับทราบ</button>
@@ -1194,7 +1342,7 @@ const SEED = [
 ];
 const TYPE_MAP={'GIR6':'หกล้อ','GIR10':'สิบล้อ','GIRTL':'กึ่งพ่วง 3 เพลา','CL':'กึ่งพ่วง 2 เพลา'};
 function normDriver(d){const r={idCard:'',address:'',fleet:'ระยอง',startDate:'',licenseExpiry:'',idExpiry:'',hasLicenseFile:false,hasIdFile:false,photo:null,history:[],...d,code:String(d.code||''),name:String(d.name||''),type:(TYPE_MAP[d.type]||d.type)};if(!Array.isArray(r.history)){try{const p=JSON.parse(r.history);r.history=Array.isArray(p)?p:[];}catch(e){r.history=[];}}return r;}
-function normTruck(t){const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,...t};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
+function normTruck(t){const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:t.salary||'',installment:t.installment||'',makerOther:t.makerOther||'',...t};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
 function normJob(j){return{id:j.id||0,jobNo:j.jobNo||'',date:j.date||'',time:j.time||'',driverCode:j.driverCode||'',truckPlate:j.truckPlate||'',origin:j.origin||'',destination:j.destination||'',customer:j.customer||'',deliveryNo:j.deliveryNo||'',weight:j.weight||'',revenue:j.revenue||'',dispatchPoint:j.dispatchPoint||'ระยอง',status:j.status||'รับงาน',fuelLiters:j.fuelLiters||'',fuelBaht:j.fuelBaht||'',toll:j.toll||'',allowance:j.allowance||'',tire:j.tire||'',repair:j.repair||'',police:j.police||'',misc:j.misc||'',remark:j.remark||'',createdAt:j.createdAt||'',dispatchTime:j.dispatchTime||'',pickupTime:j.pickupTime||'',pickupLat:j.pickupLat||'',pickupLng:j.pickupLng||'',arrivalTime:j.arrivalTime||'',arrivalLat:j.arrivalLat||'',arrivalLng:j.arrivalLng||'',completionTime:j.completionTime||'',completionLat:j.completionLat||'',completionLng:j.completionLng||'',documentTime:j.documentTime||'',dispatcher:j.dispatcher||'',dispatcherOther:j.dispatcherOther||''};}
 const DISPATCHERS=['ปกรณ์ สิ้นทอง','วารี ภักดีวาณิช','นันทนา สุขศิลา','สมศักดิ์ ชนะวงษ์','จารพรรณ ขาวสุข','คศิมาภรณ์ ชนะวงศ์','อื่นๆ'];
 const DISPATCH_POINTS=['ระยอง','ชลบุรี','สระบุรี','อื่นๆ'];
@@ -1205,7 +1353,7 @@ const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxBAc_lObCRDqBiRRuzQP7
 const DEPT_SHORT={'01-รถบริษัท':'01 บริษัท','11-รถร่วมหกล้อระยอง':'11 หกล้อ รย.','12-รถร่วมสิบล้อระยอง':'12 สิบล้อ รย.','13-รถร่วมเทรเล่อร์ระยอง':'13 เทรเล่อร์ รย.','21-รถร่วมหกล้อชลบุรี':'21 หกล้อ ชบ.'};
 
 class Component extends DCLogic {
-  state={drivers:SEED.map(normDriver),view:'list',selectedCode:null,search:'',fleet:'all',statusFilter:'all',draft:null,isNew:false,editingCode:null,formError:'',sidebarOpen:true,historyFormOpen:false,historyDraft:null,maintFormOpen:false,maintDraft:null,section:'jobs',trucks:TRUCK_SEED.map(normTruck),truckView:'list',truckSelectedId:null,truckSearch:'',truckDeptFilter:'all',truckStatusFilter:'all',truckDraft:null,truckIsNew:false,truckFormError:'',syncStatus:'idle',jobs:[],jobView:'list',jobSearch:'',jobDateFilter:new Date().toISOString().slice(0,10),jobDpFilter:'all',jobDraft:null,jobIsNew:false,jobFormError:'',jobQrVisible:false,jobQrImgUrl:'',jobQrText:'',savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:'',pinUnlocked:false,pinModalOpen:false,pinInput:'',pinError:''};
+  state={drivers:SEED.map(normDriver),view:'list',selectedCode:null,search:'',fleet:'all',statusFilter:'all',draft:null,isNew:false,editingCode:null,formError:'',sidebarOpen:true,historyFormOpen:false,historyDraft:null,maintFormOpen:false,maintDraft:null,section:'jobs',trucks:TRUCK_SEED.map(normTruck),truckView:'list',truckSelectedId:null,truckSearch:'',truckDeptFilter:'all',truckStatusFilter:'all',truckDraft:null,truckIsNew:false,truckFormError:'',syncStatus:'idle',jobs:[],jobView:'list',jobSearch:'',jobDateFilter:new Date().toISOString().slice(0,10),jobDpFilter:'all',jobDraft:null,jobIsNew:false,jobFormError:'',jobQrVisible:false,jobQrImgUrl:'',jobQrText:'',savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:'',pinUnlocked:false,pinModalOpen:false,pinInput:'',pinError:'',effView:'monthly',effMonth:new Date().toISOString().slice(0,7),effTruckFilter:''};
 
   componentDidMount(){
     try{const s=localStorage.getItem('driverReg_v2');if(s){const d=JSON.parse(s);if(Array.isArray(d)&&d.length)this.setState({drivers:d.map(normDriver)});}}catch(e){}
@@ -1395,8 +1543,10 @@ class Component extends DCLogic {
       navDriversStyle:'width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 11px;margin-bottom:2px;border:none;border-radius:8px;font-size:13px;font-weight:600;text-align:left;cursor:pointer;'+(S.section==='drivers'?'background:rgba(47,111,176,.22);color:#fff;':'background:transparent;color:#cdd7e1;'),
       navDriversBadge:'font-size:12px;font-weight:700;padding:1px 8px;border-radius:11px;'+(S.section==='drivers'?'background:rgba(255,255,255,.18);color:#fff;':'background:rgba(255,255,255,.07);color:#9fb2c4;'),
       onGoJobs:()=>this.setState({section:'jobs',jobView:'list'}),
+      onGoEff:()=>this.setState({section:'efficiency',effView:'monthly'}),
       onGoTrucks:()=>this.setState({section:'trucks',truckView:'list',truckStatusFilter:'all',truckDeptFilter:'all'}),
       onGoDrivers:()=>this.setState({section:'drivers',view:'list',statusFilter:'all',fleet:'all'}),
+      navEffStyle:'width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 11px;margin-bottom:2px;border:none;border-radius:8px;font-size:13px;font-weight:600;text-align:left;cursor:pointer;'+(S.section==='efficiency'?'background:rgba(47,111,176,.22);color:#fff;':'background:transparent;color:#cdd7e1;'),
       alertCount:isTrucks?tAlertCount:isJobs?0:alertCount,
       expiredCount:isTrucks?tExpiredCount:isJobs?0:expiredCount,
       soonCount:isTrucks?tSoonCount:isJobs?0:soonCount,
@@ -1472,7 +1622,10 @@ class Component extends DCLogic {
     }
     out.onTruckBack=this.onTruckBack;
     // --- Global modal states (always available) ---
-    out.savedJobQrVisible=S.savedJobQrVisible;out.savedJobQrImgUrl=S.savedJobQrImgUrl;out.savedJobQrText=S.savedJobQrText;out.savedJobNo=S.savedJobNo;
+    out.jobQrVisible=S.jobQrVisible||false;out.jobQrText=S.jobQrText||'';
+    out.jobQrImgNode=S.jobQrImgUrl?React.createElement('img',{src:S.jobQrImgUrl,alt:'QR',style:{width:'180px',height:'180px',borderRadius:'8px',border:'1px solid #e4e7ec'}}):null;
+    out.savedJobQrVisible=S.savedJobQrVisible||false;out.savedJobQrText=S.savedJobQrText||'';out.savedJobNo=S.savedJobNo||'';
+    out.savedJobQrImgNode=S.savedJobQrImgUrl?React.createElement('img',{src:S.savedJobQrImgUrl,alt:'QR',style:{width:'210px',height:'210px',borderRadius:'12px',border:'1px solid #e4e7ec'}}):null;
     out.onCloseSavedQr=()=>this.setState({savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:''});
     out.pinModalOpen=S.pinModalOpen;out.pinInput=S.pinInput;out.pinError=S.pinError;
     out.onClosePin=()=>this.setState({pinModalOpen:false,pinInput:'',pinError:''});
@@ -1541,8 +1694,61 @@ class Component extends DCLogic {
     out.truckDraftPhotoNode=dt.photo?React.createElement('img',{src:dt.photo,style:{width:'100%',height:'100%',objectFit:'cover'}}):null;
     out.onTruckPhoto=(e)=>this.readTruckPhotoDraft(e);
     out.onRemark=(e)=>this.setT('remark',e.target.value);
+    out.onTruckSalary=(e)=>this.setT('salary',e.target.value);
+    out.onTruckInstallment=(e)=>this.setT('installment',e.target.value);
+    out.isMakerOther=dt.maker==='อื่นๆ';
+    out.onTruckMakerOther=(e)=>this.setT('makerOther',e.target.value);
     out.onSaveTruckForm=this.saveTruckForm;out.onCancelTruck=this.cancelTruckForm;
     out.truckFormError=!!S.truckFormError;out.truckFormErrorText=S.truckFormError;
+    // ---- EFFICIENCY renderVals ----
+    const isEffSection=S.section==='efficiency';
+    out.isEffMonthly=isEffSection&&S.effView==='monthly';
+    out.isEffTruck=isEffSection&&S.effView==='truck';
+    out.effMonth=S.effMonth;
+    out.onEffMonth=(e)=>this.setState({effMonth:e.target.value});
+    out.onEffViewMonthly=()=>this.setState({effView:'monthly'});
+    out.onEffViewTruck=()=>this.setState({effView:'truck'});
+    out.effMonthlyBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='monthly'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
+    out.effTruckBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='truck'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
+    if(isEffSection){
+      const companyTrucks=S.trucks.filter(t=>t.dept==='รถบริษัท');
+      const sm=S.effMonth;
+      const sumF=(jobs,f)=>jobs.reduce((s,j)=>s+(parseFloat(j[f])||0),0);
+      const fmt=n=>'฿'+Math.round(n).toLocaleString();
+      const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'0.0%';
+      const truckRows=companyTrucks.map(t=>{
+        const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));
+        const rev=sumF(jobs,'revenue'),fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance');
+        const tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc');
+        const sal=parseFloat(t.salary)||0,inst=parseFloat(t.installment)||0;
+        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst;
+        const net=rev-totalExp;
+        const drCode=jobs.find(j=>j.driverCode)?.driverCode||'';
+        const drv=S.drivers.find(d=>String(d.code)===String(drCode));
+        return{plate:t.plate,driver:drv?drv.name:(drCode||'—'),trips:jobs.length,revenue:fmt(rev),fuel:fmt(fuel),pctFuel:pct(fuel,rev),allowance:fmt(allow),pctAllow:pct(allow,rev),tire:fmt(tire),repair:fmt(repair),toll:fmt(toll),misc:fmt(misc),salary:fmt(sal),installment:inst>0?fmt(inst):'—',totalExp:fmt(totalExp),net:fmt(net),netStyle:'font-weight:700;color:'+(net>=0?'#067647':'#b42318')+';',onClickRow:()=>this.setState({effView:'truck',effTruckFilter:t.plate})};
+      });
+      out.effTruckRows=truckRows;out.effRowCount=truckRows.length;
+      const tRev=companyTrucks.reduce((s,t)=>{const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));return s+sumF(jobs,'revenue');},0);
+      const tExp=companyTrucks.reduce((s,t)=>{const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));const fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance'),tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc'),sal=parseFloat(t.salary)||0,inst=parseFloat(t.installment)||0;return s+fuel+allow+tire+repair+toll+misc+sal+inst;},0);
+      out.effTotalRev=fmt(tRev);out.effTotalExp=fmt(tExp);out.effTotalNet=fmt(tRev-tExp);out.effTotalNetStyle='font-weight:700;color:'+(tRev-tExp>=0?'#067647':'#b42318')+';';
+      // Truck view
+      const selPlate=S.effTruckFilter||(companyTrucks[0]?.plate||'');
+      out.effSelectedTruck=selPlate;
+      out.onEffTruckSelect=(e)=>this.setState({effTruckFilter:e.target.value});
+      out.effTruckOptions=companyTrucks.map(t=>({value:t.plate,label:t.plate}));
+      const selTruckObj=S.trucks.find(t=>t.plate===selPlate);
+      const selJobs=S.jobs.filter(j=>j.truckPlate===selPlate&&j.date);
+      const mMap={};selJobs.forEach(j=>{const m=j.date.slice(0,7);if(!mMap[m])mMap[m]=[];mMap[m].push(j);});
+      out.effTruckMonthRows=Object.keys(mMap).sort().reverse().map(m=>{
+        const jobs=mMap[m];const rev=sumF(jobs,'revenue'),fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance');
+        const tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc');
+        const sal=parseFloat(selTruckObj?.salary)||0,inst=parseFloat(selTruckObj?.installment)||0;
+        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst;const net=rev-totalExp;
+        const [yr,mo]=m.split('-');const thM=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+        return{month:thM[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,revenue:fmt(rev),fuel:fmt(fuel),pctFuel:pct(fuel,rev),totalExp:fmt(totalExp),net:fmt(net),netStyle:'font-weight:700;color:'+(net>=0?'#067647':'#b42318')+';'};
+      });
+      out.effTruckTitle=selPlate||'—';
+    }
     // ---- JOBS renderVals ----
     out.jobSearch=S.jobSearch;out.onJobSearch=(e)=>this.setState({jobSearch:e.target.value});
     out.jobDateFilter=S.jobDateFilter;out.onJobDateFilter=(e)=>this.setState({jobDateFilter:e.target.value});
