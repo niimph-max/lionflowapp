@@ -77,6 +77,15 @@ function fmtDT(dt) {
     ' เวลา ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' น.';
 }
 
+function fmtDate(v) {
+  if (!v) return '—';
+  const s = String(v);
+  let y, m, d;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { const p = s.split('-'); y = +p[0]; m = +p[1]; d = +p[2]; }
+  else { const dt = new Date(s); if (isNaN(dt)) return s; const f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).format(dt); const p = f.split('-'); y = +p[0]; m = +p[1]; d = +p[2]; }
+  return d + ' ' + THM[m - 1] + ' ' + (y + 543);
+}
+
 function nowLocal() {
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
@@ -134,7 +143,7 @@ function shareText(job, upd) {
     '📋 รายงานงาน ' + (job.jobNo || '—'),
     '🚛 รถ: ' + (job.truckPlate || '—'),
     '👤 พขร.: ' + (job.driverName || job.driverCode || '—'),
-    '📅 วันที่: ' + (job.date || '—'),
+    '📅 วันที่: ' + fmtDate(job.date),
     '🏭 ต้นทาง: ' + (job.origin || '—'),
     '🏢 ปลายทาง: ' + (job.destination || '—'),
     '─────────────────',
@@ -266,7 +275,7 @@ function render() {
     <div class="header">
       <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
       <div class="header-title">${job.jobNo || 'ใบงาน'}</div>
-      <div class="header-sub">${job.date || ''} · ${job.driverName || job.driverCode || ''}</div>
+      <div class="header-sub">${fmtDate(job.date)} · ${job.driverName || job.driverCode || ''}</div>
     </div>
 
     <div class="card">
