@@ -1172,22 +1172,11 @@
           </div>
         </sc-if>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="{{ stg1CardStyle }}">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div style="font-size:20px;flex:none;">🚀</div>
-              <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">① จ่ายงาน</div>
-                <input type="datetime-local" value="{{ jd.dispatchTime }}" onInput="{{ onJobDispatchTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
-                <sc-if value="{{ jdDispatchTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdDispatchTimeText }}</div></sc-if>
-              </div>
-              <div style="font-size:18px;flex:none;">{{ stg1Check }}</div>
-            </div>
-          </div>
           <div style="{{ stg2CardStyle }}">
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="font-size:20px;flex:none;">📦</div>
               <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">② รับสินค้า</div>
+                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">① รับสินค้า</div>
                 <input type="datetime-local" value="{{ jd.pickupTime }}" onInput="{{ onJobPickupTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
                 <sc-if value="{{ jdPickupTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdPickupTimeText }}</div></sc-if>
                 <sc-if value="{{ hasPickupGps }}" hint-placeholder-val="{{ false }}"><a href="{{ pickupMapUrl }}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;font-size:12px;color:#2f6fb0;text-decoration:none;margin-top:5px;">📍 ดูแผนที่</a></sc-if>
@@ -1199,7 +1188,7 @@
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="font-size:20px;flex:none;">📍</div>
               <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">③ ถึงลูกค้า</div>
+                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">② ถึงลูกค้า</div>
                 <input type="datetime-local" value="{{ jd.arrivalTime }}" onInput="{{ onJobArrivalTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
                 <sc-if value="{{ jdArrivalTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdArrivalTimeText }}</div></sc-if>
                 <sc-if value="{{ hasArrivalGps }}" hint-placeholder-val="{{ false }}"><a href="{{ arrivalMapUrl }}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;font-size:12px;color:#2f6fb0;text-decoration:none;margin-top:5px;">📍 ดูแผนที่</a></sc-if>
@@ -1211,7 +1200,7 @@
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="font-size:20px;flex:none;">✅</div>
               <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">④ จบงาน</div>
+                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">③ จบงาน</div>
                 <input type="datetime-local" value="{{ jd.completionTime }}" onInput="{{ onJobCompletionTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
                 <sc-if value="{{ jdCompletionTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdCompletionTimeText }}</div></sc-if>
                 <sc-if value="{{ hasCompletionGps }}" hint-placeholder-val="{{ false }}"><a href="{{ completionMapUrl }}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;font-size:12px;color:#2f6fb0;text-decoration:none;margin-top:5px;">📍 ดูแผนที่</a></sc-if>
@@ -1223,7 +1212,7 @@
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="font-size:20px;flex:none;">📄</div>
               <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">⑤ ส่งเอกสาร</div>
+                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">④ ส่งเอกสาร</div>
                 <input type="datetime-local" value="{{ jd.documentTime }}" onInput="{{ onJobDocumentTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
                 <sc-if value="{{ jdDocumentTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdDocumentTimeText }}</div></sc-if>
               </div>
@@ -2117,7 +2106,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
       out.onJobDocumentTime=(e)=>this.setJ('documentTime',e.target.value);
       const stgCard=(done,active)=>'padding:12px 14px;border-radius:10px;border:2px solid '+(done?'#abefc6':active?'#fedf89':'#e4e7ec')+';background:'+(done?'#f0fdf4':active?'#fffbeb':'#f8fafc')+';';
       out.stg1CardStyle=stgCard(!!jd.dispatchTime,!jd.dispatchTime);
-      out.stg2CardStyle=stgCard(!!jd.pickupTime,!!jd.dispatchTime&&!jd.pickupTime);
+      out.stg2CardStyle=stgCard(!!jd.pickupTime,!jd.pickupTime);
       out.stg3CardStyle=stgCard(!!jd.arrivalTime,!!jd.pickupTime&&!jd.arrivalTime);
       out.stg4CardStyle=stgCard(!!jd.completionTime,!!jd.arrivalTime&&!jd.completionTime);
       out.stg5CardStyle=stgCard(!!jd.documentTime,!!jd.completionTime&&!jd.documentTime);
