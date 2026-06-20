@@ -320,6 +320,36 @@ if (job && job.id != null) {
   document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
 }
 render();
+
+// --- เช็คกับ Sheet: ใบงานถูกลบหรือยัง + ดึงสถานะล่าสุด ---
+function refreshFromSheet() {
+  if (!job || job.id == null) return;
+  fetch(SCRIPT_URL + '?_=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      if (!data || !Array.isArray(data.jobs)) return;
+      const sj = data.jobs.find(x => String(x.id) === String(job.id));
+      if (!sj) {
+        // ไม่พบในระบบแล้ว = ถูกลบ/ยกเลิก
+        document.getElementById('app').innerHTML =
+          '<div class="header"><div class="header-logo">ระบบงานขนส่ง</div>'
+          + '<div class="header-title">ใบงานถูกยกเลิก</div></div>'
+          + '<div class="error-box"><div class="icon">🚫</div>'
+          + '<div style="font-size:16px;font-weight:700;margin-bottom:6px;">ใบงานนี้ถูกยกเลิกแล้ว</div>'
+          + '<div style="font-size:13px;">ใบงาน ' + (job.jobNo || '') + ' ถูกลบออกจากระบบ<br>กรุณาติดต่อหัวหน้างาน</div></div>';
+        return;
+      }
+      // ดึง timestamp ล่าสุดจาก Sheet มาแสดง (Sheet เป็นหลัก)
+      const fields = ['pickupTime','pickupLat','pickupLng','arrivalTime','arrivalLat','arrivalLng','completionTime','completionLat','completionLng','documentTime'];
+      let changed = false;
+      fields.forEach(f => { if (sj[f] !== undefined && sj[f] !== '' && upd[f] !== sj[f]) { upd[f] = sj[f]; changed = true; } });
+      if (changed) { saveUpdates(job.id, upd); render(); }
+    })
+    .catch(() => {}); // ออฟไลน์ → ใช้ข้อมูลจาก QR ต่อไป
+}
+refreshFromSheet();
+// เช็คซ้ำเมื่อกลับมาที่หน้า (เปลี่ยนแท็บกลับมา)
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshFromSheet(); });
 </script>
 </body>
 </html>
