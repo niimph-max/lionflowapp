@@ -883,16 +883,7 @@
           </sc-if>
         </div>
       </div>
-      <sc-if value="{{ hasDriverChips }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
-          <sc-for list="{{ driverStatusChips }}" as="s" hint-placeholder-count="3">
-            <div style="background:#f8fafc;border:1px solid #e4e7ec;border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:8px;">
-              <span style="font-size:17px;font-weight:700;color:#16263a;">{{ s.count }}</span>
-              <span style="font-size:12px;color:#475467;">{{ s.icon }} {{ s.label }}</span>
-            </div>
-          </sc-for>
-        </div>
-      </sc-if>
+
 
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow-x:auto;">
         <div style="display:grid;grid-template-columns:100px 80px 90px 65px minmax(120px,1fr) 105px 95px 88px 82px 75px 100px 82px;background:#f8fafc;border-bottom:1px solid #e4e7ec;min-width:900px;">
@@ -903,8 +894,8 @@
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">พนักงานขับรถ</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">ทะเบียนรถ</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">ลูกค้า</div>
+          <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">นน.</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">ค่าขนส่ง</div>
-          <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">ค่าใช้จ่าย</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">สถานะ</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;">สถานะ Driver</div>
           <div style="padding:11px 12px;font-size:12px;font-weight:600;color:#667085;"></div>
@@ -935,8 +926,8 @@
             </div>
             <div style="padding:11px 12px;font-size:12px;color:#475467;">{{ j.truckPlate }}</div>
             <div style="padding:11px 12px;font-size:12px;color:#475467;">{{ j.customer }}</div>
+            <div style="padding:11px 12px;font-size:12px;color:#475467;">{{ j.weightText }}</div>
             <div style="padding:11px 12px;font-size:13px;font-weight:600;color:#175cd3;">{{ j.revenueText }}</div>
-            <div style="padding:11px 12px;font-size:13px;color:#b54708;">{{ j.expText }}</div>
             <div style="padding:11px 12px;"><span style="{{ j.statusStyle }}">{{ j.status }}</span></div>
             <div style="padding:11px 12px;"><span style="{{ j.driverStatusStyle }}">{{ j.driverStatusLabel }}</span></div>
             <div style="padding:11px 12px;display:flex;gap:5px;">
@@ -1098,7 +1089,7 @@
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
             <div>
-              <label style="font-size:12px;font-weight:600;color:#667085;display:block;margin-bottom:5px;">น้ำหนัก (กก.)</label>
+              <label style="font-size:12px;font-weight:600;color:#667085;display:block;margin-bottom:5px;">น้ำหนัก (ตัน)</label>
               <input type="number" value="{{ jd.weight }}" onInput="{{ onJobWeight }}" placeholder="0" style="width:100%;padding:9px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
             </div>
             <div>
@@ -2046,7 +2037,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
       const driverName=(code)=>{if(!code)return '';const d=S.drivers.find(x=>String(x.code)===String(code));return d?d.name:'';};
       const drvSt=(j)=>{if(j.documentTime)return{label:'📄 ส่งเอกสาร',style:this.chip('#175cd3','#eff4ff')};if(j.completionTime)return{label:'✅ ส่งสำเร็จ',style:this.chip('#067647','#ecfdf3')};if(j.arrivalTime)return{label:'📍 ถึงลูกค้า',style:this.chip('#2d6a4f','#d8f3dc')};if(j.pickupTime)return{label:'📦 รับสินค้า',style:this.chip('#b54708','#fffaeb')};if(j.dispatchTime)return{label:'🚀 รับงานแล้ว',style:this.chip('#475467','#f2f4f7')};return{label:'—',style:'color:#b0b8c2;font-size:13px;'};};
       const jobStatusChip=(s)=>{if(s==='เสร็จสิ้น')return this.chip('#067647','#ecfdf3');if(s==='จ่ายงาน')return this.chip('#b54708','#fffaeb');return this.chip('#175cd3','#eff4ff');};
-      const jobRows=jobList.map(j=>{const dn=driverName(j.driverCode);const totalExp=[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((s,v)=>s+(parseFloat(v)||0),0);const rev=parseFloat(j.revenue)||0;const profit=rev-totalExp;const ds=drvSt(j);return{...j,dateFmt:this.thaiDate(j.date),driverName:dn||'—',statusStyle:jobStatusChip(j.status),driverStatusLabel:ds.label,driverStatusStyle:ds.style,deliveryNoText:j.deliveryNo||'—',revenueText:rev?'฿'+Math.round(rev).toLocaleString():'—',expText:totalExp?'฿'+Math.round(totalExp).toLocaleString():'—',profitText:profit!==0?'฿'+Math.abs(Math.round(profit)).toLocaleString():'—',profitStyle:profit>=0?'color:#067647;font-weight:600;':'color:#b42318;font-weight:600;',dpChip:this.fleetChip(j.dispatchPoint),onEdit:()=>this.openJobEdit(j.id),onDelete:()=>this.deleteJob(j.id)};});
+      const jobRows=jobList.map(j=>{const dn=driverName(j.driverCode);const totalExp=[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((s,v)=>s+(parseFloat(v)||0),0);const rev=parseFloat(j.revenue)||0;const profit=rev-totalExp;const ds=drvSt(j);return{...j,dateFmt:this.thaiDate(j.date),driverName:dn||'—',statusStyle:jobStatusChip(j.status),driverStatusLabel:ds.label,driverStatusStyle:ds.style,deliveryNoText:j.deliveryNo||'—',weightText:j.weight?(parseFloat(j.weight)||0).toLocaleString('en-US',{maximumFractionDigits:4})+' ตัน':'—',revenueText:rev?'฿'+Math.round(rev).toLocaleString():'—',expText:totalExp?'฿'+Math.round(totalExp).toLocaleString():'—',profitText:profit!==0?'฿'+Math.abs(Math.round(profit)).toLocaleString():'—',profitStyle:profit>=0?'color:#067647;font-weight:600;':'color:#b42318;font-weight:600;',dpChip:this.fleetChip(j.dispatchPoint),onEdit:()=>this.openJobEdit(j.id),onDelete:()=>this.deleteJob(j.id)};});
       const jobRevTotal=jobList.reduce((s,j)=>s+(parseFloat(j.revenue)||0),0);
       const jobExpTotal=jobList.reduce((s,j)=>s+[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((ss,v)=>ss+(parseFloat(v)||0),0),0);
       const jobProfit=jobRevTotal-jobExpTotal;
