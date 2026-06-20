@@ -1496,6 +1496,9 @@ class Component extends DCLogic {
       }
     }catch(e){}
     try{const j=localStorage.getItem('jobReg_v1');if(j){const jobs=JSON.parse(j);if(Array.isArray(jobs))this.setState({jobs:jobs.map(normJob)});}}catch(e){}
+    // reconcile: ลบรายการที่เคยลบค้างไว้ออกจาก Sheet จริง
+    try{const dc=JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]');if(dc.length)this.pushDelete('drivers',dc.map(String));}catch(e){}
+    try{const tp=JSON.parse(localStorage.getItem('deletedTruckPlates')||'[]');if(tp.length)this.pushDelete('trucks',tp);}catch(e){}
     this.syncFromSheets();
     // auto-poll ทุก 30 วิ เพื่อดึงสถานะที่ พขร. อัปเดตจากมือถือ
     this._pollTimer=setInterval(()=>{if(document.visibilityState==='visible')this.syncFromSheets();},30000);
@@ -1587,6 +1590,11 @@ class Component extends DCLogic {
   }
 
   serializeArr(records){return records.map(r=>{const s={...r};Object.keys(s).forEach(k=>{if(Array.isArray(s[k]))s[k]=JSON.stringify(s[k]);});return s;});}
+  pushDelete(target,keys){
+    if(!keys||!keys.length)return;
+    this._lastPushAt=Date.now();
+    fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({data:JSON.stringify({type:'deleteRows',target,keys})})}).catch(()=>{});
+  }
   pushToSheets(drivers,trucks,jobs){
     this.setState({syncStatus:'saving'});
     const body={};
@@ -1641,7 +1649,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   setD(field,val){this.setState(s=>({draft:{...s.draft,[field]:val}}));}
   readFileToDraft(field,e){const f=e.target.files&&e.target.files[0];if(!f)return;if(field==='photo'){const r=new FileReader();r.onload=()=>this.setState(s=>({draft:{...s.draft,photo:r.result}}));r.readAsDataURL(f);}else{this.setState(s=>({draft:{...s.draft,[field]:true}}));}}
   saveForm=()=>{const d=this.state.draft;if(!d||!d.name||!String(d.name||'').trim()){this.setState({formError:'กรุณากรอกชื่อพนักงานขับรถ'});return;}let code=String(d.code||'').trim();if(!code)code='X'+Date.now().toString().slice(-6);const nd={...d,code,name:String(d.name||'')};let drivers;if(this.state.isNew){drivers=[nd,...this.state.drivers];}else{const origCode=String(this.state.selectedCode||'');drivers=this.state.drivers.map(x=>String(x.code)===origCode?nd:x);}this.persist(drivers);this.setState({drivers,selectedCode:code,view:'profile',formError:'',isNew:false,editingCode:null});};
-  deleteDriver=()=>{if(!window.confirm('ยืนยันการลบข้อมูลพนักงานขับรถรายนี้?'))return;const code=this.state.selectedCode;try{const del=new Set(JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]'));del.add(String(code));localStorage.setItem('deletedDriverCodes',JSON.stringify([...del]));}catch(e){}const drivers=this.state.drivers.filter(x=>x.code!==code);this.persist(drivers);this.setState({drivers,view:'list'});};
+  deleteDriver=()=>{if(!window.confirm('ยืนยันการลบข้อมูลพนักงานขับรถรายนี้?'))return;const code=this.state.selectedCode;try{const del=new Set(JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]'));del.add(String(code));localStorage.setItem('deletedDriverCodes',JSON.stringify([...del]));}catch(e){}const drivers=this.state.drivers.filter(x=>x.code!==code);try{localStorage.setItem('driverReg_v2',JSON.stringify(drivers));}catch(e){}this.pushDelete('drivers',[String(code)]);this.setState({drivers,view:'list'});};
   openHistoryForm=()=>this.setState({historyFormOpen:true,historyDraft:{date:new Date().toISOString().slice(0,10),type:'บันทึกทั่วไป',detail:'',by:''}});
   closeHistoryForm=()=>this.setState({historyFormOpen:false,historyDraft:null});
   setH=(field,val)=>this.setState(s=>({historyDraft:{...s.historyDraft,[field]:val}}));
@@ -1657,7 +1665,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   readTruckFileToDraft(field,e){const f=e.target.files&&e.target.files[0];if(!f)return;this.setState(s=>({truckDraft:{...s.truckDraft,[field]:true}}));}
   readTruckPhotoDraft(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>this.setState(s=>({truckDraft:{...s.truckDraft,photo:r.result}}));r.readAsDataURL(f);}
   saveTruckForm=()=>{const t=this.state.truckDraft;if(!t.plate||!t.plate.trim()){this.setState({truckFormError:'กรุณากรอกทะเบียนรถ'});return;}const nt={...t,plate:t.plate.trim()};let trucks;if(this.state.truckIsNew){trucks=[nt,...this.state.trucks];}else{const origPlate=this.state.editingTruckId||this.state.truckSelectedId;trucks=this.state.trucks.map(x=>x.plate===origPlate?nt:x);}this.persistTrucks(trucks,nt.plate);this.setState({trucks,truckSelectedId:nt.plate,truckView:'profile',truckFormError:'',editingTruckId:null});};
-  deleteTruck=()=>{if(!window.confirm('ยืนยันการลบข้อมูลรถคันนี้?'))return;const plate=this.state.truckSelectedId;try{const del=new Set(JSON.parse(localStorage.getItem('deletedTruckPlates')||'[]'));del.add(plate);localStorage.setItem('deletedTruckPlates',JSON.stringify([...del]));}catch(e){}const trucks=this.state.trucks.filter(x=>x.plate!==plate);this.persistTrucks(trucks);this.setState({trucks,truckView:'list'});};
+  deleteTruck=()=>{if(!window.confirm('ยืนยันการลบข้อมูลรถคันนี้?'))return;const plate=this.state.truckSelectedId;try{const del=new Set(JSON.parse(localStorage.getItem('deletedTruckPlates')||'[]'));del.add(plate);localStorage.setItem('deletedTruckPlates',JSON.stringify([...del]));}catch(e){}const trucks=this.state.trucks.filter(x=>x.plate!==plate);try{localStorage.setItem('truckReg_v1',JSON.stringify(trucks));}catch(e){}this.pushDelete('trucks',[plate]);this.setState({trucks,truckView:'list'});};
   openMaintForm=()=>this.setState({maintFormOpen:true,maintDraft:{date:new Date().toISOString().slice(0,10),type:'ซ่อมบำรุงทั่วไป',detail:'',cost:'',by:''}});
   closeMaintForm=()=>this.setState({maintFormOpen:false,maintDraft:null});
   setM=(field,val)=>this.setState(s=>({maintDraft:{...s.maintDraft,[field]:val}}));
