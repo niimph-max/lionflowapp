@@ -1942,7 +1942,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
     };
     out.beDayOpts=Array.from({length:31},(_,i)=>({v:String(i+1).padStart(2,'0'),l:String(i+1)}));
     out.beMonthOpts=[{v:'01',l:'ม.ค.'},{v:'02',l:'ก.พ.'},{v:'03',l:'มี.ค.'},{v:'04',l:'เม.ย.'},{v:'05',l:'พ.ค.'},{v:'06',l:'มิ.ย.'},{v:'07',l:'ก.ค.'},{v:'08',l:'ส.ค.'},{v:'09',l:'ก.ย.'},{v:'10',l:'ต.ค.'},{v:'11',l:'พ.ย.'},{v:'12',l:'ธ.ค.'}];
-    out.beYearOpts=Array.from({length:61},(_,i)=>({v:String(2510+i),l:String(2510+i)}));
+    out.beYearOpts=Array.from({length:31},(_,i)=>({v:String(2550+i),l:String(2550+i)}));
     out.onRegFile=(e)=>this.readTruckFileToDraft('hasRegFile',e);
     out.onInsuranceFile=(e)=>this.readTruckFileToDraft('hasInsuranceFile',e);
     out.onOwnerIdFile=(e)=>this.readTruckFileToDraft('hasOwnerIdFile',e);
