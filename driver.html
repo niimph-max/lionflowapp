@@ -86,8 +86,9 @@ function nowLocal() {
 
 function loadJob() {
   const p = new URLSearchParams(location.search);
-  const d = p.get('d');
+  let d = p.get('d');
   if (!d) return null;
+  d = d.replace(/ /g, '+'); // กัน + ถูกแปลงเป็นช่องว่างใน query string
   try { return JSON.parse(decodeURIComponent(escape(atob(d)))); } catch(e) { return null; }
 }
 
