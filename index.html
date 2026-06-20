@@ -1532,7 +1532,7 @@ class Component extends DCLogic {
             }
             return sd;
           });
-          Object.keys(localMap).forEach(c=>{if(!deletedDriverCodes.has(c)&&!merged.find(d=>String(d.code)===c))merged.push(localMap[c]);});
+          Object.keys(localMap).forEach(c=>{if(pendingCodes.has(c)&&!deletedDriverCodes.has(c)&&!merged.find(d=>String(d.code)===c))merged.push(localMap[c]);});
           [...deletedDriverCodes].forEach(c=>{if(!data.drivers.find(d=>String(d.code)===c))deletedDriverCodes.delete(c);});
           try{localStorage.setItem('deletedDriverCodes',JSON.stringify([...deletedDriverCodes]));}catch(e){}
           try{localStorage.setItem('driverPendingCodes',JSON.stringify([...pendingCodes]));}catch(e){}
@@ -1552,7 +1552,7 @@ class Component extends DCLogic {
             }
             return st;
           });
-          Object.keys(localMap).forEach(p=>{if(!deletedTruckPlates.has(p)&&!merged.find(t=>t.plate===p))merged.push(localMap[p]);});
+          Object.keys(localMap).forEach(p=>{if(pendingPlates.has(p)&&!deletedTruckPlates.has(p)&&!merged.find(t=>t.plate===p))merged.push(localMap[p]);});
           [...deletedTruckPlates].forEach(p=>{if(!data.trucks.find(t=>t.plate===p))deletedTruckPlates.delete(p);});
           try{localStorage.setItem('deletedTruckPlates',JSON.stringify([...deletedTruckPlates]));}catch(e){}
           try{localStorage.setItem('truckPendingPlates',JSON.stringify([...pendingPlates]));}catch(e){}
@@ -1574,7 +1574,7 @@ class Component extends DCLogic {
             }
             return sj;
           });
-          Object.keys(localMap).forEach(id=>{if(!merged.find(j=>String(j.id)===id))merged.push(localMap[id]);});
+          Object.keys(localMap).forEach(id=>{if(pendingIds.has(id)&&!merged.find(j=>String(j.id)===id))merged.push(localMap[id]);});
           try{localStorage.setItem('jobPendingIds',JSON.stringify([...pendingIds]));}catch(e){}
           this.setState({jobs:merged});
           try{localStorage.setItem('jobReg_v1',JSON.stringify(merged));}catch(e){}
@@ -1648,7 +1648,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   cancelForm=()=>this.setState({view:this.state.isNew?'list':'profile',formError:''});
   setD(field,val){this.setState(s=>({draft:{...s.draft,[field]:val}}));}
   readFileToDraft(field,e){const f=e.target.files&&e.target.files[0];if(!f)return;if(field==='photo'){const r=new FileReader();r.onload=()=>this.setState(s=>({draft:{...s.draft,photo:r.result}}));r.readAsDataURL(f);}else{this.setState(s=>({draft:{...s.draft,[field]:true}}));}}
-  saveForm=()=>{const d=this.state.draft;if(!d||!d.name||!String(d.name||'').trim()){this.setState({formError:'กรุณากรอกชื่อพนักงานขับรถ'});return;}let code=String(d.code||'').trim();if(!code)code='X'+Date.now().toString().slice(-6);const nd={...d,code,name:String(d.name||'')};let drivers;if(this.state.isNew){drivers=[nd,...this.state.drivers];}else{const origCode=String(this.state.selectedCode||'');drivers=this.state.drivers.map(x=>String(x.code)===origCode?nd:x);}this.persist(drivers);this.setState({drivers,selectedCode:code,view:'profile',formError:'',isNew:false,editingCode:null});};
+  saveForm=()=>{const d=this.state.draft;if(!d||!d.name||!String(d.name||'').trim()){this.setState({formError:'กรุณากรอกชื่อพนักงานขับรถ'});return;}let code=String(d.code||'').trim();if(!/^\d{6}$/.test(code)){this.setState({formError:'รหัสพนักงานต้องเป็นตัวเลข 6 หลัก'});return;}const origCode=String(this.state.selectedCode||'');if(this.state.drivers.some(x=>String(x.code)===code&&String(x.code)!==origCode)){this.setState({formError:'รหัสพนักงาน '+code+' มีอยู่แล้ว กรุณาใช้รหัสอื่น'});return;}const nd={...d,code,name:String(d.name||'')};let drivers;if(this.state.isNew){drivers=[nd,...this.state.drivers];}else{const origCode=String(this.state.selectedCode||'');drivers=this.state.drivers.map(x=>String(x.code)===origCode?nd:x);}this.persist(drivers);this.setState({drivers,selectedCode:code,view:'profile',formError:'',isNew:false,editingCode:null});};
   deleteDriver=()=>{if(!window.confirm('ยืนยันการลบข้อมูลพนักงานขับรถรายนี้?'))return;const code=this.state.selectedCode;try{const del=new Set(JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]'));del.add(String(code));localStorage.setItem('deletedDriverCodes',JSON.stringify([...del]));}catch(e){}const drivers=this.state.drivers.filter(x=>x.code!==code);try{localStorage.setItem('driverReg_v2',JSON.stringify(drivers));}catch(e){}this.pushDelete('drivers',[String(code)]);this.setState({drivers,view:'list'});};
   openHistoryForm=()=>this.setState({historyFormOpen:true,historyDraft:{date:new Date().toISOString().slice(0,10),type:'บันทึกทั่วไป',detail:'',by:''}});
   closeHistoryForm=()=>this.setState({historyFormOpen:false,historyDraft:null});
