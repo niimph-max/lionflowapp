@@ -96,9 +96,14 @@ function nowLocal() {
 function loadJob() {
   const p = new URLSearchParams(location.search);
   let d = p.get('d');
-  if (!d) return null;
-  d = d.replace(/ /g, '+'); // กัน + ถูกแปลงเป็นช่องว่างใน query string
-  try { return JSON.parse(decodeURIComponent(escape(atob(d)))); } catch(e) { return null; }
+  if (d) {
+    d = d.replace(/ /g, '+'); // กัน + ถูกแปลงเป็นช่องว่างใน query string
+    try { return JSON.parse(decodeURIComponent(escape(atob(d)))); } catch(e) { return null; }
+  }
+  // ลิงก์สั้น: ส่งแค่ id แล้วดึงรายละเอียดจาก Sheet
+  const id = p.get('j') || p.get('id');
+  if (id) return { id: id, _needFetch: true };
+  return null;
 }
 
 function lsKey(id) { return 'drvUpdate_' + id; }
@@ -203,7 +208,19 @@ function render() {
     return;
   }
 
-  const dispatchDone = !!job.dispatchTime;
+  if (job._needFetch && !job.jobNo) {
+    app.innerHTML = `
+      <div class="header">
+        <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
+        <div class="header-title">กำลังโหลดใบงาน…</div>
+      </div>
+      <div class="error-box" style="background:#f8fafc;border-color:#e4e7ec;color:#475467;">
+        <div class="icon">⏳</div>
+        <div style="font-size:15px;font-weight:600;color:#16263a;">กำลังดึงข้อมูลงานจากระบบ…</div>
+        <div style="font-size:13px;color:#667085;margin-top:6px;line-height:1.6;">หากค้างนาน กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต<br>แล้วรีเฟรชหน้าอีกครั้ง</div>
+      </div>`;
+    return;
+  }
   const allDone = STAGES.every(s => !!upd[s.key + 'Time']);
 
   const stageCards = STAGES.map((s, i) => {
@@ -305,6 +322,31 @@ function render() {
     <div class="footer"></div>`;
 }
 
+// --- หน้าจอเมื่อคนจ่ายงานปิดงาน (status = เสร็จสิ้น) → ลิงก์หมดอายุ ---
+function renderClosed() {
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="header">
+      <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
+      <div class="header-title">${job.jobNo || 'ใบงาน'}</div>
+      <div class="header-sub">${fmtDate(job.date)} · ${job.driverName || job.driverCode || ''}</div>
+    </div>
+    <div class="error-box">
+      <div class="icon">🔒</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:6px;color:#16263a;">งานนี้ปิดแล้ว</div>
+      <div style="font-size:13px;color:#667085;line-height:1.6;">ใบงาน ${job.jobNo || ''} ถูกทำเครื่องหมาย “เสร็จสิ้น” แล้ว<br>ลิงก์นี้หมดอายุ ไม่สามารถบันทึกเวลาเพิ่มได้</div>
+    </div>
+    <div class="share-wrap">
+      <div class="share-card">
+        <div class="share-title">📊 รายงานสถานะ (สรุป)</div>
+        <div class="share-text" id="share-text-content">${shareText(job, upd)}</div>
+        <button class="copy-btn" onclick="copyReport()">📋 คัดลอกรายงานส่งหัวหน้า</button>
+        <div class="copied-msg" id="copied-msg">✓ คัดลอกแล้ว!</div>
+      </div>
+    </div>
+    <div class="footer"></div>`;
+}
+
 function copyReport() {
   const text = shareText(job, upd);
   const doFallback = () => {
@@ -348,12 +390,25 @@ function refreshFromSheet() {
         return;
       }
       const sj = data.jobs.find(x => String(x.id) === String(job.id));
-      if (!sj) return; // ไม่เจอใน Sheet แต่ไม่อยู่ในทะเบียนลบ → อาจยังไม่ sync ใช้ข้อมูล QR ต่อ
+      if (!sj) return; // ไม่เจอใน Sheet แต่ไม่อยู่ในทะเบียนลบ → อาจยังไม่ sync
+      // คนจ่ายงานกดปิดงาน (status = เสร็จสิ้น) → ล็อกลิงก์ (ถ้าแก้สถานะกลับ ลิงก์กลับมาใช้ได้เอง)
+      if (String(sj.status || '').trim() === 'เสร็จสิ้น') { renderClosed(); return; }
+      let needRender = false;
+      // ลิงก์สั้น (id อย่างเดียว) → เติมรายละเอียดงานจาก Sheet
+      if (job._needFetch) {
+        ['jobNo','date','time','driverCode','truckPlate','origin','destination','customer','deliveryNo','dispatchPoint','dispatchTime'].forEach(f => { if (sj[f] !== undefined && sj[f] !== '') job[f] = sj[f]; });
+        if (Array.isArray(data.drivers)) { const drv = data.drivers.find(x => String(x.code) === String(sj.driverCode)); if (drv && drv.name) job.driverName = drv.name; }
+        if (job.dispatchTime) upd.dispatchTime = job.dispatchTime;
+        document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
+        job._needFetch = false;
+        needRender = true;
+      }
       // ดึง timestamp ล่าสุดจาก Sheet มาแสดง (Sheet เป็นหลัก)
       const fields = ['pickupTime','pickupLat','pickupLng','arrivalTime','arrivalLat','arrivalLng','completionTime','completionLat','completionLng','documentTime'];
       let changed = false;
       fields.forEach(f => { if (sj[f] !== undefined && sj[f] !== '' && upd[f] !== sj[f]) { upd[f] = sj[f]; changed = true; } });
-      if (changed) { saveUpdates(job.id, upd); render(); }
+      if (changed) saveUpdates(job.id, upd);
+      if (changed || needRender) render();
     })
     .catch(() => {}); // ออฟไลน์ → ใช้ข้อมูลจาก QR ต่อไป
 }

@@ -1164,8 +1164,12 @@
         </div>
         <sc-if value="{{ jobQrVisible }}" hint-placeholder-val="{{ false }}">
           <div style="text-align:center;padding:20px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e4e7ec;margin-bottom:18px;">
-            <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:3px;">QR Code สำหรับพขร.</div>
-            <div style="font-size:12px;color:#667085;margin-bottom:12px;">ให้พขร.สแกนเพื่อบันทึกสถานะจากมือถือ</div>
+            <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:3px;">ลิงก์ / QR สำหรับพขร.</div>
+            <div style="font-size:12px;color:#667085;margin-bottom:12px;">โทรแจ้งพขร. แล้วส่งลิงก์ทาง LINE หรือให้สแกน QR</div>
+            <div style="display:flex;gap:8px;max-width:360px;margin:0 auto 14px;">
+              <button onClick="{{ onShareJobLine }}" style="flex:1;padding:10px;background:#06C755;color:#fff;border:none;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;"><span style="background:#fff;color:#06C755;font-weight:800;font-size:10px;padding:2px 5px;border-radius:4px;">LINE</span>ส่ง LINE</button>
+              <button onClick="{{ onCopyJobLink }}" style="flex:1;padding:10px;background:#fff;color:#2f6fb0;border:1.5px solid #cfe0f2;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;">🔗 {{ jobCopyLabel }}</button>
+            </div>
             {{ jobQrImgNode }}
             <div style="font-size:11px;color:#98a2b3;margin-top:8px;word-break:break-all;max-width:360px;margin-left:auto;margin-right:auto;">{{ jobQrText }}</div>
             <button onClick="{{ onHideQr }}" style="margin-top:12px;padding:7px 20px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#475467;cursor:pointer;">ปิด</button>
@@ -1200,7 +1204,7 @@
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="font-size:20px;flex:none;">✅</div>
               <div style="flex:1;">
-                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">③ จบงาน</div>
+                <div style="font-size:12px;font-weight:600;color:#667085;margin-bottom:5px;">③ ส่งสำเร็จ</div>
                 <input type="datetime-local" value="{{ jd.completionTime }}" onInput="{{ onJobCompletionTime }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;" />
                 <sc-if value="{{ jdCompletionTimeText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#067647;font-weight:600;margin-top:5px;">🕐 {{ jdCompletionTimeText }}</div></sc-if>
                 <sc-if value="{{ hasCompletionGps }}" hint-placeholder-val="{{ false }}"><a href="{{ completionMapUrl }}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;font-size:12px;color:#2f6fb0;text-decoration:none;margin-top:5px;">📍 ดูแผนที่</a></sc-if>
@@ -1383,15 +1387,18 @@
     <sc-if value="{{ savedJobQrVisible }}" hint-placeholder-val="{{ false }}">
       <div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;">
         <div style="background:#fff;border-radius:18px;padding:28px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);">
-          <div style="font-size:28px;margin-bottom:8px;">📱</div>
+          <div style="font-size:26px;margin-bottom:6px;">✅</div>
           <div style="font-size:18px;font-weight:700;color:#16263a;margin-bottom:4px;">บันทึกใบงานสำเร็จ</div>
-          <div style="font-size:13px;color:#667085;margin-bottom:6px;">ให้พขร.สแกน QR เพื่อบันทึกสถานะจากมือถือ</div>
+          <div style="font-size:13px;color:#667085;margin-bottom:12px;line-height:1.5;">โทรแจ้งพขร. แล้วส่งลิงก์ให้บันทึกสถานะผ่านมือถือ</div>
           <div style="display:inline-block;padding:4px 14px;background:#eaf1fb;color:#2f6fb0;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;">{{ savedJobNo }}</div>
-          <div style="display:flex;justify-content:center;margin-bottom:10px;">
+          <button onClick="{{ onShareLine }}" style="width:100%;padding:13px;background:#06C755;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:9px;"><span style="background:#fff;color:#06C755;font-weight:800;font-size:11px;padding:2px 6px;border-radius:5px;">LINE</span>ส่งลิงก์ทาง LINE</button>
+          <button onClick="{{ onCopyLink }}" style="width:100%;padding:12px;background:#fff;color:#2f6fb0;border:1.5px solid #cfe0f2;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;">🔗 {{ copyLinkLabel }}</button>
+          <div style="font-size:11px;color:#b0b8c2;word-break:break-all;margin-bottom:14px;padding:0 8px;">{{ savedJobQrText }}</div>
+          <div style="border-top:1px solid #eef0f2;padding-top:13px;margin-bottom:8px;font-size:12px;color:#98a2b3;">หรือให้พขร.สแกน QR (กรณีเจอตัวกัน)</div>
+          <div style="display:flex;justify-content:center;margin-bottom:14px;">
             {{ savedJobQrImgNode }}
           </div>
-          <div style="font-size:11px;color:#b0b8c2;word-break:break-all;margin-bottom:18px;padding:0 8px;">{{ savedJobQrText }}</div>
-          <button onClick="{{ onCloseSavedQr }}" style="width:100%;padding:13px;background:#2f6fb0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">รับทราบ</button>
+          <button onClick="{{ onCloseSavedQr }}" style="width:100%;padding:11px;background:#f2f4f7;color:#475467;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">ปิด</button>
         </div>
       </div>
     </sc-if>
@@ -1664,8 +1671,11 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   openJobEdit=(id)=>{const j=this.state.jobs.find(x=>x.id===id);if(!j)return;this.editingJobId=id;this.setState({jobDraft:{...j},jobIsNew:false,jobView:'form',jobFormError:'',section:'jobs'});this.scrollMain();};
   cancelJobForm=()=>this.setState({jobView:'list',jobFormError:''});
   setJ(field,val){this.setState(s=>({jobDraft:{...s.jobDraft,[field]:val}}));}
-  saveJob=()=>{const j=this.state.jobDraft;if(!j||!j.date){this.setState({jobFormError:'กรุณาเลือกวันที่'});return;}let _newId=this.editingJobId;if(!_newId){_newId=Date.now();while(this.state.jobs.some(x=>String(x.id)===String(_newId)))_newId++;}const nj=normJob({...j,id:_newId});let jobs;if(this.state.jobIsNew){jobs=[nj,...this.state.jobs];}else{jobs=this.state.jobs.map(x=>x.id===this.editingJobId?nj:x);}this.persistJobs(jobs,nj.id);const drv=this.state.drivers.find(x=>String(x.code)===String(nj.driverCode));const data={id:nj.id,jobNo:nj.jobNo,date:nj.date,time:nj.time,driverCode:nj.driverCode,driverName:drv?drv.name:'',truckPlate:nj.truckPlate,origin:nj.origin,destination:nj.destination,customer:nj.customer,deliveryNo:nj.deliveryNo,dispatchPoint:nj.dispatchPoint,dispatchTime:nj.dispatchTime};const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const base=this.state.qrBaseUrl?this.state.qrBaseUrl.replace(/\/+$/,'')+'/':location.origin+location.pathname.replace(/[^/]*$/,'');const url=base+'driver.html?d='+encodeURIComponent(b64);const img='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url);this.setState({jobs,jobView:'list',jobFormError:'',savedJobQrVisible:true,savedJobQrImgUrl:img,savedJobQrText:url,savedJobNo:nj.jobNo||'ใบงาน'});};
+  saveJob=()=>{const j=this.state.jobDraft;if(!j||!j.date){this.setState({jobFormError:'กรุณาเลือกวันที่'});return;}let _newId=this.editingJobId;if(!_newId){_newId=Date.now();while(this.state.jobs.some(x=>String(x.id)===String(_newId)))_newId++;}const nj=normJob({...j,id:_newId});let jobs;if(this.state.jobIsNew){jobs=[nj,...this.state.jobs];}else{jobs=this.state.jobs.map(x=>x.id===this.editingJobId?nj:x);}this.persistJobs(jobs,nj.id);const drv=this.state.drivers.find(x=>String(x.code)===String(nj.driverCode));const data={id:nj.id,jobNo:nj.jobNo,date:nj.date,time:nj.time,driverCode:nj.driverCode,driverName:drv?drv.name:'',truckPlate:nj.truckPlate,origin:nj.origin,destination:nj.destination,customer:nj.customer,deliveryNo:nj.deliveryNo,dispatchPoint:nj.dispatchPoint,dispatchTime:nj.dispatchTime};const base=this.state.qrBaseUrl?this.state.qrBaseUrl.replace(/\/+$/,'')+'/':location.origin+location.pathname.replace(/[^/]*$/,'');const url=base+'driver.html?j='+encodeURIComponent(nj.id);const img='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url);this.setState({jobs,jobView:'list',jobFormError:'',savedJobQrVisible:true,savedJobQrImgUrl:img,savedJobQrText:url,savedJobNo:nj.jobNo||'ใบงาน',savedJobDriver:(drv?drv.name:''),savedLinkCopied:false});};
   deleteJob=(id)=>{if(!window.confirm('ยืนยันการลบใบงานนี้?'))return;const jobs=this.state.jobs.filter(x=>x.id!==id);try{localStorage.setItem('jobReg_v1',JSON.stringify(jobs));}catch(e){}this.pushDelete('jobs',[String(id)]);this.setState({jobs});};
+
+  copyText=(t)=>{try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(()=>this._copyFallback(t));}else{this._copyFallback(t);}}catch(e){this._copyFallback(t);}};
+  _copyFallback=(t)=>{try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);}catch(e){}};
 
   renderVals(){
     const S=this.state;
@@ -1863,8 +1873,12 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
     out.jobQrVisible=S.jobQrVisible||false;out.jobQrText=S.jobQrText||'';
     out.jobQrImgNode=S.jobQrImgUrl?React.createElement('img',{src:S.jobQrImgUrl,alt:'QR',style:{width:'180px',height:'180px',borderRadius:'8px',border:'1px solid #e4e7ec'}}):null;
     out.savedJobQrVisible=S.savedJobQrVisible||false;out.savedJobQrText=S.savedJobQrText||'';out.savedJobNo=S.savedJobNo||'';
-    out.savedJobQrImgNode=S.savedJobQrImgUrl?React.createElement('img',{src:S.savedJobQrImgUrl,alt:'QR',style:{width:'210px',height:'210px',borderRadius:'12px',border:'1px solid #e4e7ec'}}):null;
+    out.savedJobQrImgNode=S.savedJobQrImgUrl?React.createElement('img',{src:S.savedJobQrImgUrl,alt:'QR',style:{width:'150px',height:'150px',borderRadius:'10px',border:'1px solid #e4e7ec'}}):null;
     out.onCloseSavedQr=()=>this.setState({savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:''});
+    out.savedLinkCopied=S.savedLinkCopied||false;
+    out.copyLinkLabel=S.savedLinkCopied?'✓ คัดลอกลิงก์แล้ว':'ก๊อปลิงก์';
+    out.onCopyLink=()=>{this.copyText(S.savedJobQrText||'');this.setState({savedLinkCopied:true});clearTimeout(this._copyT);this._copyT=setTimeout(()=>this.setState({savedLinkCopied:false}),2200);};
+    out.onShareLine=()=>{const no=S.savedJobNo||'ใบงาน';const dn=S.savedJobDriver?('พขร. '+S.savedJobDriver+'\n'):'';const msg='🚚 ใบงาน '+no+'\n'+dn+'กดลิงก์เพื่อบันทึกสถานะงาน:\n'+(S.savedJobQrText||'');window.open('https://line.me/R/msg/text/?'+encodeURIComponent(msg),'_blank');};
     out.pinModalOpen=S.pinModalOpen;out.pinInput=S.pinInput;out.pinError=S.pinError;
     out.onClosePin=()=>this.setState({pinModalOpen:false,pinInput:'',pinError:''});
     out.onPinInput=(e)=>this.setState({pinInput:e.target.value});
@@ -2070,7 +2084,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
       const _origPreset=jd._originPreset!==undefined?jd._originPreset:(ORIGINS.includes(jd.origin)?jd.origin:(jd.origin?'อื่น...':''));
       out.jdOriginPreset=_origPreset;out.isOriginOther=_origPreset==='อื่น...';
       // normalize timestamp → datetime-local "YYYY-MM-DDTHH:mm"
-      const _toDTL=(v)=>{if(!v)return '';const s=String(v);const m=s.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3]+'T'+m[4]+':'+m[5];const d=new Date(s);if(isNaN(d))return '';const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());};
+      const _toDTL=(v)=>{if(!v)return '';const s=String(v).trim();const hasTZ=/(Z|[+-]\d{2}:?\d{2})$/.test(s);if(!hasTZ){const m=s.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3]+'T'+m[4]+':'+m[5];}const d=new Date(s);if(isNaN(d))return '';const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d);const g=t=>(parts.find(x=>x.type===t)||{}).value;let hh=g('hour');if(hh==='24')hh='00';return g('year')+'-'+g('month')+'-'+g('day')+'T'+hh+':'+g('minute');};
       const _thmArr=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
       const _fmtThaiDT=(v)=>{const dtl=_toDTL(v);if(!dtl)return '';const[dp,tp]=dtl.split('T');const[y,mo,da]=dp.split('-');return (+da)+' '+_thmArr[(+mo)-1]+' '+(+y+543)+' · '+tp+' น.';};
       const jdN={...jd,dispatchTime:_toDTL(jd.dispatchTime),pickupTime:_toDTL(jd.pickupTime),arrivalTime:_toDTL(jd.arrivalTime),completionTime:_toDTL(jd.completionTime),documentTime:_toDTL(jd.documentTime)};
@@ -2124,8 +2138,12 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
       out.hasArrivalGps=!!(jd.arrivalLat&&jd.arrivalLng);out.arrivalMapUrl='https://maps.google.com/?q='+(jd.arrivalLat||0)+','+(jd.arrivalLng||0);
       out.hasCompletionGps=!!(jd.completionLat&&jd.completionLng);out.completionMapUrl='https://maps.google.com/?q='+(jd.completionLat||0)+','+(jd.completionLng||0);
       out.jobQrVisible=S.jobQrVisible;out.jobQrImgUrl=S.jobQrImgUrl;out.jobQrText=S.jobQrText;
-      out.onShowQr=()=>{const j=S.jobDraft||{};if(!j.jobNo)return;const drv=S.drivers.find(x=>String(x.code)===String(j.driverCode));const data={id:j.id,jobNo:j.jobNo,date:j.date,time:j.time,driverCode:j.driverCode,driverName:drv?drv.name:'',truckPlate:j.truckPlate,origin:j.origin,destination:j.destination,customer:j.customer,deliveryNo:j.deliveryNo,dispatchPoint:j.dispatchPoint,dispatchTime:j.dispatchTime};const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const base=S.qrBaseUrl?S.qrBaseUrl.replace(/\/+$/,'')+'/':location.origin+location.pathname.replace(/[^/]*$/,'');const url=base+'driver.html?d='+encodeURIComponent(b64);const img='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(url);this.setState({jobQrVisible:true,jobQrImgUrl:img,jobQrText:url});};
+      out.onShowQr=()=>{const j=S.jobDraft||{};if(!j.jobNo)return;const drv=S.drivers.find(x=>String(x.code)===String(j.driverCode));const data={id:j.id,jobNo:j.jobNo,date:j.date,time:j.time,driverCode:j.driverCode,driverName:drv?drv.name:'',truckPlate:j.truckPlate,origin:j.origin,destination:j.destination,customer:j.customer,deliveryNo:j.deliveryNo,dispatchPoint:j.dispatchPoint,dispatchTime:j.dispatchTime};const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const base=S.qrBaseUrl?S.qrBaseUrl.replace(/\/+$/,'')+'/':location.origin+location.pathname.replace(/[^/]*$/,'');const url=j.id?base+'driver.html?j='+encodeURIComponent(j.id):base+'driver.html?d='+encodeURIComponent(b64);const img='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(url);this.setState({jobQrVisible:true,jobQrImgUrl:img,jobQrText:url});};
       out.onHideQr=()=>this.setState({jobQrVisible:false,jobQrImgUrl:'',jobQrText:''});
+      out.jobLinkCopied=S.jobLinkCopied||false;
+      out.jobCopyLabel=S.jobLinkCopied?'✓ คัดลอกลิงก์แล้ว':'ก๊อปลิงก์';
+      out.onCopyJobLink=()=>{this.copyText(S.jobQrText||'');this.setState({jobLinkCopied:true});clearTimeout(this._jcT);this._jcT=setTimeout(()=>this.setState({jobLinkCopied:false}),2200);};
+      out.onShareJobLine=()=>{const j=S.jobDraft||{};const drv=S.drivers.find(x=>String(x.code)===String(j.driverCode));const dn=drv?('พขร. '+drv.name+'\n'):'';const msg='🚚 ใบงาน '+(j.jobNo||'ใบงาน')+'\n'+dn+'กดลิงก์เพื่อบันทึกสถานะงาน:\n'+(S.jobQrText||'');window.open('https://line.me/R/msg/text/?'+encodeURIComponent(msg),'_blank');};
       out.onSaveJob=this.saveJob;out.onCancelJob=this.cancelJobForm;
       out.savedJobQrVisible=S.savedJobQrVisible;out.savedJobQrImgUrl=S.savedJobQrImgUrl;out.savedJobQrText=S.savedJobQrText;out.savedJobNo=S.savedJobNo;out.onCloseSavedQr=()=>this.setState({savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:''});
       out.jobFormError=!!S.jobFormError;out.jobFormErrorText=S.jobFormError;
