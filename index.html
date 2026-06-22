@@ -1506,8 +1506,10 @@ class Component extends DCLogic {
           const deletedDriverCodes=new Set(JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]'));
           const merged=data.drivers.map(normDriver).filter(sd=>!deletedDriverCodes.has(String(sd.code))).map(sd=>{
             const ck=String(sd.code);
+            const loc=localMap[ck];
+            // เก็บฟิลด์ที่ Sheet ยังไม่มีคอลัมน์ (เช่น birthDate) ไว้จาก local กันหายตอน refresh
+            if(loc&&!sd.birthDate&&loc.birthDate){sd={...sd,birthDate:loc.birthDate};}
             if(pendingCodes.has(ck)){
-              const loc=localMap[ck];
               if(loc&&JSON.stringify(normDriver(sd))===JSON.stringify(loc)){pendingCodes.delete(ck);return sd;}
               return loc||sd;
             }
@@ -1615,12 +1617,12 @@ class Component extends DCLogic {
   persistJobs(jobs,changedId){try{localStorage.setItem('jobReg_v1',JSON.stringify(jobs));}catch(e){}if(changedId){try{const p=new Set(JSON.parse(localStorage.getItem('jobPendingIds')||'[]'));p.add(String(changedId));localStorage.setItem('jobPendingIds',JSON.stringify([...p]));}catch(e){}}const toSend=changedId?jobs.filter(j=>String(j.id)===String(changedId)):jobs;this.pushToSheets(undefined,undefined,toSend);}
   scrollMain(){try{document.querySelector('main').scrollTo({top:0});}catch(e){}}
 
-  isoToBE(iso){if(!iso)return '';const p=String(iso).slice(0,10).split('-');if(p.length!==3||p[0].length!==4)return '';return p[2]+'/'+p[1]+'/'+(+p[0]+543);}
+  isoToBE(iso){if(!iso)return '';const p=String(iso).slice(0,10).split('-');if(p.length!==3||p[0].length!==4)return '';if(+p[0]<=0||+p[1]<=0||+p[2]<=0)return '';return p[2]+'/'+p[1]+'/'+(+p[0]+543);}
   beToISO(s){if(!s)return '';const p=String(s).replace(/[.\-]/g,'/').split('/');if(p.length!==3)return '';let[d,m,y]=p.map(v=>+String(v).trim());if(!d||!m||!y)return '';if(y>2400)y-=543;return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
   parseISO(iso){if(!iso)return null;const s=String(iso);// รองรับทั้ง YYYY-MM-DD และ ISO full datetime
-const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d)?null:d;}
+const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<=0||+p[2]<=0)return null;const d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d)?null:d;}
   thaiDate(iso){const d=this.parseISO(iso);if(!d)return '—';return d.getDate()+' '+THM[d.getMonth()]+' '+(d.getFullYear()+543);}
-  ageFromISO(iso){if(!iso)return '';const p=String(iso).slice(0,10).split('-');if(p.length!==3||p[0].length!==4)return '';const b=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(b))return '';const n=new Date();let a=n.getFullYear()-b.getFullYear();const md=n.getMonth()-b.getMonth();if(md<0||(md===0&&n.getDate()<b.getDate()))a--;return (a>=0&&a<130)?a:'';}
+  ageFromISO(iso){if(!iso)return '';const p=String(iso).slice(0,10).split('-');if(p.length!==3||p[0].length!==4||+p[0]<=0||+p[1]<=0||+p[2]<=0)return '';const b=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(b))return '';const n=new Date();let a=n.getFullYear()-b.getFullYear();const md=n.getMonth()-b.getMonth();if(md<0||(md===0&&n.getDate()<b.getDate()))a--;return (a>=0&&a<130)?a:'';}
   codeFmt(c){c=String(c||'');return c.length>=4?c.slice(0,2)+'-'+c.slice(2):c;}
   daysUntil(iso){const d=this.parseISO(iso);if(!d)return null;return Math.round((d-TODAY)/86400000);}
   chip(fg,bg){return 'display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;color:'+fg+';background:'+bg+';';}
@@ -1638,7 +1640,8 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   cancelForm=()=>this.setState({view:this.state.isNew?'list':'profile',formError:''});
   setD(field,val){this.setState(s=>({draft:{...s.draft,[field]:val}}));}
   readFileToDraft(field,e){const f=e.target.files&&e.target.files[0];if(!f)return;if(field==='photo'){const r=new FileReader();r.onload=()=>this.setState(s=>({draft:{...s.draft,photo:r.result}}));r.readAsDataURL(f);}else{this.setState(s=>({draft:{...s.draft,[field]:true}}));}}
-  saveForm=()=>{const d=this.state.draft;if(!d||!d.name||!String(d.name||'').trim()){this.setState({formError:'กรุณากรอกชื่อพนักงานขับรถ'});return;}let code=String(d.code||'').trim();if(!/^\d{6}$/.test(code)){this.setState({formError:'รหัสพนักงานต้องเป็นตัวเลข 6 หลัก'});return;}const origCode=String(this.state.selectedCode||'');if(this.state.drivers.some(x=>String(x.code)===code&&String(x.code)!==origCode)){this.setState({formError:'รหัสพนักงาน '+code+' มีอยู่แล้ว กรุณาใช้รหัสอื่น'});return;}const nd={...d,code,name:String(d.name||'')};let drivers;if(this.state.isNew){drivers=[nd,...this.state.drivers];}else{const origCode=String(this.state.selectedCode||'');drivers=this.state.drivers.map(x=>String(x.code)===origCode?nd:x);}this.persist(drivers);this.setState({drivers,selectedCode:code,view:'profile',formError:'',isNew:false,editingCode:null});};
+  _cleanDate(v){if(!v)return '';const p=String(v).slice(0,10).split('-');if(p.length!==3||+p[0]<=0||+p[1]<=0||+p[2]<=0)return '';return v;}
+  saveForm=()=>{const d=this.state.draft;if(!d||!d.name||!String(d.name||'').trim()){this.setState({formError:'กรุณากรอกชื่อพนักงานขับรถ'});return;}let code=String(d.code||'').trim();if(!/^\d{6}$/.test(code)){this.setState({formError:'รหัสพนักงานต้องเป็นตัวเลข 6 หลัก'});return;}const origCode=String(this.state.selectedCode||'');if(this.state.drivers.some(x=>String(x.code)===code&&String(x.code)!==origCode)){this.setState({formError:'รหัสพนักงาน '+code+' มีอยู่แล้ว กรุณาใช้รหัสอื่น'});return;}const nd={...d,code,name:String(d.name||''),birthDate:this._cleanDate(d.birthDate),startDate:this._cleanDate(d.startDate),licenseExpiry:this._cleanDate(d.licenseExpiry),idExpiry:this._cleanDate(d.idExpiry)};let drivers;if(this.state.isNew){drivers=[nd,...this.state.drivers];}else{const origCode=String(this.state.selectedCode||'');drivers=this.state.drivers.map(x=>String(x.code)===origCode?nd:x);}this.persist(drivers);this.setState({drivers,selectedCode:code,view:'profile',formError:'',isNew:false,editingCode:null});};
   deleteDriver=()=>{if(!window.confirm('ยืนยันการลบข้อมูลพนักงานขับรถรายนี้?'))return;const code=this.state.selectedCode;try{const del=new Set(JSON.parse(localStorage.getItem('deletedDriverCodes')||'[]'));del.add(String(code));localStorage.setItem('deletedDriverCodes',JSON.stringify([...del]));}catch(e){}const drivers=this.state.drivers.filter(x=>x.code!==code);try{localStorage.setItem('driverReg_v2',JSON.stringify(drivers));}catch(e){}this.pushDelete('drivers',[String(code)]);this.setState({drivers,view:'list'});};
   openHistoryForm=()=>this.setState({historyFormOpen:true,historyDraft:{date:new Date().toISOString().slice(0,10),type:'บันทึกทั่วไป',detail:'',by:''}});
   closeHistoryForm=()=>this.setState({historyFormOpen:false,historyDraft:null});
@@ -1654,7 +1657,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
   setT(field,val){this.setState(s=>({truckDraft:{...s.truckDraft,[field]:val}}));}
   readTruckFileToDraft(field,e){const f=e.target.files&&e.target.files[0];if(!f)return;this.setState(s=>({truckDraft:{...s.truckDraft,[field]:true}}));}
   readTruckPhotoDraft(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>this.setState(s=>({truckDraft:{...s.truckDraft,photo:r.result}}));r.readAsDataURL(f);}
-  saveTruckForm=()=>{const t=this.state.truckDraft;if(!t.plate||!t.plate.trim()){this.setState({truckFormError:'กรุณากรอกทะเบียนรถ'});return;}const nt={...t,plate:t.plate.trim()};let trucks;if(this.state.truckIsNew){trucks=[nt,...this.state.trucks];}else{const origPlate=this.state.editingTruckId||this.state.truckSelectedId;trucks=this.state.trucks.map(x=>x.plate===origPlate?nt:x);}this.persistTrucks(trucks,nt.plate);this.setState({trucks,truckSelectedId:nt.plate,truckView:'profile',truckFormError:'',editingTruckId:null});};
+  saveTruckForm=()=>{const t=this.state.truckDraft;if(!t.plate||!t.plate.trim()){this.setState({truckFormError:'กรุณากรอกทะเบียนรถ'});return;}const nt={...t,plate:t.plate.trim(),contractDate:this._cleanDate(t.contractDate),regExpiry:this._cleanDate(t.regExpiry),insuranceExpiry:this._cleanDate(t.insuranceExpiry),ownerIdExpiry:this._cleanDate(t.ownerIdExpiry),cargoInsExpiry:this._cleanDate(t.cargoInsExpiry)};let trucks;if(this.state.truckIsNew){trucks=[nt,...this.state.trucks];}else{const origPlate=this.state.editingTruckId||this.state.truckSelectedId;trucks=this.state.trucks.map(x=>x.plate===origPlate?nt:x);}this.persistTrucks(trucks,nt.plate);this.setState({trucks,truckSelectedId:nt.plate,truckView:'profile',truckFormError:'',editingTruckId:null});};
   deleteTruck=()=>{if(!window.confirm('ยืนยันการลบข้อมูลรถคันนี้?'))return;const plate=this.state.truckSelectedId;try{const del=new Set(JSON.parse(localStorage.getItem('deletedTruckPlates')||'[]'));del.add(plate);localStorage.setItem('deletedTruckPlates',JSON.stringify([...del]));}catch(e){}const trucks=this.state.trucks.filter(x=>x.plate!==plate);try{localStorage.setItem('truckReg_v1',JSON.stringify(trucks));}catch(e){}this.pushDelete('trucks',[plate]);this.setState({trucks,truckView:'list'});};
   openMaintForm=()=>this.setState({maintFormOpen:true,maintDraft:{date:new Date().toISOString().slice(0,10),type:'ซ่อมบำรุงทั่วไป',detail:'',cost:'',by:''}});
   closeMaintForm=()=>this.setState({maintFormOpen:false,maintDraft:null});
@@ -1940,8 +1943,8 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;const d=new Date(+p
     out.beDateOwnerIdExpiry=this.isoToBE(dt2.ownerIdExpiry);
     out.beDateCargoInsExpiry=this.isoToBE(dt2.cargoInsExpiry);
     // BE Date Picker engine
-    const _bp=(iso)=>{if(!iso)return{day:'',month:'',yearBE:''};const p=iso.split('-');return{day:p[2]||'',month:p[1]||'',yearBE:p[0]?String(+p[0]+543):''};};
-    const _bc=(d,m,y)=>{if(!y)return '';return (+y-543)+'-'+String(+m||1).padStart(2,'0')+'-'+String(+d||1).padStart(2,'0');};
+    const _bp=(iso)=>{if(!iso)return{day:'',month:'',yearBE:''};const p=iso.split('-');const y=+p[0];return{day:(p[2]&&+p[2]>0)?p[2]:'',month:(p[1]&&+p[1]>0)?p[1]:'',yearBE:(y>0)?String(y+543):''};};
+    const _bc=(d,m,y)=>{if(!d&&!m&&!y)return '';const Y=y?(+y-543):0;return String(Y).padStart(4,'0')+'-'+String(+m||0).padStart(2,'0')+'-'+String(+d||0).padStart(2,'0');};
     const _mk=(iso,set)=>{const c=_bp(iso);return{...c,onDay:(e)=>{const x=_bp(iso);set(_bc(e.target.value,x.month,x.yearBE));},onMonth:(e)=>{const x=_bp(iso);set(_bc(x.day,e.target.value,x.yearBE));},onYear:(e)=>{const x=_bp(iso);set(_bc(x.day,x.month,e.target.value));}};};
     const _age=(iso)=>{if(!iso)return '';const p=String(iso).slice(0,10).split('-');if(p.length!==3||p[0].length!==4)return '';const b=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(b))return '';const n=new Date();let a=n.getFullYear()-b.getFullYear();const md=n.getMonth()-b.getMonth();if(md<0||(md===0&&n.getDate()<b.getDate()))a--;return (a>=0&&a<130)?('('+a+' \u0e1b\u0e35)'):'';};
     out.ageLabel=_age(dd.birthDate);
