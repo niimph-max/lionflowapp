@@ -168,6 +168,7 @@ function shareText(job, upd) {
     '📅 วันที่: ' + fmtDate(job.date),
     '🏭 ต้นทาง: ' + (job.origin || '—'),
     '🏢 ปลายทาง: ' + (job.destination || '—'),
+    ...(job.driverNote ? ['📋 หมายเหตุ: ' + job.driverNote] : []),
     '─────────────────',
   ];
   if (job.dispatchTime) lines.push('🚀 จ่ายงาน: ' + fmtDT(job.dispatchTime));
@@ -330,6 +331,7 @@ function render() {
         <div class="job-row"><span class="job-lbl">ลูกค้า</span><span class="job-val">${job.customer || '—'}</span></div>
         <div class="job-row"><span class="job-lbl">จุดจ่ายงาน</span><span class="job-val">${job.dispatchPoint || '—'}</span></div>
       </div>
+      ${job.driverNote ? `<div style="margin-top:12px;padding:12px 14px;background:#fffaeb;border:1px solid #fde68a;border-radius:10px;"><div style="font-size:12px;font-weight:700;color:#b54708;margin-bottom:4px;">📋 หมายเหตุถึงคนขับ</div><div style="font-size:15px;color:#5c3d00;line-height:1.55;white-space:pre-wrap;">${job.driverNote}</div></div>` : ''}
     </div>
 
     <div class="stages-wrap">
@@ -437,7 +439,7 @@ function refreshFromSheet() {
       let needRender = false;
       // ลิงก์สั้น (id อย่างเดียว) → เติมรายละเอียดงานจาก Sheet
       if (job._needFetch) {
-        ['jobNo','date','time','driverCode','truckPlate','origin','destination','customer','deliveryNo','dispatchPoint','dispatchTime'].forEach(f => { if (sj[f] !== undefined && sj[f] !== '') job[f] = sj[f]; });
+        ['jobNo','date','time','driverCode','truckPlate','origin','destination','customer','deliveryNo','dispatchPoint','dispatchTime','driverNote'].forEach(f => { if (sj[f] !== undefined && sj[f] !== '') job[f] = sj[f]; });
         if (Array.isArray(data.drivers)) { const drv = data.drivers.find(x => String(x.code) === String(sj.driverCode)); if (drv && drv.name) job.driverName = drv.name; }
         if (job.dispatchTime) upd.dispatchTime = job.dispatchTime;
         document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
