@@ -70,6 +70,16 @@
       <button onClick="{{ onGoEff }}" style="{{ navEffStyle }}">
         <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">📊</span>ประสิทธิภาพรถบริษัท</span>
       </button>
+      <sc-if value="{{ isEff }}" hint-placeholder-val="{{ false }}">
+        <div style="padding-left:8px;margin-top:2px;">
+          <sc-for list="{{ navEffItems }}" as="s" hint-placeholder-count="4">
+            <button onClick="{{ s.onClick }}" style="{{ s.btnStyle }}">
+              <span style="display:flex;align-items:center;gap:9px;"><span style="{{ s.dotStyle }}"></span>{{ s.label }}</span>
+              <span style="{{ s.badgeStyle }}">{{ s.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
 
       <div style="font-size:10.5px;letter-spacing:.08em;color:#6f8499;font-weight:600;padding:16px 8px 7px;">ระบบทะเบียนรถและพขร.</div>
       <button onClick="{{ onGoTrucks }}" style="{{ navTrucksStyle }}">
@@ -391,6 +401,10 @@
               <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">เงินเดือน (บาท/เดือน)</label>
               <input type="number" value="{{ draft.salary }}" onInput="{{ onDriverSalary }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;background:#fff;" />
             </div>
+            <div>
+              <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ประกันสังคม (บาท/เดือน)</label>
+              <input type="number" value="{{ draft.socialSecurity }}" onInput="{{ onDriverSocial }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;background:#fff;" />
+            </div>
             <div style="grid-column:1 / -1;">
               <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ที่อยู่</label>
               <textarea value="{{ draft.address }}" onInput="{{ onAddress }}" placeholder="บ้านเลขที่ หมู่ ตำบล อำเภอ จังหวัด" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;background:#fff;min-height:56px;resize:vertical;"></textarea>
@@ -495,13 +509,14 @@
         </sc-if>
       </div>
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-        <div style="display:grid;grid-template-columns:160px 150px 90px 80px 100px 100px 100px 100px 90px;background:#f8fafc;border-bottom:1px solid #e4e7ec;">
+        <div style="overflow-x:auto;">
+        <div style="display:grid;grid-template-columns:160px 150px 90px 80px 90px 120px 100px 100px 100px 100px 90px;min-width:1180px;background:#f8fafc;border-bottom:1px solid #e4e7ec;">
           <sc-for list="{{ truckHeaders }}" as="h" hint-placeholder-count="8">
             <div onClick="{{ h.onClick }}" style="{{ h.style }}">{{ h.label }}<span style="font-size:10px;opacity:.55;margin-left:2px;">{{ h.icon }}</span></div>
           </sc-for>
         </div>
         <sc-for list="{{ truckRows }}" as="r" hint-placeholder-count="6">
-          <div onClick="{{ r.onOpen }}" style="display:grid;grid-template-columns:160px 150px 90px 80px 100px 100px 100px 100px 90px;cursor:pointer;border-bottom:1px solid #f0f2f5;">
+          <div onClick="{{ r.onOpen }}" style="display:grid;grid-template-columns:160px 150px 90px 80px 90px 120px 100px 100px 100px 100px 90px;min-width:1180px;cursor:pointer;border-bottom:1px solid #f0f2f5;">
             <div style="padding:12px 15px;font-size:14.5px;font-weight:700;color:#16263a;">{{ r.plate }}</div>
             <div style="padding:12px 15px;font-size:12.5px;color:#475467;line-height:1.35;">{{ r.owner }}</div>
             <div style="padding:12px 15px;">
@@ -509,7 +524,8 @@
               <div style="font-size:11.5px;color:#98a2b3;margin-top:2px;line-height:1.3;">{{ r.ttName }}</div>
             </div>
             <div style="padding:12px 15px;"><span style="{{ r.deptStyle }}">{{ r.deptLabel }}</span></div>
-            <div style="padding:12px 15px;font-size:13px;"><span style="{{ r.regStyle }}">{{ r.regText }}</span></div>
+            <div style="padding:12px 15px;font-size:12.5px;color:#475467;">{{ r.fuelText }}</div>
+            <div style="padding:12px 15px;font-size:12.5px;color:#2f6fb0;font-weight:600;">{{ r.rateText }}</div>
             <div style="padding:12px 15px;font-size:13px;"><span style="{{ r.insStyle }}">{{ r.insText }}</span></div>
             <div style="padding:12px 15px;font-size:13px;"><span style="{{ r.cargoStyle }}">{{ r.cargoText }}</span></div>
             <div style="padding:12px 15px;"><span style="{{ r.statusStyle }}">{{ r.statusLabel }}</span></div>
@@ -519,6 +535,7 @@
         <sc-if value="{{ truckEmptyVisible }}" hint-placeholder-val="{{ false }}">
           <div style="padding:48px;text-align:center;color:#98a2b3;font-size:14px;">ยังไม่มีข้อมูลรถบรรทุก — กดปุ่ม "+ เพิ่มรถบรรทุก" เพื่อเริ่มบันทึก</div>
         </sc-if>
+        </div>
       </div>
     </div>
     </sc-if>
@@ -860,10 +877,20 @@
       </div>
 
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:20px 22px;margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:14px;">💰 ข้อมูลการเงิน (รถบริษัท)</div>
-        <div>
-          <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ค่างวดรถ (บาท/เดือน) — 0 ถ้าไม่มี</label>
-          <input type="number" value="{{ draft.installment }}" onInput="{{ onTruckInstallment }}" placeholder="0" style="width:280px;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
+        <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:14px;">💰 ค่าใช้จ่ายรถ &amp; เรทน้ำมัน (รถบริษัท)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div>
+            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ค่าผ่อนรถ / ค่าเสื่อม (บาท/เดือน)</label>
+            <input type="number" value="{{ draft.installment }}" onInput="{{ onTruckInstallment }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;box-sizing:border-box;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#2f6fb0;font-weight:600;margin-bottom:5px;">⛽ เรทน้ำมัน บรรทุก (กม./ลิตร)</label>
+            <input type="number" step="0.1" value="{{ draft.fuelRateLoaded }}" onInput="{{ onTruckRateLoaded }}" placeholder="เช่น 2.6" style="width:100%;padding:9px 11px;border:1px solid #2f6fb0;border-radius:8px;font-size:14px;color:#1d2b3a;box-sizing:border-box;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;color:#2f6fb0;font-weight:600;margin-bottom:5px;">⛽ เรทน้ำมัน วิ่งเปล่า (กม./ลิตร)</label>
+            <input type="number" step="0.1" value="{{ draft.fuelRateEmpty }}" onInput="{{ onTruckRateEmpty }}" placeholder="เช่น 2.4" style="width:100%;padding:9px 11px;border:1px solid #2f6fb0;border-radius:8px;font-size:14px;color:#1d2b3a;box-sizing:border-box;" />
+          </div>
         </div>
       </div>
 
@@ -951,7 +978,7 @@
           <div style="display:grid;grid-template-columns:100px 80px 90px 65px minmax(120px,1fr) 105px 95px 88px 82px 75px 100px 82px;border-bottom:1px solid #f0f2f5;align-items:center;min-width:900px;">
             <div style="padding:11px 12px;font-size:12px;color:#475467;font-weight:600;">{{ j.jobNo }}</div>
             <div style="padding:11px 12px;font-size:12px;color:#475467;">{{ j.dateFmt }}</div>
-            <div style="padding:11px 12px;font-size:12px;color:#475467;font-weight:600;">{{ j.deliveryNoText }}</div>
+            <div style="padding:11px 12px;font-size:12px;color:#475467;font-weight:600;">{{ j.deliveryNoText }}<sc-if value="{{ j.hasAttach }}" hint-placeholder-val="{{ false }}"><span style="margin-left:5px;color:#2f6fb0;" title="มีไฟล์แนบ">📎{{ j.attachCount }}</span></sc-if></div>
             <div style="padding:11px 12px;"><span style="{{ j.dpChip }}">{{ j.dispatchPoint }}</span></div>
             <div style="padding:11px 12px;">
               <div style="font-size:13.5px;font-weight:600;color:#16263a;">{{ j.driverName }}</div>
@@ -1168,8 +1195,8 @@
         </div>
         </sc-if>
         <div style="margin-top:16px;max-width:260px;">
-          <label style="font-size:12px;font-weight:600;color:#16263a;display:block;margin-bottom:5px;">ค่าขนส่ง (บาท)</label>
-          <input type="number" value="{{ jd.revenue }}" onInput="{{ onJobRevenue }}" placeholder="0" style="width:100%;padding:10px 12px;border:1px solid #2f6fb0;border-radius:8px;font-size:15px;font-weight:600;color:#1d2b3a;" />
+          <label style="font-size:12px;font-weight:600;color:#16263a;display:block;margin-bottom:5px;">ระยะทาง (กม.)</label>
+          <input type="number" value="{{ jd.distance }}" onInput="{{ onJobDistance }}" placeholder="0" style="width:100%;padding:10px 12px;border:1px solid #2f6fb0;border-radius:8px;font-size:15px;font-weight:600;color:#1d2b3a;" />
         </div>
         <div style="margin-top:16px;">
           <label style="font-size:12px;font-weight:600;color:#16263a;display:block;margin-bottom:5px;">📋 หมายเหตุถึงคนขับ <span style="font-weight:400;color:#98a2b3;">· แสดงในลิงก์ที่ พขร. ได้รับ</span></label>
@@ -1178,18 +1205,32 @@
       </div>
 
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:22px;margin-bottom:16px;">
-        <div style="font-size:14px;font-weight:700;color:#16263a;margin-bottom:4px;">📎 เอกสารแนบสำหรับ พขร.</div>
-        <div style="font-size:12px;color:#98a2b3;margin-bottom:14px;">แนบรูปใบส่งของ/รายละเอียดเที่ยว · พขร. กดดูภาพเต็มได้จากลิงก์</div>
-        <sc-if value="{{ jdHasAttachment }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
-            {{ jdAttachmentNode }}
-            <label style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:#eaf1fb;color:#2f6fb0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">เปลี่ยนรูป<input type="file" accept="image/*" onChange="{{ onJobAttachment }}" style="display:none;" /></label>
-            <button onClick="{{ onRemoveJobAttachment }}" style="padding:8px 14px;background:#fef3f2;color:#b42318;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">ลบรูป</button>
+        <div style="font-size:14px;font-weight:700;color:#16263a;margin-bottom:4px;">📎 เอกสารแนบ {{ jdAttachCountText }}</div>
+        <div style="font-size:12px;color:#98a2b3;margin-bottom:14px;">แนบได้หลายไฟล์ ทุกชนิด (รูป / PDF / เอกสาร) · เก็บออนไลน์ เปิดดูได้จากทุกเครื่อง</div>
+        <sc-if value="{{ jdHasAttachmentsList }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+            <sc-for list="{{ jdAttachments }}" as="a" hint-placeholder-count="2">
+              <div style="width:150px;border:1px solid #e4e7ec;border-radius:10px;overflow:hidden;background:#fff;display:flex;flex-direction:column;">
+                <div onClick="{{ a.onOpen }}" style="height:94px;background:#f4f6f8;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;">
+                  <sc-if value="{{ a.showThumb }}" hint-placeholder-val="{{ false }}">{{ a.thumbNode }}</sc-if>
+                  <sc-if value="{{ a.showIcon }}" hint-placeholder-val="{{ true }}"><div style="font-size:36px;">{{ a.icon }}</div></sc-if>
+                  <sc-if value="{{ a.uploading }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#98a2b3;text-align:center;">⏳ กำลังอัปโหลด…</div></sc-if>
+                  <sc-if value="{{ a.error }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#b42318;text-align:center;padding:0 8px;">⚠ อัปโหลดไม่สำเร็จ</div></sc-if>
+                </div>
+                <div style="padding:7px 9px;">
+                  <div style="font-size:11.5px;color:#16263a;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ a.name }}</div>
+                  <div style="font-size:10.5px;color:#98a2b3;margin-top:1px;min-height:13px;">{{ a.sizeText }}</div>
+                  <sc-if value="{{ a.error }}" hint-placeholder-val="{{ false }}"><div style="font-size:9.5px;color:#b42318;line-height:1.3;margin-top:2px;word-break:break-word;">{{ a.errorMsg }}</div></sc-if>
+                  <div style="display:flex;gap:6px;margin-top:7px;">
+                    <sc-if value="{{ a.done }}" hint-placeholder-val="{{ false }}"><a href="{{ a.url }}" target="_blank" download="{{ a.name }}" style="flex:1;text-align:center;padding:5px;background:#eaf1fb;color:#2f6fb0;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;">⬇ ดาวน์โหลด</a></sc-if>
+                    <button onClick="{{ a.onRemove }}" style="padding:5px 9px;background:#fef3f2;color:#b42318;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">ลบ</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
           </div>
         </sc-if>
-        <sc-if value="{{ jdNoAttachment }}" hint-placeholder-val="{{ true }}">
-          <label style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:#eaf1fb;color:#2f6fb0;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">📷 เลือกรูปเอกสาร<input type="file" accept="image/*" onChange="{{ onJobAttachment }}" style="display:none;" /></label>
-        </sc-if>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:#eaf1fb;color:#2f6fb0;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">📎 แนบไฟล์<input type="file" multiple="multiple" onChange="{{ onJobAddFiles }}" style="display:none;" /></label>
       </div>
 
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:22px;margin-bottom:16px;">
@@ -1328,7 +1369,8 @@
         </div>
       </sc-if>
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04);">
-        <div style="display:grid;grid-template-columns:44px 130px 104px 150px 1fr 84px 110px 110px 110px 116px;background:#f8fafc;border-bottom:1px solid #e4e7ec;">
+        <div style="overflow-x:auto;">
+        <div style="display:grid;grid-template-columns:44px 130px 104px 150px 1fr 84px 110px 110px 110px 180px;min-width:1180px;background:#f8fafc;border-bottom:1px solid #e4e7ec;">
           <div style="padding:11px 8px;"></div>
           <div style="padding:11px 15px;font-size:12px;font-weight:600;color:#667085;">เลขที่บิล</div>
           <div style="padding:11px 15px;font-size:12px;font-weight:600;color:#667085;">วันรับแจ้ง</div>
@@ -1341,7 +1383,7 @@
           <div style="padding:11px 15px;font-size:12px;font-weight:600;color:#667085;text-align:right;">จัดการ</div>
         </div>
         <sc-for list="{{ orderRows }}" as="r" hint-placeholder-count="5">
-          <div style="display:grid;grid-template-columns:44px 130px 104px 150px 1fr 84px 110px 110px 110px 116px;border-bottom:1px solid #f0f2f5;align-items:center;background:{{ r.rowBg }};">
+          <div style="display:grid;grid-template-columns:44px 130px 104px 150px 1fr 84px 110px 110px 110px 180px;min-width:1180px;border-bottom:1px solid #f0f2f5;align-items:center;background:{{ r.rowBg }};">
             <div style="padding:12px 8px;display:flex;justify-content:center;"><sc-if value="{{ r.showCheckbox }}" hint-placeholder-val="{{ true }}"><input type="checkbox" checked="{{ r.selected }}" onChange="{{ r.onToggleSel }}" style="width:16px;height:16px;cursor:pointer;" /></sc-if></div>
             <div onClick="{{ r.onEdit }}" style="padding:12px 15px;cursor:pointer;">
               <div style="font-size:13.5px;font-weight:700;color:#16263a;"><span style="color:#98a2b3;font-weight:400;">{{ r.billPrefix }}</span>{{ r.billNo }}</div>
@@ -1355,7 +1397,7 @@
             <div style="padding:12px 15px;font-size:12.5px;color:#475467;">{{ r.truckType }}</div>
             <div style="padding:12px 15px;font-size:12.5px;color:#475467;">{{ r.requiredDate }}</div>
             <div style="padding:12px 15px;"><span style="{{ r.statusStyle }}">{{ r.statusLabel }}</span></div>
-            <div style="padding:10px 15px;display:flex;gap:6px;justify-content:flex-end;align-items:center;">
+            <div style="padding:10px 15px;display:flex;gap:5px;justify-content:flex-end;align-items:center;flex-wrap:wrap;">
               <sc-if value="{{ r.hasTrip }}" hint-placeholder-val="{{ false }}">
                 <button onClick="{{ r.onUnlink }}" style="padding:6px 9px;background:#fef3f2;color:#b42318;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">เลิกผูก</button>
               </sc-if>
@@ -1364,6 +1406,7 @@
               </sc-if>
               <sc-if value="{{ r.dispatched }}" hint-placeholder-val="{{ false }}">
                 <button onClick="{{ r.onViewJob }}" style="padding:6px 11px;background:#eff4ff;color:#175cd3;border:1px solid #d3e0f7;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">ดูใบงาน</button>
+                <button onClick="{{ r.onRevertDispatch }}" title="คืนสถานะกลับไปรอจัดรถ (ยกเลิกการจ่ายงาน)" style="padding:6px 9px;background:#fff;color:#b54708;border:1px solid #fde9c8;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">↩ คืน</button>
               </sc-if>
               <button onClick="{{ r.onDelete }}" style="padding:6px 9px;background:#fef3f2;color:#b42318;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">ลบ</button>
             </div>
@@ -1372,6 +1415,7 @@
         <sc-if value="{{ orderEmptyVisible }}" hint-placeholder-val="{{ false }}">
           <div style="padding:48px;text-align:center;color:#98a2b3;font-size:14px;">ยังไม่มีงานรับเข้า — กดปุ่ม "+ เพิ่มงานรับเข้า" เพื่อเริ่มบันทึก</div>
         </sc-if>
+        </div>
       </div>
     </div>
     </sc-if>
@@ -1504,9 +1548,10 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
           <input type="month" value="{{ effMonth }}" onInput="{{ onEffMonth }}" style="padding:8px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
-          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
-          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
           <button onClick="{{ onEffViewSettle }}" style="{{ effSettleBtnStyle }}">ปิดงาน &amp; ค่าใช้จ่าย</button>
+          <button onClick="{{ onEffViewTrip }}" style="{{ effTripBtnStyle }}">รายงานรายเที่ยว</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
         </div>
       </div>
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow:hidden;">
@@ -1595,9 +1640,10 @@
               <option value="{{ to.value }}">{{ to.label }}</option>
             </sc-for>
           </select>
-          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
-          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
           <button onClick="{{ onEffViewSettle }}" style="{{ effSettleBtnStyle }}">ปิดงาน &amp; ค่าใช้จ่าย</button>
+          <button onClick="{{ onEffViewTrip }}" style="{{ effTripBtnStyle }}">รายงานรายเที่ยว</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
         </div>
       </div>
       <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow:hidden;">
@@ -1631,6 +1677,156 @@
     </div>
     </sc-if>
 
+    <!-- ===== EFFICIENCY: TRIP REPORT (รายงานรายเที่ยว) ===== -->
+    <sc-if value="{{ isEffTrip }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:26px 30px 60px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+        <div>
+          <h1 style="margin:0;font-size:22px;font-weight:700;color:#16263a;">🚚 รายงานรายเที่ยว</h1>
+          <div style="font-size:13px;color:#667085;margin-top:3px;">เลือกรถ → ทุกเที่ยวแยกตามเดือน · ค่าขนส่ง · ค่าใช้จ่าย · คงเหลือแต่ละเที่ยว</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
+          <select value="{{ effSelectedTruck }}" onChange="{{ onEffTruckSelect }}" style="padding:8px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;background:#fff;">
+            <sc-for list="{{ effTruckOptions }}" as="to" hint-placeholder-count="5">
+              <option value="{{ to.value }}">{{ to.label }}</option>
+            </sc-for>
+          </select>
+          <input type="date" value="{{ effTripFrom }}" onInput="{{ onEffTripFrom }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;" />
+          <span style="font-size:13px;color:#98a2b3;">ถึง</span>
+          <input type="date" value="{{ effTripTo }}" onInput="{{ onEffTripTo }}" style="padding:7px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#1d2b3a;" />
+          <sc-if value="{{ effTripDateActive }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onClearTripDate }}" style="padding:7px 12px;background:#fff;color:#667085;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">✕ ดูทั้งหมด</button>
+          </sc-if>
+          <button onClick="{{ onEffViewSettle }}" style="{{ effSettleBtnStyle }}">ปิดงาน &amp; ค่าใช้จ่าย</button>
+          <button onClick="{{ onEffViewTrip }}" style="{{ effTripBtnStyle }}">รายงานรายเที่ยว</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
+        </div>
+      </div>
+
+      <sc-if value="{{ effTripEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:48px;text-align:center;color:#98a2b3;font-size:14px;">ยังไม่มีใบงานของรถคันนี้</div>
+      </sc-if>
+
+      <sc-for list="{{ effTripMonths }}" as="mo" hint-placeholder-count="2">
+        <div style="background:#fff;border:1px solid #e4e7ec;border-radius:14px;overflow:hidden;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 18px;background:#16263a;color:#fff;">
+            <div style="font-size:15px;font-weight:700;">{{ mo.monthLabel }}</div>
+            <div style="font-size:12px;color:#9fb2c4;">{{ mo.trips }} เที่ยว</div>
+            <div style="display:flex;gap:20px;margin-left:auto;flex-wrap:wrap;font-size:12.5px;color:#cdd7e1;">
+              <div>ค่าขนส่ง <span style="font-weight:700;color:#7cc0ff;">{{ mo.revTotal }}</span></div>
+              <div>ค่าใช้จ่าย <span style="font-weight:700;color:#f6b894;">{{ mo.expTotal }}</span></div>
+              <div>คงเหลือสุทธิ <span style="{{ mo.netHeaderStyle }}">{{ mo.net }}</span></div>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:1120px;">
+              <thead>
+                <tr style="background:#f8fafc;border-bottom:2px solid #e4e7ec;">
+                  <th style="padding:10px 14px;text-align:left;font-weight:600;color:#475467;white-space:nowrap;">วันที่</th>
+                  <th style="padding:10px 12px;text-align:left;font-weight:600;color:#475467;">เลขที่บิล / เส้นทาง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ระยะทาง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">น้ำหนัก</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;white-space:nowrap;">ราคา/ตัน</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#175cd3;white-space:nowrap;">ค่าขนส่ง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">น้ำมัน</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">เบี้ยเลี้ยง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">ผ่านทาง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">ยาง</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">ซ่อม</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#475467;">เบ็ดเตล็ด</th>
+                  <th style="padding:10px 8px;text-align:right;font-weight:600;color:#b54708;white-space:nowrap;">รวมจ่าย</th>
+                  <th style="padding:10px 14px;text-align:right;font-weight:600;color:#067647;white-space:nowrap;">คงเหลือ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ mo.rows }}" as="r" hint-placeholder-count="3">
+                  <tr style="border-bottom:1px solid #f0f2f5;">
+                    <td style="padding:10px 14px;color:#475467;white-space:nowrap;">{{ r.date }}</td>
+                    <td style="padding:9px 12px;">
+                      <div style="font-weight:600;color:#16263a;">{{ r.bill }}</div>
+                      <div style="font-size:11px;color:#98a2b3;margin-top:2px;">{{ r.route }}</div>
+                    </td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;white-space:nowrap;">{{ r.distText }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.weightText }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.ratePerTonText }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#175cd3;font-weight:600;">{{ r.revenue }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.fuel }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.allow }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.toll }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.tire }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.repair }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#475467;">{{ r.misc }}</td>
+                    <td style="padding:10px 8px;text-align:right;color:#b54708;font-weight:600;">{{ r.totalExp }}</td>
+                    <td style="padding:10px 14px;" style="{{ r.netStyle }}">{{ r.net }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+              <tfoot>
+                <tr style="background:#f8fafc;border-top:2px solid #e4e7ec;">
+                  <td colspan="5" style="padding:11px 14px;font-weight:700;color:#16263a;">รวม {{ mo.trips }} เที่ยว</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:700;color:#175cd3;">{{ mo.revTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.fuelTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.allowTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.tollTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.tireTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.repairTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:600;color:#475467;">{{ mo.miscTotal }}</td>
+                  <td style="padding:11px 8px;text-align:right;font-weight:700;color:#b54708;">{{ mo.expTotal }}</td>
+                  <td style="padding:11px 14px;text-align:right;font-weight:700;color:#475467;">{{ mo.tripRemainTotal }}</td>
+                </tr>
+                <sc-if value="{{ mo.hasFixed }}" hint-placeholder-val="{{ false }}">
+                  <tr style="background:#fbfcfe;">
+                    <td colspan="12" style="padding:9px 14px;text-align:right;font-size:11.5px;color:#667085;">หัก ค่าคงที่/เดือน — เงินเดือน <input type="number" value="{{ mo.salaryVal }}" onInput="{{ mo.onSalary }}" style="width:80px;padding:3px 6px;border:1px solid #d0d5dd;border-radius:6px;font-size:11.5px;text-align:right;color:#16263a;" /> + ประกันสังคม <input type="number" value="{{ mo.socialVal }}" onInput="{{ mo.onSocial }}" style="width:72px;padding:3px 6px;border:1px solid #d0d5dd;border-radius:6px;font-size:11.5px;text-align:right;color:#16263a;" /> + ผ่อน/เสื่อม <input type="number" value="{{ mo.installVal }}" onInput="{{ mo.onInstall }}" style="width:80px;padding:3px 6px;border:1px solid #d0d5dd;border-radius:6px;font-size:11.5px;text-align:right;color:#16263a;" /><sc-if value="{{ mo.isOverridden }}" hint-placeholder-val="{{ false }}"><button onClick="{{ mo.onResetFixed }}" style="margin-left:8px;padding:2px 8px;background:#fff;border:1px solid #e4e7ec;border-radius:6px;font-size:11px;color:#b54708;font-weight:600;cursor:pointer;">↺ คืนค่าตั้งต้น</button></sc-if></td>
+                    <td style="padding:9px 8px;text-align:right;font-weight:600;color:#b54708;">{{ mo.fixedTotal }}</td>
+                    <td style="padding:9px 14px;" style="{{ mo.netStyle }}">{{ mo.net }}</td>
+                  </tr>
+                </sc-if>
+              </tfoot>
+            </table>
+          </div>
+          <div style="overflow-x:auto;border-top:1px solid #eef0f3;">
+            <div style="padding:9px 16px;font-size:12px;font-weight:700;color:#16263a;background:#fbfcfe;">⛽ ตรวจน้ำมัน (ลิตร) · ควรใช้ = บรรทุก÷เรทบรรทุก + เปล่า÷เรทเปล่า · 🚩 เติมเกินที่ควรใช้ (ตั้งแต่ +0 ล.)</div>
+            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:920px;">
+              <thead>
+                <tr style="background:#f8fafc;border-bottom:1px solid #e4e7ec;">
+                  <th style="padding:8px 14px;text-align:left;font-weight:600;color:#475467;white-space:nowrap;">วันที่</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:#475467;">บิล</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#475467;">ระยะทาง</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#b54708;">เปล่า</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#2f6fb0;">ควรใช้</th>
+                  <th style="padding:8px 8px;text-align:left;font-weight:600;color:#475467;white-space:nowrap;">น้ำมันที่ให้</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#16263a;">เติมจริง</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#98a2b3;">ยกมา</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#98a2b3;">ยกไป</th>
+                  <th style="padding:8px 8px;text-align:right;font-weight:600;color:#475467;">ส่วนเกิน</th>
+                  <th style="padding:8px 14px;text-align:left;font-weight:600;color:#475467;">สถานะ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ mo.rows }}" as="r" hint-placeholder-count="3">
+                  <tr style="border-bottom:1px solid #f4f6f8;background:{{ r.fuelRowBg }};">
+                    <td style="padding:8px 14px;color:#475467;white-space:nowrap;">{{ r.date }}</td>
+                    <td style="padding:8px 12px;color:#16263a;font-weight:600;">{{ r.bill }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#475467;">{{ r.distText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#b54708;">{{ r.emptyDistText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#2f6fb0;font-weight:600;">{{ r.usedText }}</td>
+                    <td style="padding:8px 8px;text-align:left;color:#475467;">{{ r.advText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#16263a;font-weight:600;">{{ r.refillText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#98a2b3;">{{ r.openingText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#98a2b3;">{{ r.closingText }}</td>
+                    <td style="padding:8px 8px;text-align:right;color:#475467;">{{ r.excessText }}</td>
+                    <td style="padding:8px 14px;"><sc-if value="{{ r.fuelOver }}" hint-placeholder-val="{{ false }}"><span style="color:#b42318;font-weight:700;">{{ r.fuelFlag }}</span></sc-if></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+
     <!-- ===== EFFICIENCY: SETTLE (ปิดงาน & ค่าใช้จ่าย) ===== -->
     <sc-if value="{{ isEffSettle }}" hint-placeholder-val="{{ false }}">
     <div style="padding:26px 30px 60px;">
@@ -1641,9 +1837,10 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;">
           <input type="month" value="{{ effMonth }}" onInput="{{ onEffMonth }}" style="padding:8px 12px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;" />
-          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
-          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
           <button onClick="{{ onEffViewSettle }}" style="{{ effSettleBtnStyle }}">ปิดงาน &amp; ค่าใช้จ่าย</button>
+          <button onClick="{{ onEffViewTrip }}" style="{{ effTripBtnStyle }}">รายงานรายเที่ยว</button>
+          <button onClick="{{ onEffViewTruck }}" style="{{ effTruckBtnStyle }}">รายรถ</button>
+          <button onClick="{{ onEffViewMonthly }}" style="{{ effMonthlyBtnStyle }}">รายเดือน</button>
         </div>
       </div>
       <div style="display:flex;gap:11px;margin-bottom:18px;flex-wrap:wrap;">
@@ -1662,6 +1859,10 @@
         <div style="background:#ecfdf3;border:1px solid #c6ebd4;border-radius:12px;padding:14px 18px;min-width:140px;">
           <div style="font-size:24px;font-weight:700;line-height:1;color:#067647;">{{ settleDone }}</div>
           <div style="font-size:12px;color:#667085;margin-top:6px;">🟢 เสร็จสมบูรณ์</div>
+        </div>
+        <div style="background:#eff4ff;border:1px solid #d3e0f7;border-radius:12px;padding:14px 18px;min-width:160px;">
+          <div style="font-size:24px;font-weight:700;line-height:1;color:#175cd3;">{{ settleTotalRev }}</div>
+          <div style="font-size:12px;color:#667085;margin-top:6px;">ค่าขนส่งรวมเดือนนี้</div>
         </div>
         <div style="background:#fff;border:1px solid #e4e7ec;border-radius:12px;padding:14px 18px;min-width:160px;">
           <div style="font-size:24px;font-weight:700;line-height:1;color:#b54708;">{{ settleTotalExp }}</div>
@@ -1686,11 +1887,11 @@
           <div style="min-width:1040px;">
             <div style="display:grid;grid-template-columns:120px 130px 130px 120px 1fr 100px 110px 150px 84px;background:#f8fafc;border-bottom:1px solid #e4e7ec;">
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">วันที่</div>
-              <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">เลขใบงาน · บิล</div>
+              <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">บิล · เลขใบงาน</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">ทะเบียน · พขร.</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">ลูกค้า</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">เส้นทาง</div>
-              <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#175cd3;text-align:right;">ค่าขนส่ง</div>
+              <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#175cd3;text-align:right;">ราคา/ตัน → ค่าขนส่ง</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#b54708;text-align:right;">ค่าใช้จ่าย</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;">สถานะ</div>
               <div style="padding:11px 14px;font-size:12px;font-weight:600;color:#667085;text-align:right;">จัดการ</div>
@@ -1698,11 +1899,11 @@
             <sc-for list="{{ settleRows }}" as="r" hint-placeholder-count="5">
               <div style="display:grid;grid-template-columns:120px 130px 130px 120px 1fr 100px 110px 150px 84px;border-bottom:1px solid #f0f2f5;align-items:center;">
                 <div style="padding:11px 14px;font-size:12.5px;color:#475467;">{{ r.date }}</div>
-                <div style="padding:11px 14px;"><div style="font-size:13px;font-weight:700;color:#16263a;">{{ r.jobNo }}</div><div style="font-size:11.5px;color:#98a2b3;margin-top:2px;">บิล {{ r.bill }}</div></div>
+                <div style="padding:11px 14px;"><div style="font-size:14px;font-weight:700;color:#16263a;">{{ r.bill }}</div><div style="font-size:11px;color:#98a2b3;margin-top:2px;">ใบงาน {{ r.jobNo }}</div></div>
                 <div style="padding:11px 14px;font-size:12.5px;color:#344054;line-height:1.4;">{{ r.plate }}<br /><span style="color:#98a2b3;">{{ r.driver }}</span></div>
                 <div style="padding:11px 14px;font-size:12.5px;color:#475467;">{{ r.customer }}</div>
-                <div style="padding:11px 14px;font-size:12px;color:#667085;line-height:1.4;">{{ r.route }}</div>
-                <div style="padding:11px 14px;font-size:13px;color:#175cd3;font-weight:600;text-align:right;">{{ r.revenue }}</div>
+                <div style="padding:11px 14px;font-size:12px;color:#667085;line-height:1.4;">{{ r.route }}<sc-if value="{{ r.distanceText }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#2f6fb0;margin-top:2px;">📏 {{ r.distanceText }}</div></sc-if></div>
+                <div style="padding:7px 9px;"><input type="number" defaultValue="{{ r.rateRaw }}" onBlur="{{ r.onRateCommit }}" placeholder="ราคา/ตัน" style="width:100%;padding:6px 8px;border:1px solid #cdd5df;border-radius:7px;font-size:13px;font-weight:600;color:#16263a;text-align:right;box-sizing:border-box;background:#fff;" /><div style="font-size:10px;color:#98a2b3;margin-top:3px;text-align:right;line-height:1.3;">{{ r.weightText }}<br />= <b style="color:#175cd3;">{{ r.revenueText }}</b></div></div>
                 <div style="padding:11px 14px;font-size:13px;color:#b54708;font-weight:600;text-align:right;">{{ r.expense }}</div>
                 <div style="padding:11px 14px;"><span style="{{ r.statusStyle }}">{{ r.statusLabel }}</span></div>
                 <div style="padding:9px 14px;text-align:right;"><button onClick="{{ r.onOpen }}" style="padding:6px 14px;background:#2f6fb0;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">เปิด</button></div>
@@ -1750,6 +1951,22 @@
 
           <div style="border:1px solid #e4e7ec;border-radius:12px;padding:16px;margin-bottom:16px;">
             <div style="font-size:13px;font-weight:700;color:#16263a;margin-bottom:12px;">② บันทึกค่าใช้จ่าย (รถบริษัท)</div>
+            <div style="background:#eff4ff;border:1px solid #d3e0f7;border-radius:9px;padding:12px;margin-bottom:12px;">
+              <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                <div style="flex:1;min-width:130px;">
+                  <label style="font-size:11.5px;font-weight:700;color:#175cd3;display:block;margin-bottom:4px;">💰 ราคา / ตัน (บาท)</label>
+                  <input type="number" value="{{ sd.ratePerTon }}" onInput="{{ onSettleRate }}" placeholder="เช่น 307" style="width:100%;padding:9px 11px;border:1px solid #2f6fb0;border-radius:8px;font-size:15px;font-weight:600;color:#16263a;box-sizing:border-box;" />
+                </div>
+                <div style="font-size:12px;color:#475467;line-height:1.7;min-width:150px;">
+                  น้ำหนัก <b style="color:#16263a;">{{ sdWeightText }}</b> · ระยะทาง <b style="color:#16263a;">{{ sdDistanceText }}</b><br />
+                  ค่าขนส่ง = <b style="color:#175cd3;font-size:15px;">{{ sdRevenueText }}</b>
+                </div>
+                <div style="min-width:130px;">
+                  <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">🛣️ ระยะทางเที่ยวเปล่า (กม.)</label>
+                  <input type="number" value="{{ sd.emptyDistance }}" onInput="{{ onSettleEmptyDist }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;box-sizing:border-box;" />
+                </div>
+              </div>
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
               <div>
                 <label style="font-size:11.5px;font-weight:600;color:#667085;display:block;margin-bottom:4px;">น้ำมัน/แก๊ส (ลิตร)</label>
@@ -1795,6 +2012,24 @@
             <button onClick="{{ onSettleSave }}" style="padding:10px 24px;background:#2f6fb0;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">บันทึก</button>
           </div>
         </div>
+      </div>
+    </sc-if>
+
+    <!-- ===== ATTACHMENT LIGHTBOX ===== -->
+    <sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ onCloseLightbox }}" style="position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:1100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;">
+        <sc-if value="{{ lightboxIsImage }}" hint-placeholder-val="{{ false }}">
+          {{ lightboxImgNode }}
+        </sc-if>
+        <sc-if value="{{ lightboxNotImage }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ stopProp }}" style="background:#fff;border-radius:14px;padding:32px;text-align:center;max-width:380px;">
+            <div style="font-size:46px;margin-bottom:10px;">📄</div>
+            <div style="font-size:14px;font-weight:700;color:#16263a;margin-bottom:4px;word-break:break-all;">{{ lightboxName }}</div>
+            <div style="font-size:12px;color:#98a2b3;margin-bottom:18px;">ไฟล์ชนิดนี้แสดงตัวอย่างไม่ได้</div>
+            <a href="{{ lightboxUrl }}" target="_blank" download="{{ lightboxName }}" style="display:inline-block;padding:10px 24px;background:#2f6fb0;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;">เปิด / ดาวน์โหลด</a>
+          </div>
+        </sc-if>
+        <button onClick="{{ onCloseLightbox }}" style="padding:9px 22px;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">✕ ปิด</button>
       </div>
     </sc-if>
 
@@ -1868,7 +2103,7 @@ const SEED = [
  {"code":"743415","name":"นายอนันต์ ประทุมชาติ","type":"GIRTL","address":"222/1 หมู่ 5 ต.หนองบัว อ.บ้านค่าย จ.ระยอง","account":"4241493549","idCard":"3210500624618","fleet":"เทรลเลอร์","startDate":"2022-01-04","licenseExpiry":"2030-01-04","idExpiry":"2029-06-01","hasLicenseFile":true,"hasIdFile":true,"photo":null}
 ];
 const TYPE_MAP={'GIR6':'หกล้อ','GIR10':'สิบล้อ','GIRTL':'กึ่งพ่วง 3 เพลา','CL':'กึ่งพ่วง 2 เพลา'};
-function normDriver(d){const r={idCard:'',birthDate:'',address:'',fleet:'ระยอง',startDate:'',licenseExpiry:'',idExpiry:'',hasLicenseFile:false,hasIdFile:false,photo:null,history:[],salary:'',...d,code:String(d.code||''),name:String(d.name||''),type:(TYPE_MAP[d.type]||d.type)};if(!Array.isArray(r.history)){try{const p=JSON.parse(r.history);r.history=Array.isArray(p)?p:[];}catch(e){r.history=[];}}return r;}
+function normDriver(d){const r={idCard:'',birthDate:'',address:'',fleet:'ระยอง',startDate:'',licenseExpiry:'',idExpiry:'',hasLicenseFile:false,hasIdFile:false,photo:null,history:[],salary:'',socialSecurity:'',...d,code:String(d.code||''),name:String(d.name||''),type:(TYPE_MAP[d.type]||d.type)};if(!Array.isArray(r.history)){try{const p=JSON.parse(r.history);r.history=Array.isArray(p)?p:[];}catch(e){r.history=[];}}return r;}
 function normTruck(t){
   // parse maintenance ถ้าเป็น string จาก Sheets
   let maint=t.maintenance;
@@ -1878,9 +2113,9 @@ function normTruck(t){
   const boolParse=(v)=>v===true||v==='true'||v==='TRUE';
   // normalize date fields: ตัด timestamp ออก เหลือแค่ YYYY-MM-DD
   const normDate=(v)=>toBkkDate(v);
-  const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',trailerPlate:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',makerOther:'',...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม','รถผู้บริหาร',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
+  const r={plate:'',truckType:'',fuel:'',dept:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',gps:'',owner:'',ownerIdCard:'',account:'',trailerPlate:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',socialSecurity:'',fuelRateLoaded:'',fuelRateEmpty:'',makerOther:'',...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม','รถผู้บริหาร',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
 function toBkkDate(v){if(!v)return '';const s=String(v);if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const d=new Date(s);if(isNaN(d))return s.slice(0,10);try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}catch(e){return s.slice(0,10);}}
-function normJob(j){return{id:j.id||0,jobNo:j.jobNo||'',date:toBkkDate(j.date),time:j.time||'',driverCode:String(j.driverCode||''),truckPlate:j.truckPlate||'',origin:j.origin||'',destination:j.destination||'',customer:j.customer||'',deliveryNo:j.deliveryNo||'',weight:j.weight||'',revenue:j.revenue||'',dispatchPoint:j.dispatchPoint||'ระยอง',status:j.status||'รับงาน',fuelLiters:j.fuelLiters||'',fuelBaht:j.fuelBaht||'',toll:j.toll||'',allowance:j.allowance||'',tire:j.tire||'',repair:j.repair||'',police:j.police||'',misc:j.misc||'',remark:j.remark||'',driverNote:j.driverNote||'',attachment:j.attachment||'',shipments:Array.isArray(j.shipments)?j.shipments:[],fuelAdvance:j.fuelAdvance||'',fuelAdvanceNote:j.fuelAdvanceNote||'',docsClosed:!!j.docsClosed,docsClosedTime:j.docsClosedTime||'',docsTarget:j.docsTarget||'',expenseDone:!!j.expenseDone,createdAt:j.createdAt||'',dispatchTime:j.dispatchTime||'',pickupTime:j.pickupTime||'',pickupLat:j.pickupLat||'',pickupLng:j.pickupLng||'',arrivalTime:j.arrivalTime||'',arrivalLat:j.arrivalLat||'',arrivalLng:j.arrivalLng||'',completionTime:j.completionTime||'',completionLat:j.completionLat||'',completionLng:j.completionLng||'',documentTime:j.documentTime||'',dispatcher:j.dispatcher||'',dispatcherOther:j.dispatcherOther||''};}
+function normJob(j){return{id:j.id||0,jobNo:j.jobNo||'',date:toBkkDate(j.date),time:j.time||'',driverCode:String(j.driverCode||''),truckPlate:j.truckPlate||'',origin:j.origin||'',destination:j.destination||'',customer:j.customer||'',deliveryNo:j.deliveryNo||'',weight:j.weight||'',revenue:j.revenue||'',distance:j.distance||'',emptyDistance:j.emptyDistance||'',ratePerTon:j.ratePerTon||'',dispatchPoint:j.dispatchPoint||'ระยอง',status:j.status||'รับงาน',fuelLiters:j.fuelLiters||'',fuelBaht:j.fuelBaht||'',toll:j.toll||'',allowance:j.allowance||'',tire:j.tire||'',repair:j.repair||'',police:j.police||'',misc:j.misc||'',remark:j.remark||'',driverNote:j.driverNote||'',attachment:j.attachment||'',attachments:Array.isArray(j.attachments)?j.attachments:[],shipments:Array.isArray(j.shipments)?j.shipments:[],fuelAdvance:j.fuelAdvance||'',fuelAdvanceNote:j.fuelAdvanceNote||'',docsClosed:!!j.docsClosed,docsClosedTime:j.docsClosedTime||'',docsTarget:j.docsTarget||'',expenseDone:!!j.expenseDone,createdAt:j.createdAt||'',dispatchTime:j.dispatchTime||'',pickupTime:j.pickupTime||'',pickupLat:j.pickupLat||'',pickupLng:j.pickupLng||'',arrivalTime:j.arrivalTime||'',arrivalLat:j.arrivalLat||'',arrivalLng:j.arrivalLng||'',completionTime:j.completionTime||'',completionLat:j.completionLat||'',completionLng:j.completionLng||'',documentTime:j.documentTime||'',dispatcher:j.dispatcher||'',dispatcherOther:j.dispatcherOther||''};}
 const DISPATCHERS=['ปกรณ์ ลิ้นทอง','วารี ภักดีวาณิช','นันทนา สุขศิลา','สมศักดิ์ ชนะวงษ์','จารพรรณ ขาวสุข','คศิมาภรณ์ ชนะวงศ์','อื่นๆ'];
 const ORIGINS=['รง.เหล็กมาบตาพุต','รง. บ่อวิน NTS','รง. เหล็กท่าหลวง','รง.โมเนีย บ้านบึง','รง. การ์เดียน ระยอง'];
 const CUSTOMER_SEED=['30-004 SCG','30-005 การ์เดียนระยอง','30-006 วีมูฟ','30-008 บุญกิติพัฒน์','30-015 ทาทาสตีล'];
@@ -1930,6 +2165,14 @@ function sbUpsertTrucks(list){return sbUpsert('trucks','company_id,plate',list.m
 function sbUpsertJobs(list){return sbUpsert('jobs','company_id,id',list.map(j=>{const data={...j};SB_DRV_FIELDS.forEach(f=>delete data[f]);return {company_id:COMPANY_ID,id:String(j.id),data};}));}
 async function sbDeleteRows(table,col,keys){for(const k of keys){await fetch(SB_REST+'/'+table+'?company_id=eq.'+encodeURIComponent(COMPANY_ID)+'&'+col+'=eq.'+encodeURIComponent(String(k)),{method:'DELETE',headers:SB_HEADERS}).catch(()=>{});}}
 async function sbSoftDeleteJobs(keys){for(const k of keys){await fetch(SB_REST+'/jobs?company_id=eq.'+encodeURIComponent(COMPANY_ID)+'&id=eq.'+encodeURIComponent(String(k)),{method:'PATCH',headers:SB_HEADERS,body:JSON.stringify({deleted:true})}).catch(()=>{});}}
+const SB_BUCKET='attachments';
+async function sbUploadFile(file,jobId){
+  const safe=String(file.name||'file').replace(/[^\w.\-]+/g,'_').slice(-60);
+  const path=COMPANY_ID+'/jobs/'+jobId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,7)+'_'+safe;
+  const res=await fetch(SUPABASE_URL+'/storage/v1/object/'+SB_BUCKET+'/'+encodeURI(path),{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file});
+  if(!res.ok){let t='';try{t=await res.text();}catch(e){}throw new Error('storage '+res.status+' '+t);}
+  return SUPABASE_URL+'/storage/v1/object/public/'+SB_BUCKET+'/'+encodeURI(path);
+}
 function sbUpsertCustomers(list){return sbUpsert('customers','company_id,id',list.map(c=>({company_id:COMPANY_ID,id:String(c.id),data:c})));}
 function sbUpsertOrigins(list){return sbUpsert('origins','company_id,id',list.map(o=>({company_id:COMPANY_ID,id:String(o.id),data:o})));}
 function sbUpsertOrders(list){return sbUpsert('orders','company_id,id',list.map(o=>({company_id:COMPANY_ID,id:String(o.id),data:o})));}
@@ -1939,13 +2182,16 @@ const DEPT_SHORT={'01-รถบริษัท':'01 บริษัท','11-ร�
 class Component extends DCLogic {
   state={drivers:SEED.map(normDriver),view:'list',selectedCode:null,search:'',fleet:'all',statusFilter:'all',draft:null,isNew:false,editingCode:null,formError:'',sidebarOpen:true,historyFormOpen:false,historyDraft:null,maintFormOpen:false,maintDraft:null,section:'jobs',trucks:TRUCK_SEED.map(normTruck),truckView:'list',truckSelectedId:null,truckSearch:'',truckDeptFilter:'all',truckStatusFilter:'all',truckDraft:null,truckIsNew:false,truckFormError:'',syncStatus:'idle',jobs:[],jobView:'list',jobSearch:'',jobDateFrom:new Date().toISOString().slice(0,10),jobDateTo:new Date().toISOString().slice(0,10),jobDpFilter:'all',jobDraft:null,jobIsNew:false,jobFormError:'',jobQrVisible:false,jobQrImgUrl:'',jobQrText:'',savedJobQrVisible:false,savedJobQrImgUrl:'',savedJobQrText:'',savedJobNo:'',pinUnlocked:false,pinModalOpen:false,pinInput:'',pinError:'',qrBaseUrl:'',effView:'monthly',settleModalOpen:false,settleDraft:null,effSettleStatus:'all',effSettleTruck:'all',effMonth:new Date().toISOString().slice(0,7),effTruckFilter:'',driverSort:{col:'',dir:'asc'},truckSort:{col:'',dir:'asc'},truckSortKeys:[],orders:[],customers:[],origins:[],hiddenCustomers:[],hiddenOrigins:[],jobAddingCustomer:false,jobAddingOrigin:false,orderAddingOrigin:false,selectedOrderIds:[],orderDateFrom:'',orderDateTo:'',dispatchers:[],jobAddingDispatcher:false,importOpen:false,importText:'',importPreview:null,importError:'',jobEditDetails:false,jobShowExpenses:false,jobShowTracking:false,orderView:'list',orderDraft:null,orderIsNew:false,orderFormError:'',orderSearch:'',orderStatusFilter:'all',orderAddingCustomer:false};
 
-  componentWillUnmount(){window.removeEventListener('beforeunload',this._beforeUnload);if(this._pollTimer)clearInterval(this._pollTimer);}
+  componentWillUnmount(){window.removeEventListener('beforeunload',this._beforeUnload);if(this._wheelGuard)window.removeEventListener('wheel',this._wheelGuard);if(this._pollTimer)clearInterval(this._pollTimer);}
   componentDidMount(){
+    this._wheelGuard=(e)=>{const a=document.activeElement;if(a&&a.tagName==='INPUT'&&a.type==='number'&&(e.target===a||a.contains(e.target))){e.preventDefault();a.blur();}};
+    window.addEventListener('wheel',this._wheelGuard,{passive:false});
     this._beforeUnload=()=>{
       try{const S=this.state;localStorage.setItem('transport_autosave',JSON.stringify({version:2,exportedAt:new Date().toISOString(),drivers:S.drivers,trucks:S.trucks,jobs:S.jobs}));}catch(e){}
     };
     window.addEventListener('beforeunload',this._beforeUnload);
     try{const q=localStorage.getItem('qrBaseUrl');if(q)this.setState({qrBaseUrl:q});}catch(e){}
+    try{const f=localStorage.getItem('fixedOverrides_v1');if(f){const o=JSON.parse(f);if(o&&typeof o==='object')this.setState({fixedOverrides:o});}}catch(e){}
     try{const s=localStorage.getItem('driverReg_v2');if(s){const d=JSON.parse(s);if(Array.isArray(d)&&d.length)this.setState({drivers:d.map(normDriver)});}}catch(e){}
     try{
       const t=localStorage.getItem('truckReg_v1');
@@ -2217,6 +2463,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     sbUpsertOrders(newOrders).then(()=>this.setState({syncStatus:'ok'})).catch(()=>this.setState({syncStatus:'error'}));
   };
   toggleOrderSel=(id)=>this.setState(s=>{const set=new Set((s.selectedOrderIds||[]).map(String));const k=String(id);if(set.has(k))set.delete(k);else set.add(k);return{selectedOrderIds:[...set]};});
+  toggleTripSel=(ids)=>this.setState(s=>{const set=new Set((s.selectedOrderIds||[]).map(String));const keys=(ids||[]).map(String);const all=keys.length>0&&keys.every(k=>set.has(k));keys.forEach(k=>all?set.delete(k):set.add(k));return{selectedOrderIds:[...set]};});
   linkTrip=()=>{const ids=(this.state.selectedOrderIds||[]).map(String);if(ids.length<2)return;const tripId='T'+Date.now().toString().slice(-7);const orders=this.state.orders.map(o=>ids.includes(String(o.id))?normOrder({...o,tripId}):o);try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();const changed=orders.filter(o=>ids.includes(String(o.id)));this.setState({orders,selectedOrderIds:[]});sbUpsertOrders(changed).catch(()=>{});};
   unlinkOrder=(id)=>{const o=this.state.orders.find(x=>String(x.id)===String(id));if(!o||!o.tripId)return;const tid=o.tripId;const clearAll=this.state.orders.filter(x=>x.tripId===tid).length<=2;const orders=this.state.orders.map(x=>((clearAll&&x.tripId===tid)||String(x.id)===String(id))?normOrder({...x,tripId:''}):x);try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();const changed=this.state.orders.filter(x=>x.tripId===tid).map(x=>orders.find(y=>String(y.id)===String(x.id)));this.setState({orders});sbUpsertOrders(changed).catch(()=>{});};
   openOrderNew=()=>{const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const S=this.state;const _ymd=today.replace(/-/g,'').slice(2);const _prefix='OR-'+_ymd+'-';const _seq=S.orders.filter(x=>String(x.orderNo||'').startsWith(_prefix)).reduce((mx,x)=>{const n=parseInt(String(x.orderNo).slice(_prefix.length),10);return isNaN(n)?mx:Math.max(mx,n);},0)+1;this.editingOrderId=null;this.setState({orderDraft:normOrder({orderNo:_prefix+String(_seq).padStart(3,'0'),receivedDate:today,requiredDate:today}),orderIsNew:true,orderView:'form',orderFormError:'',orderAddingCustomer:false,section:'orders'});this.scrollMain();};
@@ -2225,6 +2472,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   setO(field,val){this.setState(s=>({orderDraft:{...s.orderDraft,[field]:val}}));}
   saveOrder=()=>{const o=this.state.orderDraft;if(!o||!String(o.customer||'').trim()){this.setState({orderFormError:'กรุณาเลือกลูกค้า / ผู้ว่าจ้าง'});return;}if(!String(o.billNo||'').trim()){this.setState({orderFormError:'กรุณากรอกเลขที่บิลลูกค้า'});return;}let _id=this.editingOrderId;if(!_id){_id=Date.now();while(this.state.orders.some(x=>String(x.id)===String(_id)))_id++;}const no=normOrder({...o,id:_id});let orders;if(this.state.orderIsNew){orders=[no,...this.state.orders];}else{orders=this.state.orders.map(x=>String(x.id)===String(this.editingOrderId)?no:x);}try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();this.setState({orders,orderView:'list',orderFormError:'',syncStatus:'saving'});sbUpsertOrders([no]).then(()=>this.setState({syncStatus:'ok'})).catch(()=>this.setState({syncStatus:'error'}));};
   deleteOrder=(id)=>{if(!window.confirm('ยืนยันการลบงานรับเข้านี้?'))return;const orders=this.state.orders.filter(x=>String(x.id)!==String(id));try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();this.setState({orders});sbSoftDeleteOrders([String(id)]);};
+  revertOrderDispatch=(id)=>{const o=this.state.orders.find(x=>String(x.id)===String(id));if(!o)return;if(!window.confirm('คืนงานนี้กลับไปสถานะ "รอจัดรถ"? (ยกเลิกการจ่ายงาน — ใบงานเดิมไม่ถูกลบ)'))return;const orders=this.state.orders.map(x=>String(x.id)===String(id)?normOrder({...x,status:'รอจัดรถ',jobId:''}):x);try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();this.setState({orders});const _u=orders.find(x=>String(x.id)===String(id));if(_u)sbUpsertOrders([_u]).catch(()=>{});};
   addCustomerInline=()=>{const o=this.state.orderDraft||{};const name=String(o.newCustomer||'').trim();if(!name)return;if(this.state.customers.some(c=>c.name===name)){this.setState(s=>({orderDraft:{...s.orderDraft,customer:name,newCustomer:''},orderAddingCustomer:false}));return;}let _id=Date.now();while(this.state.customers.some(c=>String(c.id)===String(_id)))_id++;const nc=normCustomer({id:_id,name});const customers=[...this.state.customers,nc].sort((a,b)=>String(a.name).localeCompare(String(b.name),'th'));try{localStorage.setItem('customerReg_v1',JSON.stringify(customers));}catch(e){}this._lastPushAt=Date.now();const _uh=(this.state.hiddenCustomers||[]).filter(n=>n!==name);try{localStorage.setItem('customerHidden_v1',JSON.stringify(_uh));}catch(e){}this.setState(s=>({customers,hiddenCustomers:_uh,orderDraft:{...s.orderDraft,customer:name,newCustomer:''},orderAddingCustomer:false}));sbUpsertCustomers([nc]).catch(()=>{});};
   addJobCustomerInline=()=>{const j=this.state.jobDraft||{};const name=String(j.newCustomer||'').trim();if(!name)return;const exists=this.state.customers.some(c=>c.name===name)||CUSTOMER_SEED.indexOf(name)>=0;if(exists){this.setState(s=>({jobDraft:{...s.jobDraft,customer:name,newCustomer:''},jobAddingCustomer:false}));return;}let _id=Date.now();while(this.state.customers.some(c=>String(c.id)===String(_id)))_id++;const nc=normCustomer({id:_id,name});const customers=[...this.state.customers,nc].sort((a,b)=>String(a.name).localeCompare(String(b.name),'th'));try{localStorage.setItem('customerReg_v1',JSON.stringify(customers));}catch(e){}this._lastPushAt=Date.now();const _uh=(this.state.hiddenCustomers||[]).filter(n=>n!==name);try{localStorage.setItem('customerHidden_v1',JSON.stringify(_uh));}catch(e){}this.setState(s=>({customers,hiddenCustomers:_uh,jobDraft:{...s.jobDraft,customer:name,newCustomer:''},jobAddingCustomer:false}));sbUpsertCustomers([nc]).catch(()=>{});};
   addJobOriginInline=()=>{const j=this.state.jobDraft||{};const name=String(j.newOrigin||'').trim();if(!name)return;const exists=this.state.origins.some(o=>o.name===name)||ORIGINS.indexOf(name)>=0;if(exists){this.setState(s=>({jobDraft:{...s.jobDraft,origin:name,_originPreset:name,newOrigin:''},jobAddingOrigin:false}));return;}let _id=Date.now();while(this.state.origins.some(o=>String(o.id)===String(_id)))_id++;const no=normOrigin({id:_id,name});const origins=[...this.state.origins,no];try{localStorage.setItem('originReg_v1',JSON.stringify(origins));}catch(e){}this._lastPushAt=Date.now();const _uh=(this.state.hiddenOrigins||[]).filter(n=>n!==name);try{localStorage.setItem('originHidden_v1',JSON.stringify(_uh));}catch(e){}this.setState(s=>({origins,hiddenOrigins:_uh,jobDraft:{...s.jobDraft,origin:name,_originPreset:name,newOrigin:''},jobAddingOrigin:false}));sbUpsertOrigins([no]).catch(()=>{});};
@@ -2236,10 +2484,27 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   setJ(field,val){this.setState(s=>({jobDraft:{...s.jobDraft,[field]:val}}));}
   readJobAttachment=(e)=>{const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=(ev)=>{const img=new Image();img.onload=()=>{const max=1400;let w=img.width,h=img.height;if(w>max||h>max){if(w>=h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);let data;try{data=c.toDataURL('image/jpeg',0.72);}catch(err){data=ev.target.result;}this.setJ('attachment',data);};img.src=ev.target.result;};reader.readAsDataURL(file);};
   removeJobAttachment=()=>this.setJ('attachment','');
+  _fileToDataUrl=(file)=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
+  _updateAtt=(id,patch)=>this.setState(s=>{const cur=(s.jobDraft&&s.jobDraft.attachments)||[];return{jobDraft:{...s.jobDraft,attachments:cur.map(x=>x.id===id?{...x,...patch}:x)}};});
+  addJobFiles=async(e)=>{const files=[...(e.target.files||[])];if(!files.length)return;e.target.value='';const jd=this.state.jobDraft||{};const jobId=jd.id||this.editingJobId||('tmp'+Date.now());
+    for(const file of files){const id='att'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+      const entry={id,name:file.name||'ไฟล์',type:file.type||'',size:file.size||0,url:'',status:'uploading'};
+      this.setState(s=>({jobDraft:{...s.jobDraft,attachments:[...(((s.jobDraft&&s.jobDraft.attachments))||[]),entry]}}));
+      try{const url=await sbUploadFile(file,jobId);this._updateAtt(id,{url,status:'done'});}
+      catch(err){const em=String((err&&err.message)||err||'').replace(/\s+/g,' ').slice(0,200);if((file.size||0)<=500000){try{const du=await this._fileToDataUrl(file);this._updateAtt(id,{url:du,status:'done',inline:true,errorMsg:em});}catch(e2){this._updateAtt(id,{status:'error',errorMsg:em});}}else{this._updateAtt(id,{status:'error',errorMsg:em});}}
+    }};
+  removeJobAttachmentById=(id)=>this.setState(s=>({jobDraft:{...s.jobDraft,attachments:(((s.jobDraft&&s.jobDraft.attachments))||[]).filter(x=>x.id!==id)}}));
+  openLightbox=(url,name,type)=>{const img=/^image\//.test(type||'')||/\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(name||url||'')||/^data:image\//.test(url||'');this.setState({lightboxUrl:url,lightboxName:name||'',lightboxIsImage:img});};
+  closeLightbox=()=>this.setState({lightboxUrl:''});
+  setFixedOverride=(plate,month,field,val)=>{const k=plate+'|'+month;const cur={...(this.state.fixedOverrides||{})};cur[k]={...(cur[k]||{}),[field]:val};try{localStorage.setItem('fixedOverrides_v1',JSON.stringify(cur));}catch(e){}this.setState({fixedOverrides:cur});};
+  clearFixedOverride=(plate,month)=>{const k=plate+'|'+month;const cur={...(this.state.fixedOverrides||{})};delete cur[k];try{localStorage.setItem('fixedOverrides_v1',JSON.stringify(cur));}catch(e){}this.setState({fixedOverrides:cur});};
   addJobDispatcherInline=()=>{const j=this.state.jobDraft||{};const name=String(j.newDispatcher||'').trim();if(!name)return;let list=this.state.dispatchers||[];if(!list.includes(name)){list=[...list,name].sort((a,b)=>String(a).localeCompare(String(b),'th'));try{localStorage.setItem('dispatcherReg_v1',JSON.stringify(list));}catch(e){}}this.setState(s=>({dispatchers:list,jobDraft:{...s.jobDraft,dispatcher:name,newDispatcher:''},jobAddingDispatcher:false}));};
   deleteDispatcherName=(name)=>{name=String(name||'').trim();if(!name)return;if(!window.confirm('ลบ "'+name+'" ออกจากรายชื่อผู้จ่ายงาน?'))return;const list=(this.state.dispatchers||[]).filter(n=>n!==name);try{localStorage.setItem('dispatcherReg_v1',JSON.stringify(list));}catch(e){}this.setState(s=>({dispatchers:list,jobDraft:(s.jobDraft&&s.jobDraft.dispatcher===name)?{...s.jobDraft,dispatcher:''}:s.jobDraft}));};
   saveJob=()=>{const j=this.state.jobDraft;if(!j||!j.date){this.setState({jobFormError:'กรุณาเลือกวันที่'});return;}let _newId=this.editingJobId;if(!_newId){_newId=Date.now();while(this.state.jobs.some(x=>String(x.id)===String(_newId)))_newId++;}const nj=normJob({...j,id:_newId});let jobs;if(this.state.jobIsNew){jobs=[nj,...this.state.jobs];}else{jobs=this.state.jobs.map(x=>x.id===this.editingJobId?nj:x);}this.persistJobs(jobs,nj.id);if(this.dispatchingOrderId){const _ids=(this.dispatchingTripIds&&this.dispatchingTripIds.length?this.dispatchingTripIds:[this.dispatchingOrderId]).map(String);this.dispatchingOrderId=null;this.dispatchingTripIds=null;const _orders=this.state.orders.map(x=>_ids.includes(String(x.id))?normOrder({...x,status:'จ่ายงานแล้ว',jobId:nj.id}):x);try{localStorage.setItem('orderReg_v1',JSON.stringify(_orders));}catch(e){}const _uo=_orders.filter(x=>_ids.includes(String(x.id)));this.setState({orders:_orders});if(_uo.length)sbUpsertOrders(_uo).catch(()=>{});}const drv=this.state.drivers.find(x=>String(x.code)===String(nj.driverCode));const data={id:nj.id,jobNo:nj.jobNo,date:nj.date,time:nj.time,driverCode:nj.driverCode,driverName:drv?drv.name:'',truckPlate:nj.truckPlate,origin:nj.origin,destination:nj.destination,customer:nj.customer,deliveryNo:nj.deliveryNo,dispatchPoint:nj.dispatchPoint,dispatchTime:nj.dispatchTime,driverNote:nj.driverNote,fuelAdvance:nj.fuelAdvance,fuelAdvanceNote:nj.fuelAdvanceNote};const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const base=(this.state.qrBaseUrl&&this.state.qrBaseUrl.trim())?this.state.qrBaseUrl.trim().replace(/\/+$/,'')+'/':'https://niimph-max.github.io/singthongtruck/';const url=base+'driver.html?d='+encodeURIComponent(b64);const img='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url);this.setState({jobs,jobView:'list',jobFormError:'',savedJobQrVisible:true,savedJobQrImgUrl:img,savedJobQrText:url,savedJobNo:(nj.jobNo||'ใบงาน')+(nj.deliveryNo?(' · บิล '+nj.deliveryNo):''),savedJobDriver:(drv?drv.name:''),savedLinkCopied:false});};
-  deleteJob=(id)=>{if(!window.confirm('ยืนยันการลบใบงานนี้?'))return;const jobs=this.state.jobs.filter(x=>x.id!==id);try{localStorage.setItem('jobReg_v1',JSON.stringify(jobs));}catch(e){}this.pushDelete('jobs',[String(id)]);this.setState({jobs});};
+  deleteJob=(id)=>{if(!window.confirm('ยืนยันการลบใบงานนี้? (งานรับเข้าที่ผูกไว้จะกลับไปสถานะ "รอจัดรถ")'))return;const jobs=this.state.jobs.filter(x=>x.id!==id);try{localStorage.setItem('jobReg_v1',JSON.stringify(jobs));}catch(e){}this.pushDelete('jobs',[String(id)]);
+    const linked=this.state.orders.filter(o=>o.jobId&&String(o.jobId)===String(id));
+    if(linked.length){const orders=this.state.orders.map(o=>(o.jobId&&String(o.jobId)===String(id))?normOrder({...o,status:'รอจัดรถ',jobId:''}):o);try{localStorage.setItem('orderReg_v1',JSON.stringify(orders));}catch(e){}this._lastPushAt=Date.now();this.setState({jobs,orders});const _uo=orders.filter(o=>linked.some(l=>String(l.id)===String(o.id)));sbUpsertOrders(_uo).catch(()=>{});}
+    else{this.setState({jobs});}};
 
   openSettle=(jobId)=>{const j=this.state.jobs.find(x=>String(x.id)===String(jobId));if(!j)return;this.setState({settleModalOpen:true,settleDraft:{...j}});};
   closeSettle=()=>this.setState({settleModalOpen:false,settleDraft:null});
@@ -2247,11 +2512,14 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   markDocsClosed=(target)=>{const now=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date()).replace(' ','T');this.setState(s=>({settleDraft:{...s.settleDraft,docsClosed:true,docsClosedTime:now,docsTarget:target}}));};
   undoDocsClosed=()=>this.setState(s=>({settleDraft:{...s.settleDraft,docsClosed:false,docsClosedTime:'',docsTarget:''}}));
   saveSettle=()=>{const d=this.state.settleDraft;if(!d)return;const nj=normJob(d);const jobs=this.state.jobs.map(x=>String(x.id)===String(nj.id)?nj:x);this.persistJobs(jobs,nj.id);this.setState({jobs,settleModalOpen:false,settleDraft:null});};
+  setSettleRowRate=(id,val)=>{const cur=this.state.jobs.find(x=>String(x.id)===String(id));if(!cur)return;const w=parseFloat(cur.weight)||0;const rev=val?String(Math.round(w*(parseFloat(val)||0)*100)/100):'';if(String(cur.ratePerTon||'')===String(val||'')&&String(cur.revenue||'')===rev)return;const jobs=this.state.jobs.map(x=>String(x.id)===String(id)?normJob({...x,ratePerTon:val,revenue:rev}):x);this.persistJobs(jobs,id);this.setState({jobs});};
+  setSettleRowRevenue=(id,val)=>{const cur=this.state.jobs.find(x=>String(x.id)===String(id));if(cur&&String(cur.revenue||'')===String(val||''))return;const jobs=this.state.jobs.map(x=>String(x.id)===String(id)?normJob({...x,revenue:val}):x);this.persistJobs(jobs,id);this.setState({jobs});};
   copyText=(t)=>{try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(()=>this._copyFallback(t));}else{this._copyFallback(t);}}catch(e){this._copyFallback(t);}};
   _copyFallback=(t)=>{try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);}catch(e){}};
 
   renderVals(){
     const S=this.state;
+    const _attLightbox={lightboxOpen:!!S.lightboxUrl,lightboxUrl:S.lightboxUrl||'',lightboxName:S.lightboxName||'',lightboxIsImage:!!S.lightboxIsImage,lightboxNotImage:!!S.lightboxUrl&&!S.lightboxIsImage,lightboxImgNode:(S.lightboxUrl&&S.lightboxIsImage)?React.createElement('img',{src:S.lightboxUrl,onClick:(e)=>e.stopPropagation(),style:{maxWidth:'92vw',maxHeight:'78vh',borderRadius:'10px',boxShadow:'0 12px 50px rgba(0,0,0,.5)'}}):null,onCloseLightbox:this.closeLightbox,stopProp:(e)=>e.stopPropagation()};
     const mkDoc=(label,dateLabel,iso,attached,isExpiry)=>{let chipFg='#475467',chipBg='#eef1f4',chipLabel='ยังไม่มีข้อมูล',dateColor='color:#b0b8c2;';if(isExpiry){if(!iso){chipLabel='ยังไม่กรอก';}else{const days=this.daysUntil(iso);if(days<0){chipFg='#b42318';chipBg='#fef3f2';chipLabel='หมดอายุ';dateColor='color:#b42318;';}else if(days<=60){chipFg='#b54708';chipBg='#fffaeb';chipLabel='ใกล้หมดอายุ';dateColor='color:#b54708;';}else{chipFg='#067647';chipBg='#ecfdf3';chipLabel='ปกติ';dateColor='color:#1d2b3a;';}}}else{if(iso){chipFg='#067647';chipBg='#ecfdf3';chipLabel='มีเอกสาร';dateColor='color:#1d2b3a;';}else{chipLabel='ยังไม่มี';}}return{label,dateLabel,dateText:iso?this.thaiDate(iso):'—',dateColor,fileText:attached?'แนบไฟล์แล้ว':'ยังไม่แนบไฟล์',iconBg:attached?'#eaf1fb':'#f2f4f7',iconFg:attached?'#2f6fb0':'#b0b8c2',chipLabel,chipStyle:this.chip(chipFg,chipBg)};};
 
     // ---- DRIVERS ----
@@ -2281,10 +2549,10 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     const truckStats=tStatDefs.map(s=>{const active=S.truckStatusFilter===s.key;return{...s,count:s.key==='all'?trucks.length:tcnt(s.key),cardStyle:'text-align:left;padding:15px 17px;border-radius:12px;background:#fff;border:1px solid '+(active?'#2f6fb0':'#e4e7ec')+';box-shadow:'+(active?'0 0 0 3px rgba(47,111,176,.12)':'0 1px 2px rgba(16,24,40,.04)')+';',onClick:()=>this.setState({truckStatusFilter:S.truckStatusFilter===s.key?'all':s.key})};});
     const tq=S.truckSearch.trim().toLowerCase();
     const tList=trucks.filter(t=>{if(S.truckDeptFilter!=='all'&&t.dept!==S.truckDeptFilter)return false;if(S.truckStatusFilter==='attention'){if(!['expired','soon'].includes(tStatusKey(t)))return false;}else if(S.truckStatusFilter!=='all'&&tStatusKey(t)!==S.truckStatusFilter)return false;if(tq){const hay=(t.plate+' '+t.truckType+' '+t.dept+' '+t.owner+' '+t.ownerIdCard+' '+t.maker).toLowerCase();if(!hay.includes(tq))return false;}return true;});
-    const tColVal=(t,col)=>{if(col==='plate')return t.plate||'';if(col==='owner')return t.owner||'';if(col==='truckType')return t.truckType||'';if(col==='dept')return t.dept||'';if(col==='regExpiry')return t.regExpiry||'9999-99-99';if(col==='insuranceExpiry')return t.insuranceExpiry||'9999-99-99';if(col==='cargoInsExpiry')return t.cargoInsExpiry||'9999-99-99';if(col==='status')return ({expired:0,soon:1,ok:2,incomplete:3})[tStatusKey(t)]??4;return '';};
+    const tColVal=(t,col)=>{if(col==='plate')return t.plate||'';if(col==='owner')return t.owner||'';if(col==='truckType')return t.truckType||'';if(col==='dept')return t.dept||'';if(col==='fuel')return t.fuel||'';if(col==='regExpiry')return t.regExpiry||'9999-99-99';if(col==='insuranceExpiry')return t.insuranceExpiry||'9999-99-99';if(col==='cargoInsExpiry')return t.cargoInsExpiry||'9999-99-99';if(col==='status')return ({expired:0,soon:1,ok:2,incomplete:3})[tStatusKey(t)]??4;return '';};
     const tSortKeys=(S.truckSortKeys&&S.truckSortKeys.length)?S.truckSortKeys.filter(k=>k&&k.col):[];
     if(tSortKeys.length){tList.sort((a,b)=>{for(const k of tSortKeys){const av=tColVal(a,k.col),bv=tColVal(b,k.col);let c;if(typeof av==='number'&&typeof bv==='number')c=av-bv;else c=String(av).localeCompare(String(bv),'th');if(c)return k.dir==='desc'?-c:c;}return 0;});}
-    const truckRows=tList.map(t=>{const st=this.truckDocStatus(t);const ins=this.expiryCell(t.insuranceExpiry);const cargo=this.expiryCell(t.cargoInsExpiry);const reg=this.expiryCell(t.regExpiry);const mCnt=(t.maintenance||[]).length;const mText=mCnt>0?(mCnt+' ครั้ง'):'—';const mStyle=mCnt>0?'font-size:13px;font-weight:600;color:#175cd3;':'font-size:13px;color:#b0b8c2;';const ttParts=(t.truckType||'').split('-');const ttCode=ttParts[0]||'';const ttName=ttParts.slice(1).join('-')||t.truckType||'—';return{id:t.plate,plate:t.plate,owner:t.owner||'—',truckType:t.truckType||'—',ttCode,ttName,dept:t.dept,deptLabel:DEPT_SHORT[t.dept]||t.dept||'—',deptStyle:this.deptChip(t.dept),regText:reg.text,regStyle:reg.style,insText:ins.text,insStyle:ins.style,cargoText:cargo.text,cargoStyle:cargo.style,statusLabel:st.label,statusStyle:this.chip(st.fg,st.bg),maintText:mText,maintStyle:mStyle,onOpen:()=>this.openTruckProfile(t.plate)};});
+    const truckRows=tList.map(t=>{const st=this.truckDocStatus(t);const ins=this.expiryCell(t.insuranceExpiry);const cargo=this.expiryCell(t.cargoInsExpiry);const reg=this.expiryCell(t.regExpiry);const mCnt=(t.maintenance||[]).length;const mText=mCnt>0?(mCnt+' ครั้ง'):'—';const mStyle=mCnt>0?'font-size:13px;font-weight:600;color:#175cd3;':'font-size:13px;color:#b0b8c2;';const ttParts=(t.truckType||'').split('-');const ttCode=ttParts[0]||'';const ttName=ttParts.slice(1).join('-')||t.truckType||'—';return{id:t.plate,plate:t.plate,owner:t.owner||'—',truckType:t.truckType||'—',ttCode,ttName,dept:t.dept,deptLabel:DEPT_SHORT[t.dept]||t.dept||'—',deptStyle:this.deptChip(t.dept),fuelText:t.fuel||'—',rateText:(t.fuelRateLoaded||t.fuelRateEmpty)?((t.fuelRateLoaded||'—')+' / '+(t.fuelRateEmpty||'—')):'—',regText:reg.text,regStyle:reg.style,insText:ins.text,insStyle:ins.style,cargoText:cargo.text,cargoStyle:cargo.style,statusLabel:st.label,statusStyle:this.chip(st.fg,st.bg),maintText:mText,maintStyle:mStyle,onOpen:()=>this.openTruckProfile(t.plate)};});
 
     // ---- SORT HANDLERS & HEADERS ----
     const mkSortHdr=(label,col,sortSt,onSort)=>{const active=sortSt.col===col;const icon=active?(sortSt.dir==='asc'?'↑':'↓'):'↕';return{label,icon,style:'padding:11px 15px;font-size:12px;font-weight:600;color:'+(active?'#1d2b3a':'#667085')+';cursor:pointer;user-select:none;display:flex;align-items:center;gap:3px;',onClick:()=>onSort(col)};};
@@ -2297,7 +2565,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     const ds=S.driverSort||{col:'',dir:'asc'};
     const ts=S.truckSort||{col:'',dir:'asc'};
     const driverHeaders=[mkSortHdr('รหัสพนักงาน','code',ds,onDriverSort),mkSortHdr('ชื่อพนักงานขับรถ','name',ds,onDriverSort),mkSortHdr('ฟลีต','fleet',ds,onDriverSort),mkSortHdr('วันที่เริ่มงาน','startDate',ds,onDriverSort),noSortHdr('ประวัติ'),mkSortHdr('ใบขับขี่หมดอายุ','licenseExpiry',ds,onDriverSort),mkSortHdr('บัตร ปชช.หมดอายุ','idExpiry',ds,onDriverSort),mkSortHdr('สถานะเอกสาร','status',ds,onDriverSort)];
-    const truckHeaders=[mkTruckHdr('ทะเบียนรถ','plate'),mkTruckHdr('เจ้าของรถ','owner'),mkTruckHdr('ชนิดรถ','truckType'),mkTruckHdr('แผนก','dept'),mkTruckHdr('ทะเบียนรถ (หมดอายุ)','regExpiry'),mkTruckHdr('ประกันภัยรถ (หมดอายุ)','insuranceExpiry'),mkTruckHdr('ประกันสินค้า (หมดอายุ)','cargoInsExpiry'),mkTruckHdr('สถานะเอกสาร','status'),noSortHdr('ประวัติซ่อมบำรุง')];
+    const truckHeaders=[mkTruckHdr('ทะเบียนรถ','plate'),mkTruckHdr('เจ้าของรถ','owner'),mkTruckHdr('ชนิดรถ','truckType'),mkTruckHdr('แผนก','dept'),mkTruckHdr('เชื้อเพลิง','fuel'),noSortHdr('เรทน้ำมัน บ./ป.'),mkTruckHdr('ทะเบียนรถ (หมดอายุ)','regExpiry'),mkTruckHdr('ประกันภัยรถ (หมดอายุ)','insuranceExpiry'),mkTruckHdr('ประกันสินค้า (หมดอายุ)','cargoInsExpiry'),mkTruckHdr('สถานะเอกสาร','status'),noSortHdr('ประวัติซ่อมบำรุง')];
 
     // ---- SECTION & SIDEBAR ----
     const isTrucks=S.section==='trucks';
@@ -2343,7 +2611,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       navOrdersStyle:'width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 11px;margin-bottom:2px;border:none;border-radius:8px;font-size:13px;font-weight:600;text-align:left;cursor:pointer;'+(S.section==='orders'?'background:rgba(255,255,255,.1);color:#fff;':'background:transparent;color:#cdd7e1;'),
       navOrdersBadge:'font-size:12px;font-weight:700;padding:1px 8px;border-radius:11px;'+(S.section==='orders'?'background:rgba(255,255,255,.18);color:#fff;':'background:rgba(255,255,255,.07);color:#9fb2c4;'),
       orderPendingCount:S.orders.filter(o=>o.status!=='จ่ายงานแล้ว'&&o.status!=='ยกเลิก').length,
-      onGoEff:()=>this.setState({section:'efficiency',effView:'monthly'}),
+      onGoEff:()=>this.setState({section:'efficiency',effView:'settle'}),
       onGoTrucks:()=>this.setState({section:'trucks',truckView:'list',truckStatusFilter:'all',truckDeptFilter:'all'}),
       onGoDrivers:()=>this.setState({section:'drivers',view:'list',statusFilter:'all',fleet:'all'}),
       navEffStyle:'width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 11px;margin-bottom:2px;border:none;border-radius:8px;font-size:13px;font-weight:600;text-align:left;cursor:pointer;'+(S.section==='efficiency'?'background:rgba(47,111,176,.22);color:#fff;':'background:transparent;color:#cdd7e1;'),
@@ -2408,7 +2676,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     if(tsel){
       const tst=this.truckDocStatus(tsel);
       out.truckSel={plate:tsel.plate,truckType:tsel.truckType||'—',maker:tsel.maker||'—',model:tsel.model||'',modelSuffix:tsel.model?' '+tsel.model:'',dept:tsel.dept||'—',deptStyle:this.deptChip(tsel.dept),statusLabel:tst.label,statusStyle:this.chip(tst.fg,tst.bg)};
-      out.truckInfoRows=[{label:'ทะเบียนรถ',value:tsel.plate},{label:'ชนิดรถ',value:tsel.truckType||'—'},{label:'รุ่น',value:tsel.model||'—'},{label:'เชื้อเพลิง',value:tsel.fuel||'—'},{label:'แผนก',value:tsel.dept||'—'},{label:'ผู้ผลิต',value:tsel.maker||'—'},{label:'ปีที่ผลิต',value:tsel.year||'—'},{label:'สีรถ',value:tsel.color||'—'},{label:'เลขตัวถัง',value:tsel.chassis||'—'},{label:'เลขเครื่อง',value:tsel.engine||'—'},{label:'หมายเหตุ',value:tsel.remark||'—'}];
+      out.truckInfoRows=[{label:'ทะเบียนรถ',value:tsel.plate},{label:'ชนิดรถ',value:tsel.truckType||'—'},{label:'รุ่น',value:tsel.model||'—'},{label:'เชื้อเพลิง',value:tsel.fuel||'—'},{label:'แผนก',value:tsel.dept||'—'},{label:'ผู้ผลิต',value:tsel.maker||'—'},{label:'ปีที่ผลิต',value:tsel.year||'—'},{label:'สีรถ',value:tsel.color||'—'},{label:'เลขตัวถัง',value:tsel.chassis||'—'},{label:'เลขเครื่อง',value:tsel.engine||'—'},{label:'⛽ เรทน้ำมัน บรรทุก',value:tsel.fuelRateLoaded?(tsel.fuelRateLoaded+' กม./ลิตร'):'—'},{label:'⛽ เรทน้ำมัน วิ่งเปล่า',value:tsel.fuelRateEmpty?(tsel.fuelRateEmpty+' กม./ลิตร'):'—'},{label:'ค่าผ่อน/ค่าเสื่อม',value:tsel.installment?('฿'+(parseFloat(tsel.installment)||0).toLocaleString()+' /เดือน'):'—'},{label:'หมายเหตุ',value:tsel.remark||'—'}];
       out.truckOwnerRows=[{label:'เจ้าของรถ',value:tsel.owner||'—'},{label:'เลขบัตร ปชช.',value:tsel.ownerIdCard||'—'},{label:'เลขที่บัญชี',value:tsel.account||'—'},{label:'น้ำหนักรถ',value:tsel.weight?(tsel.weight+' กก.'):'—'},{label:'น้ำหนักบรรทุก',value:tsel.loadWeight?(tsel.loadWeight+' กก.'):'—'},{label:'บริษัท GPS',value:tsel.gps||'—'},{label:'วันทำสัญญา',value:this.thaiDate(tsel.contractDate)}];
       out.truckHasPhoto=!!tsel.photo;out.truckNoPhoto=!tsel.photo;
       out.truckPhotoNode=tsel.photo?React.createElement('img',{src:tsel.photo,style:{width:'100%',height:'100%',objectFit:'cover'}}):null;
@@ -2492,6 +2760,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     out.onFleet=(e)=>this.setD('fleet',e.target.value);
     out.onAddress=(e)=>this.setD('address',e.target.value);
     out.onDriverSalary=(e)=>this.setD('salary',e.target.value);
+    out.onDriverSocial=(e)=>this.setD('socialSecurity',e.target.value);
     out.onStartDate=(e)=>this.setD('startDate',e.target.value);
     out.onLicenseExpiry=(e)=>this.setD('licenseExpiry',e.target.value);
     out.onIdExpiry=(e)=>this.setD('idExpiry',e.target.value);
@@ -2570,6 +2839,9 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     out.onRemark=(e)=>this.setT('remark',e.target.value);
     out.onTruckSalary=(e)=>this.setT('salary',e.target.value);
     out.onTruckInstallment=(e)=>this.setT('installment',e.target.value);
+    out.onTruckSocial=(e)=>this.setT('socialSecurity',e.target.value);
+    out.onTruckRateLoaded=(e)=>this.setT('fuelRateLoaded',e.target.value);
+    out.onTruckRateEmpty=(e)=>this.setT('fuelRateEmpty',e.target.value);
     out.isMakerOther=dt.maker==='อื่นๆ';
     out.onTruckMakerOther=(e)=>this.setT('makerOther',e.target.value);
     out.onSaveTruckForm=this.saveTruckForm;out.onCancelTruck=this.cancelTruckForm;
@@ -2579,11 +2851,17 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     out.isEffMonthly=isEffSection&&S.effView==='monthly';
     out.isEffTruck=isEffSection&&S.effView==='truck';
     out.isEffSettle=isEffSection&&S.effView==='settle';
+    out.isEffTrip=isEffSection&&S.effView==='tripreport';
+    const _effSubDefs=[{key:'settle',label:'ปิดงาน & ค่าใช้จ่าย',color:'#c98bd0'},{key:'tripreport',label:'รายงานรายเที่ยว',color:'#e0a87f'},{key:'truck',label:'รายรถ',color:'#5fc08a'},{key:'monthly',label:'รายเดือน',color:'#5b9bd5'}];
+    out.navEffItems=_effSubDefs.map(d=>{const active=isEffSection&&S.effView===d.key;return{label:d.label,onClick:()=>this.setState({section:'efficiency',effView:d.key}),btnStyle:'width:100%;display:flex;align-items:center;justify-content:space-between;padding:7px 11px;margin-bottom:2px;border:none;border-radius:8px;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;'+(active?'background:rgba(47,111,176,.3);color:#fff;':'background:transparent;color:#9fb2c4;'),dotStyle:'width:6px;height:6px;border-radius:50%;flex:none;background:'+d.color+';',badgeStyle:'display:none;',count:''};});
+    out.isEff=isEffSection;
     out.effMonth=S.effMonth;
     out.onEffMonth=(e)=>this.setState({effMonth:e.target.value});
     out.onEffViewMonthly=()=>this.setState({effView:'monthly'});
     out.onEffViewTruck=()=>this.setState({effView:'truck'});
     out.onEffViewSettle=()=>this.setState({effView:'settle'});
+    out.onEffViewTrip=()=>this.setState({effView:'tripreport'});
+    out.effTripBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='tripreport'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
     out.effSettleBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='settle'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
     out.effMonthlyBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='monthly'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
     out.effTruckBtnStyle='padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;'+(S.effView==='truck'?'background:#2f6fb0;color:#fff;':'background:#f4f6f8;color:#475467;');
@@ -2598,12 +2876,13 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       const sumF=(jobs,f)=>jobs.reduce((s,j)=>s+(parseFloat(j[f])||0),0);
       const fmt=n=>'฿'+Math.round(n).toLocaleString();
       const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'0.0%';
+      const _drvFixed=(jobs)=>{const dc=((jobs||[]).find(j=>j.driverCode)||{}).driverCode;const d=S.drivers.find(x=>String(x.code)===String(dc));return {sal:parseFloat(d&&d.salary)||0,soc:parseFloat(d&&d.socialSecurity)||0};};
       const truckRows=companyTrucks.map(t=>{
         const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));
         const rev=sumF(jobs,'revenue'),fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance');
         const tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc');
-        const sal=parseFloat(t.salary)||0,inst=parseFloat(t.installment)||0;
-        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst;
+        const _df=_drvFixed(jobs);const sal=_df.sal,inst=parseFloat(t.installment)||0,soc=_df.soc;
+        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst+soc;
         const net=rev-totalExp;
         const drCode=jobs.find(j=>j.driverCode)?.driverCode||'';
         const drv=S.drivers.find(d=>String(d.code)===String(drCode));
@@ -2611,7 +2890,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       });
       out.effTruckRows=truckRows;out.effRowCount=truckRows.length;
       const tRev=companyTrucks.reduce((s,t)=>{const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));return s+sumF(jobs,'revenue');},0);
-      const tExp=companyTrucks.reduce((s,t)=>{const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));const fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance'),tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc'),sal=parseFloat(t.salary)||0,inst=parseFloat(t.installment)||0;return s+fuel+allow+tire+repair+toll+misc+sal+inst;},0);
+      const tExp=companyTrucks.reduce((s,t)=>{const jobs=S.jobs.filter(j=>j.truckPlate===t.plate&&j.date&&j.date.startsWith(sm));const fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance'),tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc'),_df=_drvFixed(jobs),sal=_df.sal,inst=parseFloat(t.installment)||0,soc=_df.soc;return s+fuel+allow+tire+repair+toll+misc+sal+inst+soc;},0);
       out.effTotalRev=fmt(tRev);out.effTotalExp=fmt(tExp);out.effTotalNet=fmt(tRev-tExp);out.effTotalNetStyle='font-weight:700;color:'+(tRev-tExp>=0?'#067647':'#b42318')+';';
       // Truck view
       const selPlate=S.effTruckFilter||(companyTrucks[0]?.plate||'');
@@ -2624,12 +2903,46 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.effTruckMonthRows=Object.keys(mMap).sort().reverse().map(m=>{
         const jobs=mMap[m];const rev=sumF(jobs,'revenue'),fuel=sumF(jobs,'fuelBaht'),allow=sumF(jobs,'allowance');
         const tire=sumF(jobs,'tire'),repair=sumF(jobs,'repair'),toll=sumF(jobs,'toll'),misc=sumF(jobs,'misc');
-        const sal=parseFloat(selTruckObj?.salary)||0,inst=parseFloat(selTruckObj?.installment)||0;
-        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst;const net=rev-totalExp;
+        const _df=_drvFixed(jobs);const sal=_df.sal,inst=parseFloat(selTruckObj?.installment)||0,soc=_df.soc;
+        const totalExp=fuel+allow+tire+repair+toll+misc+sal+inst+soc;const net=rev-totalExp;
         const [yr,mo]=m.split('-');const thM=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
         return{month:thM[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,revenue:fmt(rev),fuel:fmt(fuel),pctFuel:pct(fuel,rev),totalExp:fmt(totalExp),net:fmt(net),netStyle:'font-weight:700;color:'+(net>=0?'#067647':'#b42318')+';'};
       });
       out.effTruckTitle=selPlate||'—';
+      // ---- TRIP REPORT (รายงานรายเที่ยว: รายรถ → รายเดือน → รายเที่ยว) ----
+      const _thMonsFull=['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+      const _shortD=(iso)=>{const p=String(iso).slice(0,10).split('-');return (+p[2])+' '+THM[parseInt(p[1])-1];};
+      const _trEv=(j)=>{const fuel=parseFloat(j.fuelBaht)||0,allow=parseFloat(j.allowance)||0,toll=parseFloat(j.toll)||0,tire=parseFloat(j.tire)||0,repair=parseFloat(j.repair)||0,misc=(parseFloat(j.misc)||0)+(parseFloat(j.police)||0);return{fuel,allow,toll,tire,repair,misc,total:fuel+allow+toll+tire+repair+misc};};
+      const _instT=parseFloat(selTruckObj&&selTruckObj.installment)||0;
+      const _od=(n)=>n?fmt(n):'—';
+      const _loadedRate=parseFloat(selTruckObj&&selTruckObj.fuelRateLoaded)||0;
+      const _emptyRate=parseFloat(selTruckObj&&selTruckObj.fuelRateEmpty)||0;
+      const _fuelChrono=selJobs.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.id-b.id));
+      let _fbal=0;const _fuelMap={};
+      _fuelChrono.forEach(j=>{const dist=parseFloat(j.distance)||0;const edist=parseFloat(j.emptyDistance)||0;const usedL=_loadedRate>0?(dist/_loadedRate):0;const usedE=_emptyRate>0?(edist/_emptyRate):0;const used=Math.round((usedL+usedE)*10)/10;const refill=parseFloat(j.fuelLiters)||0;const opening=Math.round(_fbal*10)/10;const closing=Math.round((opening+refill-used)*10)/10;const excess=Math.round((refill-used)*10)/10;_fuelMap[j.id]={dist:dist,edist:edist,used:used,refill:refill,opening:opening,closing:closing,excess:excess,over:(refill>0&&excess>0),hasRate:(_loadedRate>0||_emptyRate>0)};_fbal=closing;});
+      const _tripFrom=S.effTripFrom||'';const _tripTo=S.effTripTo||'';
+      const _tripMMap={};selJobs.forEach(j=>{if((_tripFrom&&j.date<_tripFrom)||(_tripTo&&j.date>_tripTo))return;const m=j.date.slice(0,7);if(!_tripMMap[m])_tripMMap[m]=[];_tripMMap[m].push(j);});
+      out.effTripFrom=_tripFrom;out.effTripTo=_tripTo;out.onEffTripFrom=(e)=>this.setState({effTripFrom:e.target.value});out.onEffTripTo=(e)=>this.setState({effTripTo:e.target.value});out.onClearTripDate=()=>this.setState({effTripFrom:'',effTripTo:''});out.effTripDateActive=!!(_tripFrom||_tripTo);
+      out.effTripMonths=Object.keys(_tripMMap).sort().reverse().map(m=>{
+        const jobs=_tripMMap[m].slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.id-b.id));
+        const mp=m.split('-');const yr=mp[0],mo=mp[1];const _df=_drvFixed(jobs);
+        const _ov=(S.fixedOverrides||{})[selPlate+'|'+m]||{};
+        const _hasOv=(k)=>_ov[k]!==undefined&&_ov[k]!=='';
+        const _salT=_hasOv('salary')?(parseFloat(_ov.salary)||0):_df.sal;
+        const _socT=_hasOv('social')?(parseFloat(_ov.social)||0):_df.soc;
+        const _instM=_hasOv('installment')?(parseFloat(_ov.installment)||0):_instT;
+        const _fixedT=_salT+_socT+_instM;
+        const _isOv=_hasOv('salary')||_hasOv('social')||_hasOv('installment');
+        const rows=jobs.map(j=>{const e=_trEv(j);const rev=parseFloat(j.revenue)||0;const net=rev-e.total;const _fm=_fuelMap[j.id]||{};return{id:j.id,date:_shortD(j.date),bill:j.deliveryNo||j.jobNo||'—',route:(j.origin||'—')+' → '+(j.destination||'—'),revenue:_od(rev),fuel:_od(e.fuel),allow:_od(e.allow),toll:_od(e.toll),tire:_od(e.tire),repair:_od(e.repair),misc:_od(e.misc),totalExp:_od(e.total),weightText:(j.weight?((parseFloat(j.weight)||0)+' ตัน'):'—'),ratePerTonText:(j.ratePerTon?fmt(parseFloat(j.ratePerTon)||0):'—'),advText:(j.fuelAdvance?String(j.fuelAdvance):'—'),emptyDistText:(_fm.edist?(_fm.edist+' กม.'):'—'),distText:(_fm.dist?(_fm.dist+' กม.'):'—'),usedText:(_fm.hasRate?(_fm.used+' ล.'):'— ตั้งเรท'),refillText:(_fm.refill?(_fm.refill+' ล.'):'—'),openingText:((_fm.opening||0)+' ล.'),closingText:((_fm.closing||0)+' ล.'),excessText:((_fm.excess>0?'+':'')+(_fm.excess||0)+' ล.'),fuelOver:!!_fm.over,fuelFlag:_fm.over?('⚠ เติมเกิน '+_fm.excess+' ล.'):'',fuelRowBg:_fm.over?'#fef3f2':'#ffffff',net:fmt(net),netStyle:'text-align:right;font-weight:700;color:'+(net>=0?'#067647':'#b42318')+';'};});
+        const tRev=jobs.reduce((s,j)=>s+(parseFloat(j.revenue)||0),0);
+        const sm2=jobs.reduce((a,j)=>{const e=_trEv(j);a.fuel+=e.fuel;a.allow+=e.allow;a.toll+=e.toll;a.tire+=e.tire;a.repair+=e.repair;a.misc+=e.misc;a.total+=e.total;return a;},{fuel:0,allow:0,toll:0,tire:0,repair:0,misc:0,total:0});
+        const tripRemain=tRev-sm2.total;const net=tripRemain-_fixedT;
+        return{key:m,monthLabel:_thMonsFull[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,rows:rows,
+          revTotal:fmt(tRev),fuelTotal:fmt(sm2.fuel),allowTotal:fmt(sm2.allow),tollTotal:fmt(sm2.toll),tireTotal:fmt(sm2.tire),repairTotal:fmt(sm2.repair),miscTotal:fmt(sm2.misc),
+          expTotal:fmt(sm2.total),tripRemainTotal:fmt(tripRemain),salary:fmt(_salT),installment:fmt(_instM),social:fmt(_socT),fixedTotal:fmt(_fixedT),hasFixed:true,salaryVal:String(_hasOv('salary')?_ov.salary:_df.sal),socialVal:String(_hasOv('social')?_ov.social:_df.soc),installVal:String(_hasOv('installment')?_ov.installment:_instT),onSalary:(e)=>this.setFixedOverride(selPlate,m,'salary',e.target.value),onSocial:(e)=>this.setFixedOverride(selPlate,m,'social',e.target.value),onInstall:(e)=>this.setFixedOverride(selPlate,m,'installment',e.target.value),isOverridden:_isOv,onResetFixed:()=>this.clearFixedOverride(selPlate,m),
+          net:fmt(net),netStyle:'text-align:right;font-weight:800;color:'+(net>=0?'#067647':'#b42318')+';',netHeaderStyle:'font-weight:800;color:'+(net>=0?'#7cf0b0':'#ffb4a8')+';'};
+      });
+      out.effTripEmpty=Object.keys(_tripMMap).length===0;
       // ---- SETTLE (ปิดงาน & ค่าใช้จ่าย) ----
       const cPlates=new Set(companyTrucks.map(t=>t.plate));
       const settleSrc=S.jobs.filter(j=>cPlates.has(j.truckPlate)&&j.date&&j.date.startsWith(sm)&&j.documentTime);
@@ -2640,6 +2953,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.settleAwaitExp=settleSrc.filter(j=>settleStat(j)==='awaitExp').length;
       out.settleDone=settleSrc.filter(j=>settleStat(j)==='done').length;
       out.settleTotalExp=fmt(settleSrc.reduce((a,j)=>a+expSum(j),0));
+      out.settleTotalRev=fmt(settleSrc.reduce((a,j)=>a+(parseFloat(j.revenue)||0),0));
       out.effSettleStatus=S.effSettleStatus;out.effSettleTruck=S.effSettleTruck;
       out.onEffSettleStatus=(e)=>this.setState({effSettleStatus:e.target.value});
       out.onEffSettleTruck=(e)=>this.setState({effSettleTruck:e.target.value});
@@ -2650,12 +2964,15 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       if(S.effSettleStatus!=='all')settleList=settleList.filter(j=>settleStat(j)===S.effSettleStatus);
       const _drvNm=(code)=>{const d=S.drivers.find(x=>String(x.code)===String(code));return d?d.name:(code||'—');};
       const _fmtThD=(iso)=>{if(!iso)return '—';const p=String(iso).slice(0,10).split('-');return (+p[2])+' '+THM[parseInt(p[1])-1]+' '+((+p[0])+543);};
-      out.settleRows=settleList.map(j=>{const st=settleStat(j);return{id:j.id,date:_fmtThD(j.date),jobNo:j.jobNo||'—',bill:j.deliveryNo||'—',plate:j.truckPlate||'—',driver:_drvNm(j.driverCode),customer:j.customer||'—',route:(j.origin||'—')+' → '+(j.destination||'—'),revenue:j.revenue?fmt(parseFloat(j.revenue)||0):'—',expense:expSum(j)>0?fmt(expSum(j)):'—',statusLabel:_sMeta[st].label,statusStyle:_sMeta[st].style,onOpen:()=>this.openSettle(j.id)};});
+      out.settleRows=settleList.map(j=>{const st=settleStat(j);return{id:j.id,date:_fmtThD(j.date),jobNo:j.jobNo||'—',bill:j.deliveryNo||'—',plate:j.truckPlate||'—',driver:_drvNm(j.driverCode),customer:j.customer||'—',route:(j.origin||'—')+' → '+(j.destination||'—'),revenue:j.revenue?fmt(parseFloat(j.revenue)||0):'—',revenueRaw:(j.revenue===0||j.revenue)?String(j.revenue):'',onRevenueCommit:(e)=>this.setSettleRowRevenue(j.id,e.target.value),rateRaw:(j.ratePerTon===0||j.ratePerTon)?String(j.ratePerTon):'',onRateCommit:(e)=>this.setSettleRowRate(j.id,e.target.value),weightText:j.weight?((parseFloat(j.weight)||0)+' ตัน'):'—',distanceText:j.distance?((parseFloat(j.distance)||0)+' กม.'):'',revenueText:j.revenue?fmt(parseFloat(j.revenue)||0):'—',expense:expSum(j)>0?fmt(expSum(j)):'—',statusLabel:_sMeta[st].label,statusStyle:_sMeta[st].style,onOpen:()=>this.openSettle(j.id)};});
       out.settleEmpty=settleList.length===0;out.settleRowCount=settleList.length;
       const sd=S.settleDraft;out.settleModalOpen=!!S.settleModalOpen;
       if(sd){
         out.sd=sd;out.sdTitle=(sd.jobNo||'ใบงาน')+' · '+(sd.truckPlate||'');
         out.sdDriver=_drvNm(sd.driverCode);out.sdRoute=(sd.origin||'—')+' → '+(sd.destination||'—');out.sdCustomer=sd.customer||'—';
+        out.sdWeightText=sd.weight?((parseFloat(sd.weight)||0)+' ตัน'):'— (ไม่มีน้ำหนัก)';out.sdDistanceText=sd.distance?((parseFloat(sd.distance)||0)+' กม.'):'—';out.sdRevenueText=sd.revenue?fmt(parseFloat(sd.revenue)||0):'฿0';
+        out.onSettleRate=(e)=>{const v=e.target.value;const w=parseFloat((this.state.settleDraft||{}).weight)||0;const rev=v?String(Math.round(w*(parseFloat(v)||0)*100)/100):'';this.setState(s=>({settleDraft:{...s.settleDraft,ratePerTon:v,revenue:rev}}));};
+        out.onSettleEmptyDist=(e)=>this.setSettle('emptyDistance',e.target.value);
         out.sdDocsClosed=!!sd.docsClosed;out.sdDocsOpen=!sd.docsClosed;out.sdDocsTarget=sd.docsTarget||'';
         out.sdExpenseDone=!!sd.expenseDone;
         out.sdFuelAdvanceText=(sd.fuelAdvance||sd.fuelAdvanceNote)?([sd.fuelAdvance||'',sd.fuelAdvanceNote||''].filter(Boolean).join(' · ')):'— ไม่มี —';
@@ -2663,6 +2980,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         out.onSettleDocsCust=()=>this.markDocsClosed('ส่งลูกค้า');
         out.onSettleDocsBoth=()=>this.markDocsClosed('ส่งบัญชี + ส่งลูกค้า');
         out.onSettleUndoDocs=this.undoDocsClosed;
+        out.onSettleRevenue=(e)=>this.setSettle('revenue',e.target.value);
         out.onSettleFuelL=(e)=>this.setSettle('fuelLiters',e.target.value);out.onSettleFuelB=(e)=>this.setSettle('fuelBaht',e.target.value);
         out.onSettleAllowance=(e)=>this.setSettle('allowance',e.target.value);out.onSettleToll=(e)=>this.setSettle('toll',e.target.value);
         out.onSettleTire=(e)=>this.setSettle('tire',e.target.value);out.onSettleRepair=(e)=>this.setSettle('repair',e.target.value);
@@ -2690,7 +3008,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       const driverName=(code)=>{if(!code)return '';const d=S.drivers.find(x=>String(x.code)===String(code));return d?d.name:'';};
       const drvSt=(j)=>{if(j.documentTime)return{label:'📄 ส่งเอกสาร',style:this.chip('#175cd3','#eff4ff')};if(j.completionTime)return{label:'✅ ส่งสำเร็จ',style:this.chip('#067647','#ecfdf3')};if(j.arrivalTime)return{label:'📍 ถึงลูกค้า',style:this.chip('#2d6a4f','#d8f3dc')};if(j.pickupTime)return{label:'📦 รับสินค้า',style:this.chip('#b54708','#fffaeb')};if(j.dispatchTime)return{label:'🚀 รับงานแล้ว',style:this.chip('#475467','#f2f4f7')};return{label:'—',style:'color:#b0b8c2;font-size:13px;'};};
       const jobStatusChip=(s)=>{if(s==='เสร็จสิ้น')return this.chip('#067647','#ecfdf3');if(s==='จ่ายงาน')return this.chip('#b54708','#fffaeb');return this.chip('#175cd3','#eff4ff');};
-      const jobRows=jobList.map(j=>{const dn=driverName(j.driverCode);const totalExp=[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((s,v)=>s+(parseFloat(v)||0),0);const rev=parseFloat(j.revenue)||0;const profit=rev-totalExp;const ds=drvSt(j);return{...j,dateFmt:this.thaiDate(j.date),driverName:dn||'—',statusStyle:jobStatusChip(j.status),driverStatusLabel:ds.label,driverStatusStyle:ds.style,deliveryNoText:j.deliveryNo||'—',weightText:j.weight?(parseFloat(j.weight)||0).toLocaleString('en-US',{maximumFractionDigits:4})+' ตัน':'—',revenueText:rev?'฿'+Math.round(rev).toLocaleString():'—',expText:totalExp?'฿'+Math.round(totalExp).toLocaleString():'—',profitText:profit!==0?'฿'+Math.abs(Math.round(profit)).toLocaleString():'—',profitStyle:profit>=0?'color:#067647;font-weight:600;':'color:#b42318;font-weight:600;',dpChip:this.fleetChip(j.dispatchPoint),onEdit:()=>this.openJobEdit(j.id),onDelete:()=>this.deleteJob(j.id)};});
+      const jobRows=jobList.map(j=>{const dn=driverName(j.driverCode);const totalExp=[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((s,v)=>s+(parseFloat(v)||0),0);const rev=parseFloat(j.revenue)||0;const profit=rev-totalExp;const ds=drvSt(j);return{...j,dateFmt:this.thaiDate(j.date),driverName:dn||'—',statusStyle:jobStatusChip(j.status),driverStatusLabel:ds.label,driverStatusStyle:ds.style,deliveryNoText:j.deliveryNo||'—',attachCount:((j.attachments||[]).filter(a=>(a.status||'done')==='done').length)+(j.attachment?1:0),hasAttach:((j.attachments||[]).some(a=>(a.status||'done')==='done'))||!!j.attachment,weightText:j.weight?(parseFloat(j.weight)||0).toLocaleString('en-US',{maximumFractionDigits:4})+' ตัน':'—',revenueText:rev?'฿'+Math.round(rev).toLocaleString():'—',expText:totalExp?'฿'+Math.round(totalExp).toLocaleString():'—',profitText:profit!==0?'฿'+Math.abs(Math.round(profit)).toLocaleString():'—',profitStyle:profit>=0?'color:#067647;font-weight:600;':'color:#b42318;font-weight:600;',dpChip:this.fleetChip(j.dispatchPoint),onEdit:()=>this.openJobEdit(j.id),onDelete:()=>this.deleteJob(j.id)};});
       const jobRevTotal=jobList.reduce((s,j)=>s+(parseFloat(j.revenue)||0),0);
       const jobExpTotal=jobList.reduce((s,j)=>s+[j.fuelBaht,j.toll,j.allowance,j.tire,j.repair,j.police,j.misc].reduce((ss,v)=>ss+(parseFloat(v)||0),0),0);
       const jobProfit=jobRevTotal-jobExpTotal;
@@ -2772,7 +3090,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.onJobNewCustomer=(e)=>this.setJ('newCustomer',e.target.value);out.onSaveJobCustomer=this.addJobCustomerInline;
       out.onJobNewOrigin=(e)=>this.setJ('newOrigin',e.target.value);out.onSaveJobOrigin=this.addJobOriginInline;
       out.onJobDeliveryNo=(e)=>this.setJ('deliveryNo',e.target.value);out.onJobWeight=(e)=>this.setJ('weight',e.target.value);
-      out.onJobRevenue=(e)=>this.setJ('revenue',e.target.value);out.onJobDp=(e)=>this.setJ('dispatchPoint',e.target.value);
+      out.onJobRevenue=(e)=>this.setJ('revenue',e.target.value);out.onJobDistance=(e)=>this.setJ('distance',e.target.value);out.onJobDp=(e)=>this.setJ('dispatchPoint',e.target.value);
       const selTruck=S.trucks.find(t=>t.plate===jd.truckPlate);
       const isCompanyTruck=!!(selTruck&&selTruck.dept==='รถบริษัท');
       out.isCompanyTruck=isCompanyTruck;out.isNotCompanyTruck=!isCompanyTruck;
@@ -2790,8 +3108,16 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.onJobAllowance=(e)=>this.setJ('allowance',e.target.value);out.onJobTire=(e)=>this.setJ('tire',e.target.value);
       out.onJobRepair=(e)=>this.setJ('repair',e.target.value);out.onJobPolice=(e)=>this.setJ('police',e.target.value);
       out.onJobMisc=(e)=>this.setJ('misc',e.target.value);out.onJobRemark=(e)=>this.setJ('remark',e.target.value);out.onJobDriverNote=(e)=>this.setJ('driverNote',e.target.value);out.onJobFuelAdvance=(e)=>this.setJ('fuelAdvance',e.target.value);out.onJobFuelAdvanceNote=(e)=>this.setJ('fuelAdvanceNote',e.target.value);
-      out.onJobAttachment=(e)=>this.readJobAttachment(e);out.onRemoveJobAttachment=this.removeJobAttachment;out.jdHasAttachment=!!jd.attachment;out.jdNoAttachment=!jd.attachment;
-      out.jdAttachmentNode=jd.attachment?React.createElement('img',{src:jd.attachment,style:{maxWidth:'240px',maxHeight:'180px',borderRadius:'8px',border:'1px solid #e4e7ec',objectFit:'cover'}}):null;
+      out.onJobAddFiles=this.addJobFiles;
+      const _fmtSize=(n)=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':n>=1024?Math.round(n/1024)+' KB':n+' B');
+      const _isImgAtt=(name,type,url)=>/^image\//.test(type||'')||/\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(name||'')||/^data:image\//.test(url||'');
+      const _iconFor=(name,type)=>{const n=(name||'').toLowerCase();if(/pdf/.test(type||'')||/\.pdf$/.test(n))return '📄';if(/^image\//.test(type||'')||/\.(png|jpe?g|gif|webp|bmp|svg)$/.test(n))return '🖼️';if(/sheet|excel|csv/.test(type||'')||/\.(xls|xlsx|csv)$/.test(n))return '📊';if(/word|document/.test(type||'')||/\.(doc|docx)$/.test(n))return '📝';return '📎';};
+      const _atts=[];
+      const _thumb=(src)=>React.createElement('img',{src,style:{width:'100%',height:'94px',objectFit:'cover'}});
+      if(jd.attachment){_atts.push({id:'__legacy',name:'รูปเอกสาร (เดิม)',url:jd.attachment,isImage:true,showThumb:true,thumbNode:_thumb(jd.attachment),showIcon:false,icon:'🖼️',sizeText:'',uploading:false,error:false,done:true,onRemove:this.removeJobAttachment,onOpen:()=>this.openLightbox(jd.attachment,'รูปเอกสาร','image/*')});}
+      ((jd.attachments)||[]).forEach(a=>{const st=a.status||'done';const img=_isImgAtt(a.name,a.type,a.url)&&!!a.url;const done=st==='done'&&!!a.url;
+        _atts.push({id:a.id,name:a.name||'ไฟล์',url:a.url||'',isImage:img,showThumb:img&&done,thumbNode:(img&&done)?_thumb(a.url):null,showIcon:!img&&st!=='uploading'&&st!=='error',icon:_iconFor(a.name,a.type),sizeText:_fmtSize(a.size),uploading:st==='uploading',error:st==='error',errorMsg:a.errorMsg||'',done:done,onRemove:()=>this.removeJobAttachmentById(a.id),onOpen:done?(()=>this.openLightbox(a.url,a.name,a.type)):null});});
+      out.jdAttachments=_atts;out.jdHasAttachmentsList=_atts.length>0;out.jdAttachCountText=_atts.length?('('+_atts.length+')'):'';
       out.onJobDispatchTime=(e)=>this.setJ('dispatchTime',e.target.value);
       out.onJobPickupTime=(e)=>this.setJ('pickupTime',e.target.value);
       out.onJobArrivalTime=(e)=>this.setJ('arrivalTime',e.target.value);
@@ -2831,14 +3157,14 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       }).sort((a,b)=>(Number(b.id)||0)-(Number(a.id)||0));
       const oStatusChip=(s)=>{if(s==='จ่ายงานแล้ว')return this.chip('#067647','#ecfdf3');if(s==='ยกเลิก')return this.chip('#b42318','#fef3f2');return this.chip('#b54708','#fffaeb');};
       const _osel=new Set((S.selectedOrderIds||[]).map(String));const _otc={};S.orders.forEach(o=>{if(o.tripId)_otc[o.tripId]=(_otc[o.tripId]||0)+1;});
-      out.orderSelectedCount=_osel.size;out.orderCanLink=_osel.size>=2;out.orderLinkBar=_osel.size>0;out.onLinkTrip=this.linkTrip;out.onClearSel=()=>this.setState({selectedOrderIds:[]});
-      const _mkRow=(o,fl)=>({id:o.id,selected:_osel.has(String(o.id)),onToggleSel:()=>this.toggleOrderSel(o.id),hasTrip:!!o.tripId,showCheckbox:!o.tripId,onUnlink:()=>this.unlinkOrder(o.id),billNo:o.billNo||'—',billPrefix:fl.isSub?'↳ ':'',billCount:(o.shipments&&o.shipments.length)||1,multiBill:!!(o.shipments&&o.shipments.length>1),multiBillText:(o.shipments&&o.shipments.length>1)?('+'+(o.shipments.length-1)+' บิล'):'',customer:o.customer||'—',route:(o.origin||'—')+' → '+(o.destination||'—'),weight:o.weight?(o.weight+' ตัน'):'—',truckType:o.truckType||'—',requiredDate:o.requiredDate?this.thaiDate(o.requiredDate):'—',receivedDate:o.receivedDate?this.thaiDate(o.receivedDate):'—',statusLabel:o.status||'รอจัดรถ',statusStyle:oStatusChip(o.status),canDispatch:o.status!=='จ่ายงานแล้ว'&&o.status!=='ยกเลิก',dispatched:o.status==='จ่ายงานแล้ว',onEdit:()=>this.openOrderEdit(o.id),onDispatch:()=>this.dispatchOrder(o.id),onViewJob:()=>this.viewOrderJob(o.jobId),onDelete:()=>this.deleteOrder(o.id),isPrimary:!!fl.isPrimary,isSub:!!fl.isSub,showTripBadge:!!fl.isPrimary,tripBadgeFull:fl.tripBadgeFull||'',rowBg:fl.isSub?'#fafbfd':'#ffffff'});
+      const _selOrders=S.orders.filter(o=>_osel.has(String(o.id)));out.orderSelectedCount=_osel.size;out.orderCanLink=_osel.size>=2&&_selOrders.every(o=>!o.tripId);out.orderLinkBar=_osel.size>0;out.onLinkTrip=this.linkTrip;out.onClearSel=()=>this.setState({selectedOrderIds:[]});
+      const _mkRow=(o,fl)=>({id:o.id,selected:fl.memberIds?fl.memberIds.every(mid=>_osel.has(String(mid))):_osel.has(String(o.id)),onToggleSel:fl.memberIds?(()=>this.toggleTripSel(fl.memberIds)):(()=>this.toggleOrderSel(o.id)),hasTrip:!!o.tripId,showCheckbox:!o.tripId||!!fl.isPrimary,onUnlink:()=>this.unlinkOrder(o.id),billNo:o.billNo||'—',billPrefix:fl.isSub?'↳ ':'',billCount:(o.shipments&&o.shipments.length)||1,multiBill:!!(o.shipments&&o.shipments.length>1),multiBillText:(o.shipments&&o.shipments.length>1)?('+'+(o.shipments.length-1)+' บิล'):'',customer:o.customer||'—',route:(o.origin||'—')+' → '+(o.destination||'—'),weight:o.weight?(o.weight+' ตัน'):'—',truckType:o.truckType||'—',requiredDate:o.requiredDate?this.thaiDate(o.requiredDate):'—',receivedDate:o.receivedDate?this.thaiDate(o.receivedDate):'—',statusLabel:o.status||'รอจัดรถ',statusStyle:oStatusChip(o.status),canDispatch:o.status!=='จ่ายงานแล้ว'&&o.status!=='ยกเลิก',dispatched:o.status==='จ่ายงานแล้ว',onEdit:()=>this.openOrderEdit(o.id),onDispatch:()=>this.dispatchOrder(o.id),onViewJob:()=>this.viewOrderJob(o.jobId),onRevertDispatch:()=>this.revertOrderDispatch(o.id),onDelete:()=>this.deleteOrder(o.id),isPrimary:!!fl.isPrimary,isSub:!!fl.isSub,showTripBadge:!!fl.isPrimary,tripBadgeFull:fl.tripBadgeFull||'',rowBg:fl.isSub?'#fafbfd':'#ffffff'});
       const _usedTrip=new Set();const _rows=[];
       oList.forEach(o=>{
         if(o.tripId){if(_usedTrip.has(o.tripId))return;_usedTrip.add(o.tripId);
           const mem=oList.filter(x=>x.tripId===o.tripId).slice().sort((a,b)=>(parseFloat(b.weight)||0)-(parseFloat(a.weight)||0));
           const tot=Math.round(mem.reduce((s,m)=>s+(parseFloat(m.weight)||0),0)*1000)/1000;
-          _rows.push(_mkRow(mem[0],{isPrimary:true,tripBadgeFull:'🔗 เที่ยวร่วม '+mem.length+' บิล · รวม '+tot+' ตัน'}));
+          _rows.push(_mkRow(mem[0],{isPrimary:true,memberIds:mem.map(m=>m.id),tripBadgeFull:'🔗 เที่ยวร่วม '+mem.length+' บิล · รวม '+tot+' ตัน'}));
           mem.slice(1).forEach(s=>_rows.push(_mkRow(s,{isSub:true})));
         }else{_rows.push(_mkRow(o,{}));}
       });
@@ -2874,6 +3200,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.onOrderRemark=(e)=>this.setO('remark',e.target.value);out.onSaveOrder=this.saveOrder;out.onCancelOrder=this.cancelOrderForm;
       out.orderFormErrorVisible=!!S.orderFormError;out.orderFormErrorText=S.orderFormError;
     }
+    Object.assign(out,_attLightbox);
     return out;
   }
 }
