@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>ตรวจสภาพก่อนออกงาน · LionFlow</title>
+<link rel="icon" href="lionflow-appicon.png" type="image/png" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Tahoma,sans-serif;background:#eef1f4;color:#1d2b3a;min-height:100vh;padding-bottom:96px;}
+  .wrap{max-width:520px;margin:0 auto;}
+  .header{background:#16263a;color:#fff;padding:16px 18px 18px;position:sticky;top:0;z-index:5;}
+  .header-logo{font-size:11px;color:#7f96ad;letter-spacing:.06em;text-transform:uppercase;font-weight:600;}
+  .header-title{font-size:19px;font-weight:800;margin-top:3px;}
+  .header-plate{font-size:14px;color:#c3d2e2;margin-top:5px;font-weight:600;}
+  .card{background:#fff;margin:14px 14px 0;border-radius:14px;border:1px solid #e4e7ec;overflow:hidden;}
+  .card-head{padding:13px 16px;background:#f8fafc;border-bottom:1px solid #eef1f4;font-size:14.5px;font-weight:800;color:#16263a;display:flex;align-items:center;gap:9px;}
+  .card-body{padding:6px 16px 14px;}
+  .field{margin-top:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:#51617a;margin-bottom:5px;}
+  .field input,.field textarea{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:9px;font-size:15px;color:#1d2b3a;font-family:inherit;}
+  .field textarea{min-height:64px;resize:vertical;}
+  .item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f4f6f9;}
+  .item:last-child{border-bottom:none;}
+  .item-label{flex:1;font-size:14.5px;line-height:1.4;}
+  .toggle{display:flex;gap:6px;flex:none;}
+  .tg{border:1.5px solid #d0d5dd;background:#fff;color:#98a2b3;font-size:13px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;min-width:52px;}
+  .tg.ok.on{background:#ecfdf3;border-color:#75c99a;color:#067647;}
+  .tg.fail.on{background:#fef3f2;border-color:#eda29b;color:#b42318;}
+  .grp-note{margin-top:12px;}
+  .photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
+  .photo-thumb{width:64px;height:64px;border-radius:9px;object-fit:cover;border:1px solid #d0d5dd;}
+  .add-photo{width:64px;height:64px;border-radius:9px;border:1.5px dashed #b6c2d1;background:#f8fafc;color:#6f8499;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .add-photo input{display:none;}
+  .footbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e4e7ec;padding:12px 14px;box-shadow:0 -4px 16px rgba(16,38,64,.08);}
+  .footbar-inner{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center;}
+  .summary{flex:1;font-size:12.5px;color:#667085;}
+  .summary b{color:#16263a;font-size:15px;}
+  .submit{flex:none;background:#2f6fb0;border:none;color:#fff;font-size:16px;font-weight:800;padding:14px 26px;border-radius:11px;cursor:pointer;}
+  .submit:disabled{background:#b6c2d1;}
+  .submit.fail{background:#b42318;}
+  .note-box{margin:14px;padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.6;}
+  .note-warn{background:#fffaeb;border:1px solid #f3dcae;color:#8a5a12;}
+  .done-screen{text-align:center;padding:60px 24px;}
+  .done-screen .big{font-size:60px;}
+  .done-screen h2{font-size:22px;font-weight:800;margin-top:12px;}
+  .done-screen p{font-size:14.5px;color:#51617a;margin-top:10px;line-height:1.6;}
+  .done-screen .again{margin-top:26px;background:#16263a;color:#fff;border:none;font-size:15px;font-weight:700;padding:13px 28px;border-radius:11px;cursor:pointer;}
+  .loading{text-align:center;padding:80px 20px;color:#667085;font-size:15px;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="loading">กำลังโหลด…</div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ojttzvcqjqqqullopeqt.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdHR6dmNxanFxcXVsbG9wZXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzE1MDAsImV4cCI6MjA5Nzk0NzUwMH0.68VmEegEuj6IrG3XweK4AQEufhzvQiUz79ThL28LOzk';
+const COMPANY_ID='singthong';
+const SB_REST=SUPABASE_URL+'/rest/v1';
+const SB_H={apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+const SB_BUCKET='attachments';
+
+const INSPECT_VEH=[
+  {g:'ยางและล้อ',icon:'🛞',items:['ลมยางทุกล้อ','ดอกยาง / รอยสึก','น็อตล้อครบ-แน่น','ยางอะไหล่']},
+  {g:'ระบบเบรก',icon:'🛑',items:['ลมเบรก (แรงดัน)','ผ้าเบรก','เบรกมือ']},
+  {g:'ไฟและสัญญาณ',icon:'💡',items:['ไฟหน้า / ไฟสูง','ไฟเลี้ยว-ไฟเบรก','แตร','ไฟฉุกเฉิน']},
+  {g:'ของเหลว / เครื่องยนต์',icon:'🛢️',items:['น้ำมันเครื่อง','น้ำหล่อเย็น','เชื้อเพลิง']},
+  {g:'อุปกรณ์นิรภัย',icon:'🧯',items:['ถังดับเพลิง','สามเหลี่ยมสะท้อนแสง','เข็มขัดนิรภัย']},
+];
+const INSPECT_DRIVER=['วัดแอลกอฮอล์ = 0.00','พักผ่อน ≥ 8 ชม. ก่อนขับ','ชั่วโมงขับสะสม < 8 ชม./วัน','ใบขับขี่ ท.2 ไม่หมดอายุ','สุขภาพพร้อม / ไม่มีอาการป่วย'];
+const INSPECT_CUST=['สวม PPE ครบ (หมวก/รองเท้าเซฟตี้)','เสื้อสะท้อนแสง','ผ้าใบคลุมสินค้า / สายรัด'];
+
+// ---- state ----
+const params=new URLSearchParams(location.search);
+const PLATE=(params.get('t')||params.get('plate')||'').trim();
+const state={ truck:null, inspector:'', driverName:'', status:{}, notes:{veh:'',driver:'',cust:''}, photos:{veh:[],driver:[],cust:[]}, submitting:false, done:false };
+// default all ok
+INSPECT_VEH.forEach((s,gi)=>s.items.forEach((_,ii)=>state.status['v'+gi+'_'+ii]='ok'));
+INSPECT_DRIVER.forEach((_,i)=>state.status['d'+i]='ok');
+INSPECT_CUST.forEach((_,i)=>state.status['c'+i]='ok');
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function failCount(){return Object.values(state.status).filter(x=>x==='fail').length;}
+
+async function loadTruck(){
+  if(!PLATE)return null;
+  try{
+    const rows=await (await fetch(SB_REST+'/trucks?company_id=eq.'+encodeURIComponent(COMPANY_ID)+'&plate=eq.'+encodeURIComponent(PLATE)+'&select=data',{headers:SB_H})).json();
+    if(Array.isArray(rows)&&rows[0])return rows[0].data||{plate:PLATE};
+  }catch(e){}
+  return {plate:PLATE};
+}
+
+// compress an image File to a jpeg blob (max 1000px, q0.6)
+function compress(file){
+  return new Promise((resolve)=>{
+    const img=new Image();const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      let w=img.width,h=img.height;const M=1000;
+      if(w>M||h>M){if(w>=h){h=Math.round(h*M/w);w=M;}else{w=Math.round(w*M/h);h=M;}}
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      cv.toBlob(b=>resolve(b||file),'image/jpeg',0.6);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);resolve(file);};
+    img.src=url;
+  });
+}
+async function uploadPhoto(blob,id){
+  const path=COMPANY_ID+'/inspections/'+id+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,7)+'.jpg';
+  const res=await fetch(SUPABASE_URL+'/storage/v1/object/'+SB_BUCKET+'/'+encodeURI(path),{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
+  if(!res.ok)throw new Error('upload '+res.status);
+  return SUPABASE_URL+'/storage/v1/object/public/'+SB_BUCKET+'/'+encodeURI(path);
+}
+
+function render(){
+  const app=document.getElementById('app');
+  if(state.done){
+    const fc=state.lastFail||0;
+    app.innerHTML='<div class="done-screen"><div class="big">'+(fc>0?'⚠️':'✅')+'</div><h2>ส่งผลตรวจแล้ว</h2><p>ทะเบียน <b>'+esc(state.truck.plate||PLATE)+'</b><br/>ผู้ตรวจ: '+esc(state.inspector)+(fc>0?('<br/><span style="color:#b42318;font-weight:700;">พบ '+fc+' รายการไม่ผ่าน — แจ้งหัวหน้างาน</span>'):'<br/><span style="color:#067647;font-weight:700;">ผ่านครบทุกรายการ</span>')+'</p><button class="again" onclick="location.reload()">ตรวจอีกครั้ง</button></div>';
+    return;
+  }
+  const t=state.truck||{plate:PLATE};
+  let h='<div class="header"><div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div><div class="header-title">🛡️ ตรวจสภาพก่อนออกงาน</div><div class="header-plate">🚛 '+esc(t.plate||'—')+(t.truckType?(' · '+esc(t.truckType)):'')+(t.dept?(' · '+esc(t.dept)):'')+'</div></div>';
+  if(!PLATE){h+='<div class="note-box note-warn">ไม่พบทะเบียนรถใน QR — กรุณาสแกน QR ที่ติดกับรถคันที่ต้องการตรวจ</div>';app.innerHTML=h;return;}
+  // inspector
+  h+='<div class="card"><div class="card-head">👤 ผู้ตรวจ</div><div class="card-body">'
+    +'<div class="field"><label>ชื่อผู้ตรวจ *</label><input id="f_inspector" value="'+esc(state.inspector)+'" placeholder="ชื่อ พขร. หรือ หัวหน้างาน" oninput="state.inspector=this.value;updateFoot()" /></div>'
+    +'<div class="field"><label>พนักงานขับรถ (ถ้ามี)</label><input id="f_driver" value="'+esc(state.driverName)+'" placeholder="ชื่อ พขร. ที่จะใช้รถคันนี้" oninput="state.driverName=this.value" /></div>'
+    +'</div></div>';
+  // vehicle sections
+  INSPECT_VEH.forEach((sec,gi)=>{
+    h+='<div class="card"><div class="card-head">'+sec.icon+' '+esc(sec.g)+'</div><div class="card-body">';
+    sec.items.forEach((it,ii)=>{h+=itemRow('v'+gi+'_'+ii,it);});
+    h+='</div></div>';
+  });
+  h+=groupNote('veh','หมายเหตุ/ปัญหาที่พบ (สภาพรถ)');
+  // driver
+  h+='<div class="card"><div class="card-head">🧑‍✈️ สภาพคนขับ</div><div class="card-body">';
+  INSPECT_DRIVER.forEach((it,i)=>{h+=itemRow('d'+i,it);});
+  h+='</div></div>'+groupNote('driver','หมายเหตุ/ปัญหาที่พบ (คนขับ)');
+  // customer rules
+  h+='<div class="card"><div class="card-head">📋 ระเบียบ/ความปลอดภัย</div><div class="card-body">';
+  INSPECT_CUST.forEach((it,i)=>{h+=itemRow('c'+i,it);});
+  h+='</div></div>'+groupNote('cust','หมายเหตุ/ปัญหาที่พบ (ระเบียบ)');
+  h+='<div style="height:8px"></div>';
+  // footbar
+  h+='<div class="footbar"><div class="footbar-inner"><div class="summary" id="footsum"></div><button class="submit" id="submitBtn" onclick="submit()">ส่งผลตรวจ</button></div></div>';
+  app.innerHTML=h;
+  bindPhotos();
+  updateFoot();
+}
+function itemRow(key,label){
+  const v=state.status[key]||'ok';
+  return '<div class="item"><div class="item-label">'+esc(label)+'</div><div class="toggle">'
+    +'<button class="tg ok'+(v==='ok'?' on':'')+'" onclick="setSt(\''+key+'\',\'ok\')">ผ่าน</button>'
+    +'<button class="tg fail'+(v==='fail'?' on':'')+'" onclick="setSt(\''+key+'\',\'fail\')">ไม่ผ่าน</button>'
+    +'</div></div>';
+}
+function groupNote(sec,label){
+  let ph=(state.photos[sec]||[]).map((u,i)=>'<img class="photo-thumb" src="'+u+'" onclick="rmPhoto(\''+sec+'\','+i+')" title="แตะเพื่อลบ" />').join('');
+  return '<div class="card"><div class="card-body"><div class="field grp-note"><label>'+esc(label)+'</label>'
+    +'<textarea data-note="'+sec+'" placeholder="พิมพ์เพิ่มเติม เช่น เรื่องเฉพาะที่ต้องตรวจ / สิ่งที่พบ" oninput="state.notes.'+sec+'=this.value">'+esc(state.notes[sec])+'</textarea>'
+    +'<div class="photos">'+ph+'<label class="add-photo">+<input type="file" accept="image/*" capture="environment" data-photo="'+sec+'" /></label></div>'
+    +'</div></div></div>';
+}
+function setSt(key,val){state.status[key]=val;render();}
+window.setSt=setSt;window.state=state;
+window.rmPhoto=function(sec,i){state.photos[sec].splice(i,1);render();};
+window.updateFoot=function(){
+  const fc=failCount();const sum=document.getElementById('footsum');const btn=document.getElementById('submitBtn');
+  if(sum)sum.innerHTML=(fc>0?('<b style="color:#b42318">'+fc+'</b> รายการไม่ผ่าน'):'<b style="color:#067647">ผ่านครบ</b>');
+  if(btn){btn.disabled=!String(state.inspector||'').trim()||state.submitting;btn.className='submit'+(fc>0?' fail':'');btn.textContent=state.submitting?'กำลังส่ง…':'ส่งผลตรวจ';}
+};
+function bindPhotos(){
+  document.querySelectorAll('input[data-photo]').forEach(inp=>{
+    inp.onchange=async(e)=>{
+      const sec=inp.getAttribute('data-photo');const files=[...(e.target.files||[])];
+      for(const f of files){try{const b=await compress(f);const durl=await blobToDataUrl(b);state.photos[sec].push(durl);}catch(x){}}
+      render();
+    };
+  });
+}
+function blobToDataUrl(b){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(b);});}
+function dataUrlToBlob(d){const [meta,b64]=d.split(',');const bin=atob(b64);const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);return new Blob([u8],{type:(meta.match(/:(.*?);/)||[])[1]||'image/jpeg'});}
+
+async function submit(){
+  if(state.submitting)return;
+  if(!String(state.inspector||'').trim()){alert('กรุณากรอกชื่อผู้ตรวจ');return;}
+  state.submitting=true;updateFoot();
+  try{
+    const id=Date.now();
+    const now=new Date();
+    const date=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+    const time=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'}).format(now);
+    // upload photos
+    const photoUrls={veh:[],driver:[],cust:[]};
+    for(const sec of ['veh','driver','cust']){
+      for(const durl of state.photos[sec]){
+        try{const url=await uploadPhoto(dataUrlToBlob(durl),id);photoUrls[sec].push(url);}catch(x){}
+      }
+    }
+    const fc=failCount();
+    const rec={id,date,time,inspectedAt:now.toISOString(),truckPlate:state.truck.plate||PLATE,truckType:(state.truck||{}).truckType||'',dept:(state.truck||{}).dept||'',driverName:state.driverName||'',driverCode:'',customer:'',jobId:'',jobNo:'',inspector:state.inspector.trim(),status:state.status,notes:state.notes,photos:photoUrls,result:fc>0?'fail':'pass',score:Math.round((1-fc/Math.max(1,Object.keys(state.status).length))*100),source:'qr',approvedBy:'',_editedAt:id};
+    const res=await fetch(SB_REST+'/inspections?on_conflict=company_id,id',{method:'POST',headers:{...SB_H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify([{company_id:COMPANY_ID,id:String(id),data:rec}])});
+    if(!res.ok)throw new Error('save '+res.status);
+    state.lastFail=fc;state.done=true;render();
+  }catch(e){
+    alert('ส่งไม่สำเร็จ: '+(e&&e.message||e)+'\nลองใหม่อีกครั้ง หรือเช็กสัญญาณเน็ต');
+    state.submitting=false;updateFoot();
+  }
+}
+window.submit=submit;
+
+(async function init(){
+  state.truck=await loadTruck();
+  render();
+})();
+</script>
+</body>
+</html>
