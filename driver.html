@@ -1,491 +1,131 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <title>บันทึกงานขนส่ง</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; min-height: 100vh; color: #1d2b3a; }
-    .header { background: #16263a; color: #fff; padding: 16px 20px 18px; }
-    .header-logo { font-size: 11px; color: #6f8499; margin-bottom: 4px; letter-spacing: .06em; text-transform: uppercase; }
-    .header-title { font-size: 18px; font-weight: 700; }
-    .header-sub { font-size: 13px; color: #9fb2c4; margin-top: 3px; }
-    .card { background: #fff; margin: 14px 14px 0; border-radius: 14px; border: 1px solid #e4e7ec; overflow: hidden; }
-    .card-head { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; display: flex; align-items: center; justify-content: space-between; }
-    .job-no { font-size: 17px; font-weight: 700; }
-    .job-plate { font-size: 12px; color: #667085; margin-top: 2px; }
-    .status-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-    .job-rows { padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; }
-    .job-row { display: flex; gap: 10px; font-size: 14px; }
-    .job-lbl { color: #98a2b3; font-size: 12px; min-width: 72px; padding-top: 1px; flex: none; }
-    .job-val { color: #1d2b3a; font-weight: 500; }
-    .stages-wrap { margin: 14px 14px 0; }
-    .stage { background: #fff; border-radius: 12px; border: 2px solid #e4e7ec; padding: 14px 16px; margin-bottom: 10px; transition: border-color .2s, background .2s; }
-    .stage.done { border-color: #abefc6; background: #f0fdf4; }
-    .stage.active { border-color: #fedf89; background: #fffbeb; }
-    .stage-row { display: flex; align-items: center; gap: 12px; }
-    .stage-icon { width: 40px; height: 40px; border-radius: 50%; background: #f4f6f8; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; }
-    .stage.done .stage-icon { background: #dcfce7; }
-    .stage.active .stage-icon { background: #fef3c7; }
-    .stage-info { flex: 1; min-width: 0; }
-    .stage-label { font-size: 15px; font-weight: 700; }
-    .stage-time { font-size: 12px; color: #667085; margin-top: 3px; }
-    .stage-check { font-size: 22px; flex: none; }
-    .mark-btn { margin-top: 12px; width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; background: #2f6fb0; color: #fff; letter-spacing: .02em; }
-    .mark-btn:active { background: #1d5a96; }
-    .map-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: #2f6fb0; text-decoration: none; margin-top: 8px; font-weight: 600; }
-    .no-gps { font-size: 12px; color: #98a2b3; margin-top: 6px; }
-    .getting-gps { font-size: 13px; color: #b54708; margin-top: 8px; }
-    .share-wrap { margin: 14px; }
-    .share-card { background: #fff; border-radius: 14px; border: 1px solid #e4e7ec; padding: 16px; }
-    .share-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-    .share-text { font-size: 12px; color: #475467; background: #f8fafc; padding: 12px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; line-height: 1.6; }
-    .copy-btn { margin-top: 10px; width: 100%; padding: 12px; border: 1px solid #d0d5dd; border-radius: 8px; background: #fff; font-size: 14px; color: #475467; cursor: pointer; font-weight: 600; }
-    .copy-btn:active { background: #f0f2f5; }
-    .copied-msg { text-align: center; color: #067647; font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
-    .error-box { margin: 40px 20px; padding: 24px; background: #fef3f2; border: 1px solid #f5c9c2; border-radius: 14px; text-align: center; color: #b42318; }
-    .error-box .icon { font-size: 36px; margin-bottom: 10px; }
-    .footer { height: 32px; }
-    .gps-loading { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #b54708; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { width: 14px; height: 14px; border: 2px solid #fedf89; border-top-color: #b54708; border-radius: 50%; animation: spin .8s linear infinite; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>LionFlow — งานของฉัน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:'Sarabun',sans-serif;background:#eef0f3;color:#1d2b3a;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:480px;margin:0 auto;min-height:100vh;background:#eef0f3;}
+  .head{background:radial-gradient(900px 400px at 30% -20%,#21405f,#16263a 62%,#101a28);color:#fff;padding:20px 20px 26px;}
+  .card{background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:16px 16px;margin:14px;}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #f2f4f7;font-size:14px;}
+  .row:last-child{border-bottom:none;}
+  .row .k{color:#98a2b3;flex:none;}
+  .row .v{color:#1d2b3a;font-weight:600;text-align:right;}
+  .btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;font-size:15.5px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:11px;}
+  .btn:disabled{opacity:.55;cursor:default;}
+  .stepbtn{background:#2f6fb0;color:#fff;}
+  .stepdone{background:#ecfdf3;color:#067647;border:1px solid #bfe6cf;}
+  textarea{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:10px;font-size:14px;font-family:inherit;color:#1d2b3a;resize:vertical;min-height:60px;box-sizing:border-box;}
+  .muted{font-size:12px;color:#98a2b3;}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#16263a;color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;transition:opacity .25s;z-index:50;box-shadow:0 8px 26px rgba(0,0,0,.3);}
+  .toast.show{opacity:1;}
+  .spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .8s linear infinite;vertical-align:middle;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+</style>
 </head>
 <body>
-<div id="app">
-  <div class="header"><div class="header-title">กำลังโหลด...</div></div>
+<div class="wrap" id="app">
+  <div class="head">
+    <div style="font-size:12.5px;color:#E8A33D;font-weight:700;letter-spacing:.08em;">LIONFLOW · งานของฉัน</div>
+    <div id="hTitle" style="font-size:20px;font-weight:800;margin-top:6px;">กำลังโหลด… <span class="spin"></span></div>
+    <div id="hSub" style="font-size:13px;color:#aab8c8;margin-top:4px;"></div>
+  </div>
+  <div id="body"></div>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
-const THM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-const SUPABASE_URL = 'https://ojttzvcqjqqqullopeqt.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdHR6dmNxanFxcXVsbG9wZXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzE1MDAsImV4cCI6MjA5Nzk0NzUwMH0.68VmEegEuj6IrG3XweK4AQEufhzvQiUz79ThL28LOzk';
-const COMPANY_ID = 'singthong';
-const SB_REST = SUPABASE_URL + '/rest/v1';
-const SB_HEADERS = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' };
-async function sbGetAll() {
-  const q = '?company_id=eq.' + encodeURIComponent(COMPANY_ID);
-  const A = x => Array.isArray(x) ? x : [];
-  const [dr, jb] = await Promise.all([
-    fetch(SB_REST + '/drivers' + q + '&select=code,data', { headers: SB_HEADERS }).then(r => r.json()),
-    fetch(SB_REST + '/jobs' + q + '&select=id,data,progress,deleted', { headers: SB_HEADERS }).then(r => r.json())
-  ]);
-  return {
-    drivers: A(dr).map(r => ({ ...(r.data || {}), code: r.code })),
-    jobs: A(jb).filter(r => !r.deleted).map(r => ({ ...(r.data || {}), ...(r.progress || {}), id: r.id })),
-    deletedJobIds: A(jb).filter(r => r.deleted).map(r => String(r.id))
-  };
-}
-async function sbDriverUpdate(jobId, updates) {
-  return fetch(SB_REST + '/jobs?company_id=eq.' + encodeURIComponent(COMPANY_ID) + '&id=eq.' + encodeURIComponent(String(jobId)), { method: 'PATCH', headers: SB_HEADERS, body: JSON.stringify({ progress: updates }) }).catch(() => {});
-}
+// ===== config : ชี้ PRODUCTION (cutover แล้ว) =====
+// staging (เผื่อ rollback): URL='https://vugqoevhxqssdqykwgpi.supabase.co'
+//       KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1Z3FvZXZoeHFzc2RxeWt3Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE2MzYsImV4cCI6MjA5ODkwNzYzNn0.G_wDLk8lnbp4zWH83x28MFnbS5hYiExHB33ZNQSCkhg'
+var SUPABASE_URL='https://ojttzvcqjqqqullopeqt.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdHR6dmNxanFxcXVsbG9wZXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzE1MDAsImV4cCI6MjA5Nzk0NzUwMH0.68VmEegEuj6IrG3XweK4AQEufhzvQiUz79ThL28LOzk';
+var H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
 
-const STAGES = [
-  { key: 'pickup',     label: 'รับสินค้า',  icon: '📦', latKey: 'pickupLat',     lngKey: 'pickupLng' },
-  { key: 'arrival',    label: 'ถึงลูกค้า',   icon: '📍', latKey: 'arrivalLat',    lngKey: 'arrivalLng' },
-  { key: 'completion', label: 'ส่งสำเร็จ',  icon: '✅', latKey: 'completionLat', lngKey: 'completionLng' },
-  { key: 'document',   label: 'ส่งเอกสาร',  icon: '📄', latKey: null,            lngKey: null },
-];
+var TOKEN=new URLSearchParams(location.search).get('t')||'';
+var JOB=null, JOBID=null, DRIVER=null;
 
-function fmtDT(dt) {
-  if (!dt) return '—';
-  const d = new Date(dt.includes('T') ? dt : dt.replace(' ','T'));
-  if (isNaN(d)) return dt;
-  const pad = n => String(n).padStart(2,'0');
-  return d.getDate() + ' ' + THM[d.getMonth()] + ' ' + (d.getFullYear()+543) +
-    ' เวลา ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' น.';
-}
+var THM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+function thDate(iso){if(!iso)return '—';var p=String(iso).slice(0,10).split('-');if(p.length!==3)return iso;return (+p[2])+' '+THM[(+p[1])-1]+' '+((+p[0])+543);}
+function nowLocal(){var d=new Date();var p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());}
+function fmtT(iso){if(!iso)return '';var m=String(iso).match(/T(\d{2}:\d{2})/);return m?(' · '+m[1]+' น.'):'';}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){t.classList.remove('show');},2200);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
-function fmtDate(v) {
-  if (!v) return '—';
-  const s = String(v);
-  let y, m, d;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { const p = s.split('-'); y = +p[0]; m = +p[1]; d = +p[2]; }
-  else { const dt = new Date(s); if (isNaN(dt)) return s; const f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).format(dt); const p = f.split('-'); y = +p[0]; m = +p[1]; d = +p[2]; }
-  return d + ' ' + THM[m - 1] + ' ' + (y + 543);
-}
+function rpc(fn,args){return fetch(SUPABASE_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:H,body:JSON.stringify(args)}).then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};});});}
 
-function nowLocal() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
-    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-}
+function getGeo(){return new Promise(function(res){if(!navigator.geolocation){res({});return;}navigator.geolocation.getCurrentPosition(function(p){res({lat:p.coords.latitude,lng:p.coords.longitude});},function(){res({});},{enableHighAccuracy:true,timeout:6000,maximumAge:30000});});}
 
-function loadJob() {
-  const p = new URLSearchParams(location.search);
-  let d = p.get('d');
-  if (d) {
-    d = d.replace(/ /g, '+'); // กัน + ถูกแปลงเป็นช่องว่างใน query string
-    try { return JSON.parse(decodeURIComponent(escape(atob(d)))); } catch(e) { return null; }
-  }
-  // ลิงก์สั้น: ส่งแค่ id แล้วดึงรายละเอียดจาก Sheet
-  const id = p.get('j') || p.get('id');
-  if (id) return { id: id, _needFetch: true };
-  return null;
-}
-
-function lsKey(id) { return 'drvUpdate_' + id; }
-
-function loadUpdates(id) {
-  try { const s = localStorage.getItem(lsKey(id)); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
-}
-
-function saveUpdates(id, upd) {
-  try { localStorage.setItem(lsKey(id), JSON.stringify(upd)); } catch(e) {}
-}
-
-function getGps() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) { resolve(null); return; }
-    navigator.geolocation.getCurrentPosition(
-      p => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-    );
-  });
-}
-
-function postToSheets(jobId, jobNo, upd) {
-  try {
-    sbDriverUpdate(jobId, upd);
-  } catch(e) {}
-}
-
-function stageStatus(stageKey, idx, upd) {
-  const timeKey = stageKey + 'Time';
-  if (upd[timeKey]) return 'done';
-  const prevDone = idx === 0 || !!upd[STAGES[idx-1].key + 'Time'];
-  return prevDone ? 'active' : 'pending';
-}
-
-function shareText(job, upd) {
-  const lines = [
-    '📋 รายงานงาน ' + (job.jobNo || '—'),
-    '🧾 เลขที่บิล: ' + (job.deliveryNo || '—'),
-    '🚛 รถ: ' + (job.truckPlate || '—'),
-    '👤 พขร.: ' + (job.driverName || job.driverCode || '—'),
-    '📅 วันที่: ' + fmtDate(job.date),
-    '🏭 ต้นทาง: ' + (job.origin || '—'),
-    '🏢 ปลายทาง: ' + (job.destination || '—'),
-    ...(job.driverNote ? ['📋 หมายเหตุ: ' + job.driverNote] : []),
-    '─────────────────',
-  ];
-  if (job.dispatchTime) lines.push('🚀 จ่ายงาน: ' + fmtDT(job.dispatchTime));
-  STAGES.forEach(s => {
-    const k = s.key + 'Time';
-    if (upd[k]) {
-      const gps = (s.latKey && upd[s.latKey] && s.lngKey && upd[s.lngKey])
-        ? '\n   📍 ' + Number(upd[s.latKey]).toFixed(5) + ', ' + Number(upd[s.lngKey]).toFixed(5)
-        : '';
-      lines.push(s.icon + ' ' + s.label + ': ' + fmtDT(upd[k]) + gps);
-    }
-  });
-  return lines.join('\n');
-}
-
-let job = null;
-let upd = {};
-let gettingGps = {};
-
-async function markStage(stageKey, latKey, lngKey) {
-  const timeKey = stageKey + 'Time';
-  if (upd[timeKey]) return; // already done
-  upd[timeKey] = nowLocal();
-  saveUpdates(job.id, upd);
-
-  if (latKey) {
-    gettingGps[stageKey] = true;
+function load(){
+  if(!TOKEN){fail('ลิงก์ไม่ถูกต้อง (ไม่มี token)');return;}
+  rpc('driver_get_job',{_token:TOKEN}).then(function(r){
+    if(!r.ok){fail(r.status===404?'ไม่พบงาน':'ลิงก์หมดอายุหรือถูกยกเลิก');return;}
+    JOB=r.data.job||{}; JOBID=r.data.jobId; DRIVER=r.data.driver||null;
     render();
-    const pos = await getGps();
-    gettingGps[stageKey] = false;
-    if (pos) {
-      upd[latKey] = pos.lat;
-      upd[lngKey] = pos.lng;
-      saveUpdates(job.id, upd);
-    }
-  }
-
-  postToSheets(job.id, job.jobNo, upd);
-  render();
+  }).catch(function(){fail('เชื่อมต่อไม่ได้ — ตรวจอินเทอร์เน็ต');});
+}
+function fail(msg){
+  document.getElementById('hTitle').textContent='เปิดงานไม่ได้';
+  document.getElementById('hSub').textContent='';
+  document.getElementById('body').innerHTML='<div class="card" style="text-align:center;padding:30px 18px;"><div style="font-size:40px;margin-bottom:10px;">🔒</div><div style="font-size:15px;font-weight:700;color:#b42318;">'+esc(msg)+'</div><div class="muted" style="margin-top:8px;line-height:1.6;">ลิงก์งานนี้ใช้ได้เฉพาะงานเดียวและมีวันหมดอายุ<br/>ติดต่อหัวหน้างานเพื่อขอลิงก์ใหม่</div></div>';
 }
 
-function render() {
-  const app = document.getElementById('app');
-  if (!job) {
-    app.innerHTML = `
-      <div class="header">
-        <div class="header-logo">ระบบงานขนส่ง</div>
-        <div class="header-title">ไม่พบข้อมูลงาน</div>
-      </div>
-      <div class="error-box">
-        <div class="icon">🔍</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">ไม่พบใบงาน</div>
-        <div style="font-size:13px;">กรุณาสแกน QR Code จากระบบ<br>หรือติดต่อหัวหน้างาน</div>
-      </div>`;
-    return;
-  }
-
-  if (job._needFetch && !job.jobNo) {
-    app.innerHTML = `
-      <div class="header">
-        <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
-        <div class="header-title">กำลังโหลดใบงาน…</div>
-      </div>
-      <div class="error-box" style="background:#f8fafc;border-color:#e4e7ec;color:#475467;">
-        <div class="icon">⏳</div>
-        <div style="font-size:15px;font-weight:600;color:#16263a;">กำลังดึงข้อมูลงานจากระบบ…</div>
-        <div style="font-size:13px;color:#667085;margin-top:6px;line-height:1.6;">หากค้างนาน กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต<br>แล้วรีเฟรชหน้าอีกครั้ง</div>
-      </div>`;
-    return;
-  }
-  const dispatchDone = !!job.dispatchTime;
-  const allDone = STAGES.every(s => !!upd[s.key + 'Time']);
-
-  const stageCards = STAGES.map((s, i) => {
-    const status = stageStatus(s.key, i, upd);
-    const timeKey = s.key + 'Time';
-    const timeVal = upd[timeKey] || '';
-    const lat = s.latKey ? (upd[s.latKey] || '') : '';
-    const lng = s.lngKey ? (upd[s.lngKey] || '') : '';
-    const hasGps = !!(lat && lng);
-    const isGetting = gettingGps[s.key];
-
-    let timeInfo = '';
-    if (timeVal) {
-      timeInfo = '<div class="stage-time">' + fmtDT(timeVal) + '</div>';
-      if (hasGps) {
-        timeInfo += '<a class="map-link" href="https://maps.google.com/?q=' + lat + ',' + lng + '" target="_blank">📍 ดูตำแหน่งบน Google Maps</a>';
-      } else if (s.latKey && isGetting) {
-        timeInfo += '<div class="gps-loading"><span class="spinner"></span> กำลังดึง GPS...</div>';
-      } else if (s.latKey) {
-        timeInfo += '<div class="no-gps">ไม่ได้รับสัญญาณ GPS</div>';
-      }
-    } else if (status === 'active') {
-      timeInfo = '<div class="stage-time">กดปุ่มเพื่อบันทึกเวลา' + (s.latKey ? ' + ตำแหน่ง' : '') + '</div>';
-    } else {
-      timeInfo = '<div class="stage-time" style="color:#d0d5dd;">รอขั้นตอนก่อนหน้า</div>';
-    }
-
-    const btn = (status === 'active' && !timeVal)
-      ? `<button class="mark-btn" onclick="markStage('${s.key}', ${s.latKey ? "'"+s.latKey+"'" : 'null'}, ${s.lngKey ? "'"+s.lngKey+"'" : 'null'})">บันทึก${s.label}${s.latKey ? ' + GPS' : ''}</button>`
-      : '';
-
-    return `
-      <div class="stage ${status === 'done' ? 'done' : status === 'active' ? 'active' : ''}">
-        <div class="stage-row">
-          <div class="stage-icon">${s.icon}</div>
-          <div class="stage-info">
-            <div class="stage-label">${s.label}</div>
-            ${timeInfo}
-          </div>
-          <div class="stage-check">${timeVal ? '✅' : ''}</div>
-        </div>
-        ${btn}
-      </div>`;
-  }).join('');
-
-  const dispatchCard = `
-    <div class="stage ${dispatchDone ? 'done' : 'active'}">
-      <div class="stage-row">
-        <div class="stage-icon">🚀</div>
-        <div class="stage-info">
-          <div class="stage-label">จ่ายงาน</div>
-          <div class="stage-time">${job.dispatchTime ? fmtDT(job.dispatchTime) : 'รอหัวหน้าจ่ายงาน'}</div>
-        </div>
-        <div class="stage-check">${dispatchDone ? '✅' : ''}</div>
-      </div>
-    </div>`;
-
-  const shareSection = allDone ? `
-    <div class="share-wrap">
-      <div class="share-card">
-        <div class="share-title">📊 รายงานสถานะ</div>
-        <div class="share-text" id="share-text-content">${shareText(job, upd)}</div>
-        <button class="copy-btn" onclick="copyReport()">📋 คัดลอกรายงานส่งหัวหน้า</button>
-        <div class="copied-msg" id="copied-msg">✓ คัดลอกแล้ว!</div>
-      </div>
-    </div>` : '';
-
-  app.innerHTML = `
-    <div class="header">
-      <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
-      <div class="header-title">${job.jobNo || 'ใบงาน'}</div>
-      <div class="header-sub">${fmtDate(job.date)} · ${job.driverName || job.driverCode || ''}</div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <div class="job-no">${job.jobNo || '—'}${job.deliveryNo ? ' · บิล ' + job.deliveryNo : ''}</div>
-          <div class="job-plate">${job.truckPlate || ''}</div>
-        </div>
-        <div class="status-badge" style="background:${allDone?'#ecfdf3':'#fffaeb'};color:${allDone?'#067647':'#b54708'};">
-          ${allDone ? '✅ เสร็จสิ้น' : '🔄 กำลังดำเนินการ'}
-        </div>
-      </div>
-      <div class="job-rows">
-        <div class="job-row"><span class="job-lbl">เลขที่บิล</span><span class="job-val" style="font-weight:700;">${job.deliveryNo || '—'}</span></div>
-        <div class="job-row"><span class="job-lbl">รับสินค้าที่</span><span class="job-val">${job.origin || '—'}</span></div>
-        <div class="job-row"><span class="job-lbl">ปลายทาง</span><span class="job-val">${job.destination || '—'}</span></div>
-        <div class="job-row"><span class="job-lbl">ลูกค้า</span><span class="job-val">${job.customer || '—'}</span></div>
-        <div class="job-row"><span class="job-lbl">จุดจ่ายงาน</span><span class="job-val">${job.dispatchPoint || '—'}</span></div>
-        ${(job.fuelAdvance || job.fuelAdvanceNote) ? `<div class="job-row"><span class="job-lbl">⛽ ค่าน้ำมัน/NGV</span><span class="job-val" style="font-weight:700;color:#067647;">${[job.fuelAdvance ? Number(job.fuelAdvance).toLocaleString() : '', job.fuelAdvanceNote || ''].filter(Boolean).join(' · ')}</span></div>` : ''}
-      </div>
-      ${job.driverNote ? `<div style="margin-top:12px;padding:12px 14px;background:#fffaeb;border:1px solid #fde68a;border-radius:10px;"><div style="font-size:12px;font-weight:700;color:#b54708;margin-bottom:4px;">📋 หมายเหตุถึงคนขับ</div><div style="font-size:15px;color:#5c3d00;line-height:1.55;white-space:pre-wrap;">${job.driverNote}</div></div>` : ''}
-    </div>
-    ${(function(){
-      var list = [];
-      if (job.attachment) list.push({ name: 'รูปเอกสาร', url: job.attachment, isImage: true });
-      (Array.isArray(job.attachments) ? job.attachments : []).forEach(function(a){
-        if (!a || !a.url || a.status === 'error' || a.status === 'uploading') return;
-        var isImg = /^image\//.test(a.type||'') || /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(a.name||'') || /^data:image\//.test(a.url||'');
-        list.push({ name: a.name || 'ไฟล์', url: a.url, isImage: isImg });
-      });
-      if (!list.length) return '';
-      var items = list.map(function(a){
-        return a.isImage
-          ? '<img src="' + a.url + '" onclick="__zoomImg(this.src)" style="width:100%;border-radius:10px;border:1px solid #e4e7ec;cursor:zoom-in;margin-bottom:8px;">'
-          : '<a href="' + a.url + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:#f4f6f8;border:1px solid #e4e7ec;border-radius:10px;text-decoration:none;color:#16263a;margin-bottom:8px;"><span style="font-size:22px;">📄</span><span style="font-size:14px;font-weight:600;word-break:break-all;">' + a.name + '</span><span style="margin-left:auto;font-size:12px;color:#2f6fb0;font-weight:600;">เปิด ›</span></a>';
-      }).join('');
-      return '<div class="card" style="padding:14px 16px;"><div style="font-size:12px;font-weight:700;color:#475467;margin-bottom:8px;">📎 เอกสารแนบ (' + list.length + ') · แตะเพื่อดู/ดาวน์โหลด</div>' + items + '</div>';
-    })()}
-
-    <div class="stages-wrap">
-      ${stageCards}
-    </div>
-
-    ${shareSection}
-    <div class="footer"></div>`;
+function step(field,label,extra){
+  var already=JOB[field];
+  if(already){toast('บันทึกไว้แล้ว'); return;}
+  var btn=document.getElementById('b_'+field);
+  if(btn){btn.disabled=true;btn.innerHTML='กำลังบันทึก… <span class="spin"></span>';}
+  getGeo().then(function(g){
+    var patch={}; patch[field]=nowLocal();
+    if(extra&&g.lat){patch[extra.lat]=g.lat;patch[extra.lng]=g.lng;}
+    rpc('driver_update_progress',{_token:TOKEN,_patch:patch}).then(function(r){
+      if(!r.ok){toast('บันทึกไม่สำเร็จ');if(btn){btn.disabled=false;btn.textContent=label;}return;}
+      Object.assign(JOB,patch); toast('✓ '+label+' แล้ว'); render();
+    }).catch(function(){toast('เชื่อมต่อไม่ได้');if(btn){btn.disabled=false;btn.textContent=label;}});
+  });
+}
+function saveNote(){
+  var v=document.getElementById('note').value;
+  rpc('driver_update_progress',{_token:TOKEN,_patch:{driverNote:v}}).then(function(r){toast(r.ok?'บันทึกหมายเหตุแล้ว':'บันทึกไม่สำเร็จ');if(r.ok)JOB.driverNote=v;});
 }
 
-// --- หน้าจอเมื่อคนจ่ายงานปิดงาน (status = เสร็จสิ้น) → ลิงก์หมดอายุ ---
-function renderClosed() {
-  const app = document.getElementById('app');
-  app.innerHTML = `
-    <div class="header">
-      <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัคทรานสปอร์ต</div>
-      <div class="header-title">${job.jobNo || 'ใบงาน'}</div>
-      <div class="header-sub">${fmtDate(job.date)} · ${job.driverName || job.driverCode || ''}</div>
-    </div>
-    <div class="error-box">
-      <div class="icon">🔒</div>
-      <div style="font-size:17px;font-weight:700;margin-bottom:6px;color:#16263a;">งานนี้ปิดแล้ว</div>
-      <div style="font-size:13px;color:#667085;line-height:1.6;">ใบงาน ${job.jobNo || ''} ถูกทำเครื่องหมาย “เสร็จสิ้น” แล้ว<br>ลิงก์นี้หมดอายุ ไม่สามารถบันทึกเวลาเพิ่มได้</div>
-    </div>
-    <div class="share-wrap">
-      <div class="share-card">
-        <div class="share-title">📊 รายงานสถานะ (สรุป)</div>
-        <div class="share-text" id="share-text-content">${shareText(job, upd)}</div>
-        <button class="copy-btn" onclick="copyReport()">📋 คัดลอกรายงานส่งหัวหน้า</button>
-        <div class="copied-msg" id="copied-msg">✓ คัดลอกแล้ว!</div>
-      </div>
-    </div>
-    <div class="footer"></div>`;
+function render(){
+  var j=JOB;
+  document.getElementById('hTitle').textContent='ใบงาน '+(j.jobNo||'—');
+  document.getElementById('hSub').textContent=(j.deliveryNo?('บิล '+j.deliveryNo+' · '):'')+thDate(j.date);
+  var info='<div class="card">'
+    +row('พนักงานขับรถ',(DRIVER&&DRIVER.name)||j.driverName||'—')
+    +row('ทะเบียนรถ',j.truckPlate||'—')
+    +row('ต้นทาง',j.origin||'—')
+    +row('ปลายทาง',j.destination||'—')
+    +row('ลูกค้า',j.customer||'—')
+    +(j.fuelAdvance?row('เบิกน้ำมันล่วงหน้า',j.fuelAdvance+(j.fuelAdvanceNote?(' · '+j.fuelAdvanceNote):'')):'')
+    +'</div>';
+  var steps='<div class="card"><div style="font-size:13px;font-weight:800;color:#16263a;margin-bottom:12px;">อัปเดตสถานะงาน</div>'
+    +sbtn('pickupTime','① รับงาน / ออกเดินทาง',{lat:'pickupLat',lng:'pickupLng'})
+    +sbtn('arrivalTime','② ถึงจุดส่ง',{lat:'arrivalLat',lng:'arrivalLng'})
+    +sbtn('completionTime','③ ส่งของเสร็จ',{lat:'completionLat',lng:'completionLng'})
+    +sbtn('documentTime','④ ส่งเอกสารคืน',null)
+    +'</div>';
+  var note='<div class="card"><div style="font-size:13px;font-weight:800;color:#16263a;margin-bottom:8px;">หมายเหตุถึงออฟฟิศ</div>'
+    +'<textarea id="note" placeholder="พิมพ์หมายเหตุ (ถ้ามี)…">'+esc(j.driverNote||'')+'</textarea>'
+    +'<button class="btn stepbtn" style="margin-top:10px;background:#475467;" onclick="saveNote()">บันทึกหมายเหตุ</button></div>';
+  document.getElementById('body').innerHTML=info+steps+note+'<div class="muted" style="text-align:center;padding:6px 0 24px;">🔒 ลิงก์นี้เข้าถึงได้เฉพาะงานนี้งานเดียว</div>';
 }
-
-function copyReport() {
-  const text = shareText(job, upd);
-  const doFallback = () => {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta);
-  };
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {}).catch(doFallback);
-  } else { doFallback(); }
-  const el = document.getElementById('copied-msg');
-  if (el) { el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2500); }
+function row(k,v){return '<div class="row"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+'</span></div>';}
+function sbtn(field,label,extra){
+  var done=JOB[field];
+  if(done)return '<button class="btn stepdone" disabled>✓ '+esc(label.replace(/^[①②③④]\s*/,''))+esc(fmtT(done))+'</button>';
+  return '<button class="btn stepbtn" id="b_'+field+'" onclick="step(\''+field+'\',\''+esc(label)+'\','+(extra?'{lat:\''+extra.lat+'\',lng:\''+extra.lng+'\'}':'null')+')">'+esc(label)+'</button>';
 }
-
-// --- Init ---
-job = loadJob();
-if (job && job.id != null) {
-  upd = loadUpdates(job.id);
-  if (job.dispatchTime) upd.dispatchTime = job.dispatchTime;
-  document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
-}
-render();
-
-// --- เช็คกับ Sheet: ใบงานถูกลบหรือยัง + ดึงสถานะล่าสุด ---
-var _fetchTries = 0;
-function renderFetchError() {
-  const app = document.getElementById('app');
-  app.innerHTML = `
-    <div class="header">
-      <div class="header-logo">ระบบงานขนส่ง · สิงห์ทองทรัครานสปอร์ต</div>
-      <div class="header-title">ยังไม่พบใบงาน</div>
-    </div>
-    <div class="error-box" style="background:#fff7ed;border-color:#fed7aa;color:#9a3412;">
-      <div class="icon">⚠️</div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:6px;color:#16263a;">ยังดึงข้อมูลงานไม่ได้</div>
-      <div style="font-size:13px;color:#667085;line-height:1.6;margin-bottom:16px;">อาจเป็นเพราะใบงานกำลังซิงค์เข้าระบบ<br>หรือสัญญาณอินเทอร์เน็ตไม่เสถียร</div>
-      <button onclick="_fetchTries=0;document.getElementById('app').innerHTML='';render();refreshFromSheet();" style="padding:11px 28px;background:#2f6fb0;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">ลองใหม่อีกครั้ง</button>
-    </div>`;
-}
-function refreshFromSheet() {
-  if (!job || job.id == null) return;
-  sbGetAll()
-    .then(data => {
-      if (!data || !Array.isArray(data.jobs)) return;
-      // เช็คว่าใบงานถูกลบจริง (อยู่ในทะเบียนใบงานที่ลบ)
-      if (Array.isArray(data.deletedJobIds) && data.deletedJobIds.map(String).indexOf(String(job.id)) >= 0) {
-        document.getElementById('app').innerHTML =
-          '<div class="header"><div class="header-logo">ระบบงานขนส่ง</div>'
-          + '<div class="header-title">ใบงานถูกยกเลิก</div></div>'
-          + '<div class="error-box"><div class="icon">🚫</div>'
-          + '<div style="font-size:16px;font-weight:700;margin-bottom:6px;">ใบงานนี้ถูกยกเลิกแล้ว</div>'
-          + '<div style="font-size:13px;">ใบงาน ' + (job.jobNo || '') + ' ถูกลบออกจากระบบ<br>กรุณาติดต่อหัวหน้างาน</div></div>';
-        return;
-      }
-      const sj = data.jobs.find(x => String(x.id) === String(job.id));
-      if (!sj) {
-        // ลิงก์สั้นแต่ยังหาใบงานใน Sheet ไม่เจอ → อาจยังซิงค์ไม่เสร็จ ลองซ้ำ
-        if (job._needFetch && !job.jobNo) {
-          _fetchTries++;
-          if (_fetchTries < 6) { setTimeout(refreshFromSheet, 2500); }
-          else { renderFetchError(); }
-        }
-        return;
-      }
-      _fetchTries = 0;
-      // คนจ่ายงานกดปิดงาน (status = เสร็จสิ้น) → ล็อกลิงก์ (ถ้าแก้สถานะกลับ ลิงก์กลับมาใช้ได้เอง)
-      if (String(sj.status || '').trim() === 'เสร็จสิ้น') { renderClosed(); return; }
-      let needRender = false;
-      // ลิงก์สั้น (id อย่างเดียว) → เติมรายละเอียดงานจาก Sheet
-      if (job._needFetch) {
-        ['jobNo','date','time','driverCode','truckPlate','origin','destination','customer','deliveryNo','dispatchPoint','dispatchTime','driverNote','fuelAdvance','fuelAdvanceNote'].forEach(f => { if (sj[f] !== undefined && sj[f] !== '') job[f] = sj[f]; });
-        if (Array.isArray(data.drivers)) { const drv = data.drivers.find(x => String(x.code) === String(sj.driverCode)); if (drv && drv.name) job.driverName = drv.name; }
-        if (job.dispatchTime) upd.dispatchTime = job.dispatchTime;
-        document.title = job.jobNo ? ('งาน ' + job.jobNo) : 'บันทึกงาน';
-        job._needFetch = false;
-        needRender = true;
-      }
-      if (sj.attachment !== undefined && job.attachment !== sj.attachment) { job.attachment = sj.attachment; needRender = true; }
-      if (sj.attachments !== undefined && JSON.stringify(job.attachments || []) !== JSON.stringify(sj.attachments || [])) { job.attachments = sj.attachments; needRender = true; }
-      // ดึง timestamp ล่าสุดจาก Sheet มาแสดง (Sheet เป็นหลัก)
-      const fields = ['pickupTime','pickupLat','pickupLng','arrivalTime','arrivalLat','arrivalLng','completionTime','completionLat','completionLng','documentTime'];
-      let changed = false;
-      fields.forEach(f => { if (sj[f] !== undefined && sj[f] !== '' && upd[f] !== sj[f]) { upd[f] = sj[f]; changed = true; } });
-      if (changed) saveUpdates(job.id, upd);
-      if (changed || needRender) render();
-    })
-    .catch(() => {
-      // ออฟไลน์/ดึงไม่ได้ → ถ้าเป็นลิงก์สั้นที่ยังไม่มีข้อมูล ให้ลองซ้ำ
-      if (job._needFetch && !job.jobNo) {
-        _fetchTries++;
-        if (_fetchTries < 6) { setTimeout(refreshFromSheet, 2500); }
-        else { renderFetchError(); }
-      }
-    });
-}
-window.__zoomImg = function(src){ let o=document.getElementById('__imgov'); if(!o){ o=document.createElement('div'); o.id='__imgov'; o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;align-items:center;justify-content:center;padding:10px;'; o.onclick=function(){o.style.display='none';}; const im=document.createElement('img'); im.id='__imgovimg'; im.style.cssText='max-width:100%;max-height:100%;border-radius:8px;'; o.appendChild(im); document.body.appendChild(o);} document.getElementById('__imgovimg').src=src; o.style.display='flex'; };
-refreshFromSheet();
-// เช็คซ้ำเมื่อกลับมาที่หน้า (เปลี่ยนแท็บกลับมา)
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshFromSheet(); });
+load();
 </script>
 </body>
 </html>
