@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1622">
+<title>LionFlow — แชร์ตำแหน่งรถ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{background:#0b1622;color:#e8eef6;font-family:'Noto Sans Thai',system-ui,sans-serif;
+       display:flex;flex-direction:column;padding:24px 20px calc(24px + env(safe-area-inset-bottom));
+       min-height:100%;}
+  a{color:#7db4f0}a:hover{color:#a9cef7}
+</style>
+</head>
+<body>
+<div id="app" style="flex:1;display:flex;flex-direction:column;gap:0;max-width:460px;width:100%;margin:0 auto;">
+</div>
+
+<script>
+// ===== config : ENV AUTO-SWITCH (เหมือน driver.html) =====
+var LF_ENVS={
+  prod:    {url:'https://ojttzvcqjqqqullopeqt.supabase.co', key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdHR6dmNxanFxcXVsbG9wZXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzE1MDAsImV4cCI6MjA5Nzk0NzUwMH0.68VmEegEuj6IrG3XweK4AQEufhzvQiUz79ThL28LOzk'},
+  staging: {url:'https://vugqoevhxqssdqykwgpi.supabase.co', key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1Z3FvZXZoeHFzc2RxeWt3Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE2MzYsImV4cCI6MjA5ODkwNzYzNn0.G_wDLk8lnbp4zWH83x28MFnbS5hYiExHB33ZNQSCkhg'}
+};
+var LF_ENV=(function(){try{var p=new URLSearchParams(location.search).get('env');if(p==='staging'||p==='prod')return p;if(/staging|localhost|127\.0\.0\.1/.test((location.hostname||'')+(location.pathname||'')))return 'staging';}catch(e){}return 'prod';})();
+var SUPABASE_URL=LF_ENVS[LF_ENV].url;
+var SUPABASE_KEY=LF_ENVS[LF_ENV].key;
+var H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+
+var TOKEN=new URLSearchParams(location.search).get('t')||'';
+var INTERVAL_MS=5*60*1000;              // ส่งทุก 5 นาที
+var QKEY='lf_track_queue_'+TOKEN;       // คิวจุดที่ยังส่งไม่สำเร็จ
+var SKEY='lf_track_on_'+TOKEN;          // จำว่ากำลังแชร์อยู่ไหม
+var WKEY='lf_track_wake_'+TOKEN;        // จำว่าเลือก 'กันจอดับ' ไว้ไหม
+
+var PLATE='', ON=false, timer=null, wake=null, lastOk=0, lastErr='';
+var WAKE=(function(){try{return localStorage.getItem(WKEY)!=='0';}catch(e){return true;}})();
+
+function rpc(fn,args){
+  return fetch(SUPABASE_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:H,body:JSON.stringify(args)})
+    .then(function(r){return r.json().catch(function(){return null;}).then(function(d){return {ok:r.ok,data:d};});});
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function el(id){return document.getElementById(id);}
+function q(){try{return JSON.parse(localStorage.getItem(QKEY)||'[]');}catch(e){return [];}}
+function setQ(a){try{localStorage.setItem(QKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
+
+function timeAgo(ts){
+  if(!ts) return 'ยังไม่ได้ส่ง';
+  var s=Math.round((Date.now()-ts)/1000);
+  if(s<60) return 'เมื่อ '+s+' วินาทีที่แล้ว';
+  var m=Math.round(s/60);
+  if(m<60) return 'เมื่อ '+m+' นาทีที่แล้ว';
+  return 'เมื่อ '+Math.round(m/60)+' ชั่วโมงที่แล้ว';
+}
+
+// ---------- ส่งพิกัด ----------
+function getPos(){
+  return new Promise(function(res,rej){
+    if(!navigator.geolocation){rej(new Error('เครื่องนี้ไม่รองรับ GPS'));return;}
+    navigator.geolocation.getCurrentPosition(
+      function(p){res({lat:p.coords.latitude,lng:p.coords.longitude,
+                       speed:(p.coords.speed==null||isNaN(p.coords.speed))?0:Math.max(0,p.coords.speed*3.6),
+                       acc:p.coords.accuracy||null,
+                       heading:(p.coords.heading==null||isNaN(p.coords.heading))?null:p.coords.heading,
+                       ts:new Date().toISOString()});},
+      function(e){rej(new Error(e.code===1?'ยังไม่ได้อนุญาตให้เข้าถึงตำแหน่ง':'หาตำแหน่งไม่ได้ ลองออกที่โล่ง'));},
+      {enableHighAccuracy:true,timeout:20000,maximumAge:30000}
+    );
+  });
+}
+
+function push(p){
+  return rpc('truck_push_position_qr',{_token:TOKEN,_lat:p.lat,_lng:p.lng,_speed:p.speed,_acc:p.acc,_heading:p.heading,_ts:p.ts})
+    .then(function(r){
+      if(!r.ok||(r.data&&r.data.ok===false)) throw new Error('ส่งไม่สำเร็จ');
+      return true;
+    });
+}
+
+function flushQueue(){
+  var items=q();
+  if(!items.length) return Promise.resolve();
+  var next=items[0];
+  return push(next).then(function(){
+    setQ(q().slice(1));
+    return flushQueue();
+  }).catch(function(){});
+}
+
+function tick(){
+  if(!ON) return;
+  getPos().then(function(p){
+    lastErr='';
+    return push(p).then(function(){
+      lastOk=Date.now(); render();
+      return flushQueue();
+    }).catch(function(){
+      var a=q(); a.push(p); setQ(a);      // เน็ตหลุด → เก็บไว้ก่อน ส่งทีหลัง ไม่หาย
+      lastErr='เน็ตไม่ถึงเซิร์ฟเวอร์ — เก็บไว้ส่งให้อัตโนมัติ';
+      render();
+    });
+  }).catch(function(e){ lastErr=e.message; render(); });
+}
+
+// ---------- กันจอดับ (เลือกได้) ----------
+function wakeOn(){
+  if(!('wakeLock' in navigator)) return;
+  navigator.wakeLock.request('screen').then(function(w){
+    wake=w;
+    w.addEventListener('release',function(){wake=null;});
+  }).catch(function(){});
+}
+function wakeOff(){ if(wake){try{wake.release();}catch(e){} wake=null;} }
+
+// ---------- เริ่ม / หยุด ----------
+function start(){
+  ON=true;
+  try{localStorage.setItem(SKEY,'1');}catch(e){}
+  if(WAKE) wakeOn();
+  render(); tick();
+  if(timer) clearInterval(timer);
+  timer=setInterval(tick,INTERVAL_MS);
+}
+function stop(){
+  ON=false;
+  try{localStorage.removeItem(SKEY);}catch(e){}
+  if(timer){clearInterval(timer);timer=null;}
+  wakeOff(); render();
+}
+
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&ON){
+    if(WAKE) wakeOn();
+    tick();                                // กลับมาเปิดหน้า = ส่งทันที 1 จุด
+  }
+});
+
+// ---------- แจ้งเหตุ ----------
+function report(kind,label){
+  if(!window.confirm('ยืนยันแจ้ง "'+label+'" ให้ออฟฟิศทราบ?')) return;
+  var note=window.prompt('รายละเอียดเพิ่มเติม (ไม่ใส่ก็ได้)','')||'';
+  getPos().catch(function(){return {};}).then(function(p){
+    return rpc('truck_report_issue_qr',{_token:TOKEN,_kind:kind,_note:note,_lat:p.lat||null,_lng:p.lng||null});
+  }).then(function(r){
+    if(r&&r.ok) window.alert('แจ้งเรียบร้อยแล้ว ออฟฟิศจะเห็นทันที');
+    else window.alert('ส่งไม่สำเร็จ กรุณาโทรหาออฟฟิศ');
+  }).catch(function(){ window.alert('ส่งไม่สำเร็จ กรุณาโทรหาออฟฟิศ'); });
+}
+
+// ---------- หน้าจอ ----------
+function render(){
+  var qn=q().length;
+  var dot = ON ? (lastErr?'#f5a524':'#37d67a') : '#5b6b7d';
+  var statusText = !ON ? 'ยังไม่ได้แชร์ตำแหน่ง'
+                 : (lastErr ? lastErr : 'กำลังแชร์ตำแหน่ง · ส่งล่าสุด '+timeAgo(lastOk));
+
+  el('app').innerHTML =
+    '<div style="font-size:11.5px;letter-spacing:.2em;color:#6d829a;font-weight:700;">LIONFLOW</div>'+
+    '<div style="margin-top:26px;font-size:13px;color:#8fa4bb;">ทะเบียนรถ</div>'+
+    '<div style="font-size:44px;font-weight:800;letter-spacing:.01em;line-height:1.15;margin-top:2px;">'+esc(PLATE)+'</div>'+
+
+    '<div style="display:flex;align-items:center;gap:10px;margin-top:22px;padding:14px 16px;'+
+      'background:#12202f;border:1px solid #1e3145;border-radius:14px;">'+
+      '<span style="width:11px;height:11px;border-radius:50%;background:'+dot+';flex:none;'+
+        (ON&&!lastErr?'box-shadow:0 0 0 4px rgba(55,214,122,.16);':'')+'"></span>'+
+      '<span style="font-size:14px;color:#cddceb;line-height:1.5;">'+esc(statusText)+'</span>'+
+    '</div>'+
+
+    (qn ? '<div style="margin-top:10px;font-size:12.5px;color:#f5a524;">มี '+qn+' จุดรอส่ง — จะส่งให้เองเมื่อมีสัญญาณ</div>' : '')+
+
+    '<button id="mainBtn" style="margin-top:22px;width:100%;padding:22px;border:0;border-radius:16px;'+
+      'font-family:inherit;font-size:19px;font-weight:800;cursor:pointer;'+
+      (ON ? 'background:#1e3145;color:#e8eef6;' : 'background:#37d67a;color:#062615;')+'">'+
+      (ON ? 'หยุดแชร์ตำแหน่ง' : 'เริ่มแชร์ตำแหน่ง')+'</button>'+
+
+    '<label style="display:flex;align-items:center;gap:10px;margin-top:16px;font-size:13.5px;color:#93a8bf;cursor:pointer;">'+
+      '<input type="checkbox" id="keepAwake" '+(WAKE?'checked':'')+' style="width:18px;height:18px;accent-color:#37d67a;">'+
+      'กันจอดับระหว่างวิ่ง (แนะนำให้เสียบสายชาร์จ)</label>'+
+
+    '<div style="margin-top:auto;padding-top:28px;">'+
+      '<div style="font-size:12.5px;color:#6d829a;margin-bottom:10px;">แจ้งเหตุด่วนถึงออฟฟิศ</div>'+
+      '<div style="display:flex;gap:10px;">'+
+        '<button id="bBreak" style="flex:1;padding:15px;border:1px solid #4a3a1c;background:#1f1a10;color:#f5c46b;'+
+          'border-radius:13px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;">รถเสีย</button>'+
+        '<button id="bAcc" style="flex:1;padding:15px;border:1px solid #4d2626;background:#211313;color:#f08c8c;'+
+          'border-radius:13px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;">อุบัติเหตุ</button>'+
+      '</div>'+
+      '<div style="height:18px;"></div>'+
+      '<div style="font-size:11.5px;color:#56697e;line-height:1.65;">ระบบจะส่งตำแหน่งทุก 5 นาทีระหว่างเปิดหน้านี้ค้างไว้ '+
+        'ไม่เก็บข้อมูลอื่นในเครื่อง และหยุดได้ทุกเมื่อ</div>'+
+    '</div>';
+
+  el('mainBtn').onclick=function(){ ON?stop():start(); };
+  el('bBreak').onclick=function(){ report('breakdown','รถเสีย'); };
+  el('bAcc').onclick=function(){ report('accident','อุบัติเหตุ'); };
+  el('keepAwake').onchange=function(){ WAKE=this.checked;try{localStorage.setItem(WKEY,WAKE?'1':'0');}catch(e){} WAKE?wakeOn():wakeOff(); };
+}
+
+function fail(msg){
+  el('app').innerHTML='<div style="margin:auto;text-align:center;max-width:320px;">'+
+    '<div style="font-size:17px;font-weight:800;color:#f08c8c;">'+esc(msg)+'</div>'+
+    '<div style="margin-top:12px;font-size:13.5px;color:#8fa4bb;line-height:1.7;">'+
+    'กรุณาสแกน QR ที่ติดอยู่ในรถอีกครั้ง หรือติดต่อออฟฟิศ</div></div>';
+}
+
+// ---------- เริ่มทำงาน ----------
+if(!TOKEN){ fail('ลิงก์ไม่ถูกต้อง'); }
+else{
+  rpc('truck_track_open',{_token:TOKEN}).then(function(r){
+    var d=r.data;
+    if(!r.ok||!d||d.ok===false){ fail(d&&d.error==='truck retired'?'รถคันนี้ปลดระวางแล้ว':'QR นี้ใช้ไม่ได้แล้ว'); return; }
+    PLATE=d.plate||'-';
+    document.title='แชร์ตำแหน่ง — '+PLATE;
+    render();
+    flushQueue();
+    var wasOn=false; try{wasOn=localStorage.getItem(SKEY)==='1';}catch(e){}
+    if(wasOn) start();                    // เปิดหน้าใหม่แล้วเคยแชร์อยู่ → ต่อให้เลย
+  }).catch(function(){ fail('เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง'); });
+}
+</script>
+</body>
+</html>
