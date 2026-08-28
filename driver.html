@@ -72,7 +72,17 @@ function getGeo(){return new Promise(function(res){if(!navigator.geolocation){re
 // ===== แชร์ตำแหน่งระหว่างวิ่งงาน =====
 // เปิดอัตโนมัติหลังกด “รับงาน/ออกเดินทาง” หยุดเองเมื่อ “ส่งของเสร็จ”
 // ส่งพิกัดขึ้นคลาวด์ทุก 60 วินาที ผ่าน RPC ที่ผูกกับ token ใบงานนี้เท่านั้น
-var SHARE_MS=60000, shareWatch=null, shareTimer=null, lastFix=null, lastSent=0, sendCount=0, shareErr='', shareSupported=true;
+// v.2026-08-28c: ลดโหลดเขียน DB — ส่งพิกัดทุก 3 นาที (เดิม 1 นาที) และข้ามถ้ารถไม่ขยับเกิน 50 ม.
+// เคส 28/08/2026: รถวิ่งพร้อมกันหลายคัน × ส่งทุก 1 นาที ตลอดวัน (รถจอดรอโหลดของก็ยังส่ง) → DB รับไม่ทัน
+var SHARE_MS=180000, SHARE_MIN_M=50, SHARE_MAX_MS=900000;   // ขยับ<50ม. ไม่ส่ง แต่บังคับส่ง 1 ครั้ง/15 นาที เพื่อยืนยันว่ายังออนไลน์
+var shareWatch=null, shareTimer=null, lastFix=null, lastSent=0, sentFix=null, sendCount=0, shareErr='', shareSupported=true;
+function moveMeters(a,b){   // haversine อย่างย่อ
+  if(!a||!b)return 1e9;
+  var R=6371000,t=Math.PI/180;
+  var dLat=(b.lat-a.lat)*t,dLng=(b.lng-a.lng)*t;
+  var s=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
+}
 function shareKey(){return 'lf_share_'+String(JOBID||TOKEN).slice(0,24);}
 function shareOn(){try{var v=localStorage.getItem(shareKey());if(v!==null)return v==='1';}catch(e){}return true;}
 function setShare(on){try{localStorage.setItem(shareKey(),on?'1':'0');}catch(e){}if(on)startShare();else stopShare();renderShare();}
@@ -95,12 +105,15 @@ function startShare(){
 function stopShare(){if(shareWatch!==null){try{navigator.geolocation.clearWatch(shareWatch);}catch(e){}shareWatch=null;}if(shareTimer){clearInterval(shareTimer);shareTimer=null;}}
 function pushFix(){
   if(!lastFix||!shareEligible()||!shareOn())return;
+  // รถจอดอยู่ (ขยับ<50ม.) → ไม่ต้องส่งซ้ำ ยกเว้นเกิน 15 นาทีแล้วยังไม่ส่งเลย
+  if(sentFix&&moveMeters(sentFix,lastFix)<SHARE_MIN_M&&Date.now()-lastSent<SHARE_MAX_MS){renderShare();return;}
   lastSent=Date.now();
+  var _f=lastFix;
   rpc('driver_push_position',{_token:TOKEN,_lat:lastFix.lat,_lng:lastFix.lng,_speed:lastFix.speed||0,_acc:lastFix.acc,_heading:lastFix.heading})
     .then(function(r){
       // ระบบหลังบ้านยังไม่ได้เปิดฟีเจอร์นี้ — ซ่อนการ์ดไปเงียบๆ อย่าขึ้นแดงกวน พขร.
       if(r.status===404||(r.data&&/function|does not exist|schema cache/i.test(String(r.data.message||'')))){shareSupported=false;stopShare();renderShare();return;}
-      if(r.ok){sendCount++;shareErr='';}else{shareErr='ส่งพิกัดไม่สำเร็จ';}renderShare();})
+      if(r.ok){sendCount++;shareErr='';sentFix=_f;}else{shareErr='ส่งพิกัดไม่สำเร็จ';}renderShare();})
     .catch(function(){shareErr='ออฟไลน์ — จะส่งใหม่อัตโนมัติ';renderShare();});
 }
 function renderShare(){
@@ -126,7 +139,7 @@ function renderShare(){
     +'<button onclick="setShare('+(on?'false':'true')+')" style="flex:none;width:56px;height:31px;border-radius:16px;border:none;cursor:pointer;padding:0;background:'+(on?'#1f8a5b':'#cdd5df')+';position:relative;transition:background .2s;">'
       +'<span style="position:absolute;top:3px;left:'+(on?'28px':'3px')+';width:25px;height:25px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25);"></span></button>'
   +'</div>'
-  +'<div style="font-size:11.5px;color:#98a2b3;margin-top:9px;line-height:1.6;">ส่งพิกัดทุก 1 นาที เฉพาะช่วงที่งานนี้ยังไม่ปิด · หยุดเองอัตโนมัติเมื่อกด “ส่งของเสร็จ” · เปิดหน้านี้ค้างไว้ระหว่างวิ่ง</div>';
+  +'<div style="font-size:11.5px;color:#98a2b3;margin-top:9px;line-height:1.6;">ส่งพิกัดทุก 3 นาที เพิ่งตอนรถขยับ เกิน 50 ม. · เก็บเฉพาะช่วงที่งานนี้ยังไม่ปิด · หยุดเองเมื่อกด “ส่งของเสร็จ” · เปิดหน้านี้ค้างไว้ระหว่างวิ่ง</div>';
 }
 
 function load(){
@@ -135,6 +148,8 @@ function load(){
     if(!r.ok){var m=(r.data&&r.data.message)||'';
       fail(/job not found/i.test(m)?'ไม่พบใบงานนี้ในระบบ (ใบงานอาจยังไม่ถูกบันทึกขึ้นคลาวด์ หรือถูกลบ)':(/invalid or expired/i.test(m)?'ลิงก์หมดอายุหรือถูกยกเลิก':(r.status===404?'ไม่พบงาน':('เปิดงานไม่ได้ · '+(m||r.status)))));return;}
     JOB=r.data.job||{}; JOBID=r.data.jobId; DRIVER=r.data.driver||null;
+    // v.2026-08-28d: รถคันนี้มีกล่อง GPS ติดรถอยู่แล้ว → ไม่ต้องส่งซ้ำจากมือถือ (ซ่อนการ์ดไปเงียบ)
+    if(r.data.gps===false){shareSupported=false;stopShare();}
     render();
   }).catch(function(){fail('เชื่อมต่อไม่ได้ — ตรวจอินเทอร์เน็ต');});
 }
