@@ -2,7 +2,7 @@
   "name": "LionFlow",
   "short_name": "LionFlow",
   "description": "ระบบบริหารงานขนส่ง LionFlow",
-  "start_url": ".",
+  "start_url": "app.html",
   "display": "standalone",
   "background_color": "#16263a",
   "theme_color": "#16263a",
