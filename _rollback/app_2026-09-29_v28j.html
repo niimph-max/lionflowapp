@@ -224,7 +224,7 @@
       </div>
       </sc-if>
       <div style="margin-top:14px;text-align:center;font-size:11px;color:#aab4c0;">ขับเคลื่อนโดย <span style="font-family:'Sora',sans-serif;font-weight:700;color:#16263a;">Lion<span style="color:#E8A33D;">Flow</span></span> · lionflowapp.com</div>
-      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-09-29k · admin พร้อมใช้</div>
+      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-09-28j · admin พร้อมใช้</div>
     </div>
   </div>
   </sc-if>
@@ -443,7 +443,7 @@
       </sc-if>
       <sc-if value="{{ showEcacc }}" hint-placeholder-val="{{ false }}">
       <div style="margin-top:16px;padding:0 8px 7px;font-size:10.5px;letter-spacing:.08em;color:#6f8499;font-weight:600;">ระบบ ECACC</div>
-      <button onClick="{{ onGoBilling }}" style="{{ navBillingStyle }}"><span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">🧾</span>ใบวางบิล/ใบแจ้งหนี้</span></button>
+      <button onClick="{{ onGoBilling }}" style="{{ navBillingStyle }}"><span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">🧾</span>ใบวางบิล/ใบแจ้งหนี้ - TATA</span></button>
       <button onClick="{{ onGoAcctExport }}" style="{{ navEcStyle }}"><span style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">⤓</span>ส่งออกเข้า EASY-ACC</span></button>
       </sc-if>
       <sc-if value="{{ canSettings }}" hint-placeholder-val="{{ false }}">
@@ -488,7 +488,7 @@
         <span style="font-size:11px;color:#7c90a4;">{{ syncText }}</span>
         <button onClick="{{ onSync }}" style="margin-left:auto;background:none;border:none;color:#6b8299;font-size:15px;cursor:pointer;padding:0;line-height:1;" title="รีเฟรชข้อมูล">↻</button>
       </div>
-      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-09-29k</div>
+      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-09-28j</div>
       <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ onFlushPending }}" title="มีข้อมูลที่ยังไม่ขึ้น cloud — แตะเพื่อดันขึ้นทันที" style="margin-top:7px;width:100%;display:flex;align-items:center;gap:6px;background:rgba(240,120,90,.14);border:1px solid rgba(240,120,90,.4);border-radius:8px;color:#f0a58e;font-size:11px;padding:7px 9px;cursor:pointer;text-align:left;line-height:1.35;">⚠️ ยังไม่ขึ้น cloud: {{ pendingCount }} รายการ — แตะเพื่อดันขึ้น</button>
       </sc-if>
@@ -2715,7 +2715,6 @@
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">วันที่เอกสาร</label>
             <input type="date" value="{{ blDocDate }}" onInput="{{ onBlDocDate }}" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:13.5px;color:#1d2b3a;font-family:inherit;">
           </div>
-          <sc-if value="{{ blIsTata }}" hint-placeholder-val="{{ true }}">
           <div>
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">รหัสลูกค้า</label>
             <input value="{{ blProdCode }}" onInput="{{ onBlProdCode }}" placeholder="เช่น สิงห์ทอง" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;">
@@ -2724,53 +2723,7 @@
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ประเภทรถ</label>
             <input value="{{ blTruckType }}" onInput="{{ onBlTruckType }}" placeholder="18W_LARGE" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;">
           </div>
-          </sc-if>
-          <sc-if value="{{ blIsGir }}" hint-placeholder-val="{{ false }}">
-          <div>
-            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ประเภทรถ (1 ใบ = 1 ประเภท)</label>
-            <select value="{{ blGirType }}" onChange="{{ onBlGirType }}" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;background:#fff;">
-              <sc-for list="{{ blGirTypeOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
-            </select>
-          </div>
-          <div>
-            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">รายการในใบปะหน้า</label>
-            <input value="{{ blGirDesc }}" onInput="{{ onBlGirDesc }}" placeholder="ค่าขนส่ง LOGISTICS21" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;">
-          </div>
-          <div>
-            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ผู้รับรอง (ฝ่ายบัญชี)</label>
-            <input value="{{ blSigner }}" onInput="{{ onBlSigner }}" placeholder="ชื่อผู้ลงนาม" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;">
-          </div>
-          </sc-if>
         </div>
-        <sc-if value="{{ blIsStd }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:12px;padding:10px 13px;background:#f6f7f9;border:1px solid #e4e7ec;border-radius:9px;font-size:12.5px;color:#475467;line-height:1.7;">
-            📄 รูปแบบมาตรฐาน: ใบวางบิล / ใบแจ้งหนี้ รายละเอียดรายเที่ยว — ไม่มีใบปะหน้า · เลือกแบบตาราง คิดต่อเที่ยว หรือ คิดตามน้ำหนัก ได้ · ทาทาและการ์เดียนใช้แบบของลูกค้าเอง
-          </div>
-          <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
-          <div style="width:260px;">
-            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">แบบตาราง</label>
-            <select value="{{ blStdLayout }}" onChange="{{ onBlStdLayout }}" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;background:#fff;">
-              <option value="">{{ blStdAutoText }}</option>
-              <option value="trip">คิดต่อเที่ยว (ปกติ · บวกน้ำหนัก · บวกอื่นๆ)</option>
-              <option value="ton">คิดตามน้ำหนัก (น้ำหนัก · ค่าขนส่งต่อตัน)</option>
-            </select>
-          </div>
-          <div style="width:260px;">
-            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ผู้รับรอง (ฝ่ายบัญชี)</label>
-            <input value="{{ blSigner }}" onInput="{{ onBlSigner }}" placeholder="ชื่อผู้ลงนาม" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;">
-          </div>
-          </div>
-        </sc-if>
-        <sc-if value="{{ blIsGir }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:12px;padding:10px 13px;background:#f0f6ff;border:1px solid #c9dcf5;border-radius:9px;font-size:12.5px;color:#1e4f86;line-height:1.7;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:240px;">📄 รูปแบบการ์เดียน: พิมพ์ได้ <b>ใบปะหน้า (ใบแจ้งหนี้ หัก ณ ที่จ่าย 1%)</b> + <b>ใบวางบิลรายละเอียด</b> (ค่าขนส่งปกติ · OW = บวกน้ำหนัก · OT = บวกอื่นๆ) — ออก 1 ใบต่อ 1 ประเภทรถ</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;width:100%;">
-              <input value="{{ blGirPeriod }}" onInput="{{ onBlGirPeriod }}" placeholder="งวดรับชำระเงิน (ว่าง = ใช้ช่วงวันที่ที่เลือก)" style="flex:1;min-width:200px;width:100%;padding:8px 10px;border:1px solid #c9dcf5;border-radius:8px;font-size:13px;color:#1d2b3a;font-family:inherit;background:#fff;">
-              <input value="{{ blGirTo }}" onInput="{{ onBlGirTo }}" placeholder="ส่ง (ใบสรุป) เช่น ชื่อผู้รับ/แผนก" style="flex:1;min-width:200px;width:100%;padding:8px 10px;border:1px solid #c9dcf5;border-radius:8px;font-size:13px;color:#1d2b3a;font-family:inherit;background:#fff;">
-            </div>
-            <button onClick="{{ onBlGirSummary }}" style="padding:8px 14px;background:#fff;border:1px solid #2f6fb0;border-radius:8px;color:#2f6fb0;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;white-space:nowrap;">🧾 ใบสรุปวางบิลรวม (ทุกใบในช่วงวันที่)</button>
-          </div>
-        </sc-if>
         <div style="margin-top:12px;">
           <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ที่อยู่ผู้ถูกเรียกเก็บ <span style="color:#98a2b3;font-weight:400;">(บันทึกไว้ที่ตารางลูกค้า — ครั้งต่อไปขึ้นให้เอง)</span></label>
           <input value="{{ blCustAddr }}" onInput="{{ onBlCustAddr }}" placeholder="เช่น 351 หมู่ 6 ต.บ่อวิน อ.ศรีราชา จ.ชลบุรี 20230" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:13.5px;color:#1d2b3a;font-family:inherit;">
@@ -7136,8 +7089,8 @@
                 <div style="padding:7px 9px;">
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
                   <input type="number" key="{{ r.rateKey }}" defaultValue="{{ r.rateRaw }}" onBlur="{{ r.onRateCommit }}" placeholder="{{ r.ratePh }}" title="ราคาฐาน" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #2f6fb0;border-radius:7px;font-size:12.5px;font-weight:600;color:#16263a;text-align:right;box-sizing:border-box;background:#fff;">
-                  <input type="number" key="{{ r.rateAddWeightKey }}" defaultValue="{{ r.rateAddWeightRaw }}" onBlur="{{ r.onRateAddWeightCommit }}" placeholder="{{ r.addWPh }}" title="{{ r.addWPh }}" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #f0c088;border-radius:7px;font-size:12px;font-weight:600;color:#b54708;text-align:right;box-sizing:border-box;background:#fff;">
-                  <input type="number" key="{{ r.rateAddOtherKey }}" defaultValue="{{ r.rateAddOtherRaw }}" onBlur="{{ r.onRateAddOtherCommit }}" placeholder="{{ r.addOPh }}" title="{{ r.addOPh }}" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #f0c088;border-radius:7px;font-size:12px;font-weight:600;color:#b54708;text-align:right;box-sizing:border-box;background:#fff;">
+                  <input type="number" key="{{ r.rateAddWeightKey }}" defaultValue="{{ r.rateAddWeightRaw }}" onBlur="{{ r.onRateAddWeightCommit }}" placeholder="+นน./ตัน" title="+ น้ำหนัก (ต่อตัน)" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #f0c088;border-radius:7px;font-size:12px;font-weight:600;color:#b54708;text-align:right;box-sizing:border-box;background:#fff;">
+                  <input type="number" key="{{ r.rateAddOtherKey }}" defaultValue="{{ r.rateAddOtherRaw }}" onBlur="{{ r.onRateAddOtherCommit }}" placeholder="+อื่น/ตัน" title="+ อื่นๆ (ต่อตัน)" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #f0c088;border-radius:7px;font-size:12px;font-weight:600;color:#b54708;text-align:right;box-sizing:border-box;background:#fff;">
                   <input type="number" key="{{ r.rateAddTripKey }}" defaultValue="{{ r.rateAddTripRaw }}" onBlur="{{ r.onRateAddTripCommit }}" placeholder="+/เที่ยว" title="+ บวกอื่นๆ ต่อเที่ยว (ก้อนเดียว ไม่คูณน้ำหนัก)" style="width:100%;min-width:0;padding:5px 6px;border:1px solid #d9a6f0;border-radius:7px;font-size:12px;font-weight:600;color:#7a2e9a;text-align:right;box-sizing:border-box;background:#fff;">
                   </div>
                   <div style="font-size:10px;color:#98a2b3;margin-top:4px;text-align:right;line-height:1.35;"><sc-if value="{{ r.effRateText }}" hint-placeholder-val="{{ false }}"><span style="color:#b54708;font-weight:700;">{{ r.effRateText }}</span><br></sc-if>{{ r.weightText }}<br>= <b style="color:#175cd3;">{{ r.revenueText }}</b></div>
@@ -7201,19 +7154,17 @@
                     <input type="number" value="{{ sd.ratePerTon }}" onInput="{{ onSettleRate }}" placeholder="230" style="width:100%;padding:9px 11px;border:1px solid #2f6fb0;border-radius:8px;font-size:15px;font-weight:600;color:#16263a;box-sizing:border-box;">
                   </div>
                   <div style="flex:1;min-width:82px;">
-                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">{{ sdAddWLabel }}</label>
+                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกน้ำหนัก/ตัน</label>
                     <input type="number" value="{{ sdRateAddWeight }}" onInput="{{ onSettleAddWeight }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
                   <div style="flex:1;min-width:82px;">
-                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">{{ sdAddOLabel }}</label>
+                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกอื่นๆ/ตัน</label>
                     <input type="number" value="{{ sdRateAddOther }}" onInput="{{ onSettleAddOther }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
-                  <sc-if value="{{ sdShowAddTrip }}" hint-placeholder-val="{{ true }}">
                   <div style="flex:1;min-width:82px;">
                     <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกอื่นๆ/เที่ยว</label>
                     <input type="number" value="{{ sdRateAddTrip }}" onInput="{{ onSettleAddTrip }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
-                  </sc-if>
                 </div>
                 <div style="font-size:12px;color:#475467;line-height:1.7;min-width:170px;">
                   น้ำหนัก <b style="color:#16263a;">{{ sdWeightText }}</b> · ระยะทาง <b style="color:#16263a;">{{ sdDistanceText }}</b><br>
@@ -7331,19 +7282,17 @@
                     <input type="number" value="{{ sd.ratePerTon }}" onInput="{{ onSettleRate }}" placeholder="230" style="width:100%;padding:9px 11px;border:1px solid #2f6fb0;border-radius:8px;font-size:15px;font-weight:600;color:#16263a;box-sizing:border-box;">
                   </div>
                   <div style="flex:1;min-width:82px;">
-                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">{{ sdAddWLabel }}</label>
+                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกน้ำหนัก/ตัน</label>
                     <input type="number" value="{{ sdRateAddWeight }}" onInput="{{ onSettleAddWeight }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
                   <div style="flex:1;min-width:82px;">
-                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">{{ sdAddOLabel }}</label>
+                    <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกอื่นๆ/ตัน</label>
                     <input type="number" value="{{ sdRateAddOther }}" onInput="{{ onSettleAddOther }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
-                  <sc-if value="{{ sdShowAddTrip }}" hint-placeholder-val="{{ true }}">
                   <div style="flex:1;min-width:82px;">
                     <label style="font-size:11.5px;font-weight:700;color:#b54708;display:block;margin-bottom:4px;">+ บวกอื่นๆ/เที่ยว</label>
                     <input type="number" value="{{ sdRateAddTrip }}" onInput="{{ onSettleAddTrip }}" placeholder="0" style="width:100%;padding:9px 11px;border:1px solid #f0c088;border-radius:8px;font-size:15px;font-weight:600;color:#b54708;box-sizing:border-box;">
                   </div>
-                  </sc-if>
                 </div>
                 <div style="font-size:12px;color:#475467;line-height:1.7;min-width:170px;">
                   น้ำหนัก <b style="color:#16263a;">{{ sdWeightText }}</b> · ระยะทาง <b style="color:#16263a;">{{ sdDistanceText }}</b><br>
@@ -7683,11 +7632,6 @@
 const TYPE_MAP={'GIR6':'หกล้อ','GIR10':'สิบล้อ','GIRTL':'กึ่งพ่วง 3 เพลา','CL':'กึ่งพ่วง 2 เพลา'};
 // ★ v.2026-09-10: ปลายทางตามสัญญา GIR (ลูกค้า 30-005) — จังหวัด → อำเภอ/เขต ตามตารางค่าขนส่ง 125 ปลายทาง
 const GIR_CUST_CODES=['30-005'];
-// ★ v.2026-09-29a: ใบวางบิลรูปแบบการ์เดียน — 1 ใบแจ้งหนี้ต่อ 1 ประเภทรถ (ตามแอป STT Invoice เดิม)
-const GIR_BILL_TYPES={'6':'6 ล้อ','10':'10 ล้อ','trailer':'เทรเลอร์','40':'40 GP'};
-// ★ v.2026-09-29h: รูปแบบใบวางบิล — ทาทามีแบบของตัวเอง · การ์เดียนมีใบปะหน้า · ลูกค้าอื่นใช้ใบรายละเอียดแบบการ์เดียนเป็นมาตรฐาน
-const TATA_CUST_CODES=['30-015'];
-const GIR_CO={name:'บริษัท สิงห์ทองทรัคทรานสปอร์ต จำกัด',hq:'สนญ./สระบุรี : 2/5 ถ.อุไรรัตน์ ต.แก่งคอย อ.แก่งคอย จ.สระบุรี โทร.036-246202 แฟกซ์ 036-245512',ry:'ระยอง : 2/1 หมู่ 11 ต.หนองละลอก อ.บ้านค่าย จ.ระยอง โทร./แฟกซ์ 0-3889-2396',tax:'เลขประจำตัวผู้เสียภาษี 019 554 200 009 5'};
 const GIR_DEST={"กรุงเทพฯ":["บางกะปิ","บางบอน","บางแค","บางเขน","บางขุนเทียน","บางพลัด","บางซื่อ","บึงกุ่ม","จตุจักร","คลองสามวา","ลาดพร้าว","มีนบุรี","หนองจอก","พระนคร","ประเวศ","ราษฎร์บูรณะ","ราชเทวี","สายไหม","สะพานสูง","สาธร","สวนหลวง","สุวินทวงศ์","ทวีวัฒนา","ทุ่งครุ","วังทองหลาง","ยานนาวา"],"ฉะเชิงเทรา":["ฉะเชิงเทรา"],"ชัยนาท":["ชัยนาท"],"ชัยภูมิ":["ชัยภูมิ"],"จันทบุรี":["จันทบุรี"],"เชียงใหม่":["เชียงใหม่","ดอยสะเก็ด","อ.สันทราย"],"เชียงราย":["เชียงราย","อ.เชียงแสน","แม่สาย"],"ชลบุรี":["บ้านบึง","เมืองชลบุรี","พนัสนิคม","พัทยา","บางละมุง","สัตหีบ","ศรีราชา"],"กาฬสินธุ์":["เมืองกาฬสินธุ์"],"กาญจนบุรี":["กาญจนบุรี","อ.ท่าม่วง"],"ขอนแก่น":["บ้านไผ่","เมือง ขอนแก่น"],"ลำปาง":["ลำปาง"],"ลำพูน":["ลำพูน"],"ลพบุรี":["ลพบุรี"],"นครปฐม":["กำแพงแสน","นครปฐม","นครชัยศรี","สามพราน","บางเลน","ศาลายา"],"นครราชสีมา":["เมือง นครราชสีมา","ปากช่อง","สีคิ้ว"],"นครสวรรค์":["นครสวรรค์"],"นครศรีธรรมราช":["นครศรีธรรมราช"],"นราธิวาส":["นราธิวาส"],"หนองคาย":["หนองคาย"],"นนทบุรี":["นนทบุรี"],"ปทุมธานี":["คลองหลวง","ลาดหลุมแก้ว","ลำลูกกา","เมืองปทุมธานี","สามโคก"],"พะเยา":["จุน"],"เพชรบูรณ์":["เพชรบูรณ์"],"เพชรบุรี":["เขาย้อยเพชรบุรี"],"พิษณุโลก":["พิษณุโลก"],"พระนครศรีอยุธยา":["บางไทร","อยุธยา","วังน้อย","บางปะอิน"],"แพร่":["แพร่"],"ภูเก็ต":["ภูเก็ต"],"ประจวบคีรีขันธ์":["ประจวบคีรีขันธ์"],"ราชบุรี":["ราชบุรี"],"ระยอง":["บ้านฉาง","บ้านค่าย","แกลง","นิคมพัฒนา","ปลวกแดง","เมืองระยอง"],"ร้อยเอ็ด":["ร้อยเอ็ด"],"สกลนคร":["เมืองสกลนคร","สว่างแดนดิน"],"สมุทรสาคร":["บางโทลัด","กระทุ่มแบน","สมุทรสาคร"],"สมุทรปราการ":["บางพลี","บางปู / (แอมพาส)","สมุทรปราการ","เทพารักษ์"],"สระบุรี":["หนองแค","สระบุรี","วิหารแดง"],"สตูล":["ควนกาหลง"],"สิงห์บุรี":["สิงห์บุรี"],"ศรีสะเกษ":["ศรีษะเกษ"],"สงขลา":["หาดใหญ่","จะนะ","สะเดา","นาหม่อม","รัตภูมิ","สิงหนคร","สงขลา"],"สุโขทัย":["สุโขทัย"],"สุพรรณบุรี":["สุพรรณบุรี"],"สุราษฎร์ธานี":["เกาะสมุย","สุราษฎร์ธานี"],"สุรินทร์":["จอมพระ","ศรีขรภูมิ","สุรินทร์"],"ตรัง":["ตรัง"],"ตราด":["ตราด"],"อุบลราชธานี":["อุบลราชธานี"],"อุดรธานี":["อุดรธานี"],"อุตรดิตถ์":["อุตรดิตถ์"],"อุทัยธานี":["อุทัยธานี"],"ยะลา":["ยะลา"]};
 // ★ v.2026-09-11: ปลายทางตามสัญญา ทาทาสตีล (ลูกค้า 30-015) — จังหวัด → อำเภอ (ราคาไม่ผูก กรอกมือ)
 const TATA_DEST={"กรุงเทพมหานคร":["คลองเตย","คลองสามวา","คันนายาว","จตุจักร","จอมทอง","ดอนเมือง","ดินแดง","ตลิ่งชัน","ทวีวัฒนา","ทุ่งครุ","บางกะปิ","บางขุนเทียน","บางเขน","บางคอแหลม","บางแค","บางซื่อ","บางนา","บางบอน","บางพลัด","บางรัก","บึงกุ่ม","ปทุมวัน","ประเวศ","ป้อมปราบศัตรูพ่าย","พญาไท","พระโขนง","พระนคร","ภาษีเจริญ","มีนบุรี","ยานนาวา","ราชเทวี","ราษฎร์บูรณะ","ลาดกระบัง","ลาดพร้าว","วังทองหลาง","วัฒนา","สวนหลวง","สะพานสูง","สัมพันธวงศ์","สาทร","สายไหม","หนองแขม","หนองจอก","หลักสี่","ห้วยขวาง"],"กระบี่":["เกาะลันตา","เขาพนม","คลองท่อม","ปลายพระยา","เมืองกระบี่","ลำทับ","เหนือคลอง","อ่าวลึก"],"กาญจนบุรี":["ด่านมะขามเตี้ย","ทองผาภูมิ","ท่าม่วง","ท่ามะกา","ไทรโยค","บ่อพลอย","พนมทวน","เมืองกาญจนบุรี","เลาขวัญ","ศรีสวัสดิ์","สังขละบุรี","หนองปรือ","ห้วยกระเจา"],"กาฬสินธุ์":["กมลาไสย","กุฉินารายณ์","เขาวง","คำม่วง","ฆ้องชัย","ดอนจาน","ท่าคันโท","นาคู","นามน","เมืองกาฬสินธุ์","ยางตลาด","ร่องคำ","สมเด็จ","สหัสขันธ์","สามชัย","หนองกุงศรี","ห้วยผึ้ง","ห้วยเม็ก"],"กำแพงเพชร":["โกสัมพีนคร","ขาณุวรลักษบุรี","คลองขลุง","คลองลาน","ทรายทองวัฒนา","ไทรงาม","บึงสามัคคี","ปางศิลาทอง","พรานกระต่าย","เมืองกำแพงเพชร","ลานกระบือ"],"ขอนแก่น":["กระนวน","กิ่ง อ.บ้านแฮด","เขาสวนกวาง","โคกโพธิ์ไชย","ชนบท","ชำสูง","ชุมแพ","น้ำพอง","โนนศิลา","บ้านไผ่","บ้านฝาง","บ้านแฮด","เปือยน้อย","พระยืน","พล","ภูผาม่าน","ภูเวียง","มัญจาคีรี","เมืองขอนแก่น","แวงน้อย","แวงใหญ่","สีชมพู","หนองนาคำ","หนองเรือ","หนองสองห้อง","อุบลรัตน์"],"จันทบุรี":["แก่งหางแมว","ขลุง","เขาคิชฌกูฏ","ท่าใหม่","นายายอาม","โป่งน้ำร้อน","มะขาม","เมืองจันทบุรี","สอยดาว","แหลมสิงห์"],"ฉะเชิงเทรา":["คลองเขื่อน","ท่าตะเกียบ","บางคล้า","บางน้ำเปรี้ยว","บางประกง","บ้านโพธิ์","แปลงยาว","พนมสารคาม","เมืองฉะเชิงเทรา","ราชสาส์น","สนามชัยเขต"],"ชลบุรี":["เกาะจันทร์","เกาะศรีชัง","บ่อทอง","บางละมุง","บ้านบึง","พนัสนิคม","พานทอง","เมืองชลบุรี","ศรีราชา","สัตหีบ","หนองใหญ่"],"ชัยนาท":["เนินขาม","มโนรมย์","เมืองชัยนาท","วัดสิงห์","สรรคบุรี","สรรพยา","หนองมะโมง","หันคา"],"ชัยภูมิ":["เกษตรสมบูรณ์","แก้งคร้อ","คอนสวรรค์","คอนสาร","จัตุรัส","ซับใหญ่","เทพสถิต","เนินสง่า","บ้านเขว้า","บ้านแท่น","บำเหน็จณรงค์","ภักดีชุมพล","ภูเขียว","เมืองชัยภูมิ","หนองบัวแดง","หนองบัวระเหว"],"ชุมพร":["ท่าแซะ","ทุ่งตะโก","ปะทิว","พะโต๊ะ","เมืองชุมพร","ละแม","สวี","หลังสวน"],"เชียงราย":["ขุนตาล","เชียงของ","เชียงแสน","ดอยหลวง","เทิง","ป่าแดด","พญาเม็งราย","พาน","เมืองเชียงราย","แม่จัน","แม่ฟ้าหลวง","แม่ลาว","แม่สรวย","แม่สาย","เวียงแก่น","เวียงชัย","เวียงเชียงรุ้ง","เวียงป่าเป้า"],"เชียงใหม่":["กัลยาณิวัฒนา","จอมทอง","เชียงดาว","ไชยปราการ","ดอยเต่า","ดอยสะเก็ด","ดอยหล่อ","ฝาง","พร้าว","เมืองเชียงใหม่","แม่แจ่ม","แม่แตง","แม่ริม","แม่วาง","แม่ออน","แม่อาย","เวียงแหง","สะเมิง","สันกำแพง","สันทราย","สันป่าตอง","สารภี","หางดง","อมก๋อย","ฮอด"],"ตรัง":["กันตัง","นาโยง","ปะเหลียน","เมืองตรัง","ย่านตาขาว","รัษฎา","วังวิเศษ","สิเกา","ห้วยยอด","หาดสำราญ"],"ตราด":["เกาะกูด","เกาะช้าง","เขาสมิง","คลองใหญ่","บ่อไร่","เมืองตราด","แหลมงอบ"],"ตาก":["ท่าสองยาง","บ้านตาก","พบพระ","เมืองตาก","แม่ระมาด","แม่สอด","วังเจ้า","สามเงา","อุ้มผาง"],"นครนายก":["บ้านนา","ปากพลี","เมืองนครนายก","องครักษ์"],"นครปฐม":["กำแพงแสน","ดอนตูม","นครชัยศรี","บางเลน","พุทธมณฑล","เมืองนครปฐม","สามพราน"],"นครพนม":["ท่าอุเทน","ธาตุพนม","นาแก","นาทม","นาหว้า","บ้านแพง","ปลาปาก","โพนสวรรค์","เมืองนครพนม","เรณูนคร","วังยาง","ศรีสงคราม"],"นครราชสีมา":["แก้งสนามนาง","ขามทะเลสอ","ขามสะแกแสง","คง","ครบุรี","จักราช","เฉลิมพระเกียรติ นครราชสีมา","ชุมพวง","โชคชัย","ด่านขุนทด","เทพารักษ์","โนนแดง","โนนไทย","โนนสูง","บัวลาย","บัวใหญ่","บ้านเหลื่อม","ประทาย","ปักธงชัย","ปากช่อง","พระทองคำ","พิมาย","เมืองนครราชสีมา","เมืองยาง","ลำทะเมนชัย","วังน้ำเขียว","สีคิ้ว","สีดา","สูงเนิน","เสิงสาง","หนองบุนนาก","ห้วยแถลง"],"นครศรีธรรมราช":["ขนอม","จุฬาภรณ์","ฉวาง","เฉลิมพระเกียรติ นครศรีธรรมราช","ชะอวด","ช้างกลาง","เชียรใหญ่","ถ้ำพรรณรา","ท่าศาลา","ทุ่งสง","ทุ่งใหญ่","นบพิตำ","นาบอน","บางขัน","ปากพนัง","พรหมคีรี","พระพรหม","พิปูน","เมืองนครศรีธรรมราช","ร่อนพิบูลย์","ลานสะกา","สิชล","หัวไทร"],"นครสวรรค์":["เก้าเลี้ยว","โกรกพระ","ชุมตาบง","ชุมแสง","ตากฟ้า","ตาคลี","ท่าตะโก","บรรพตพิสัย","พยุหคีรี","ไพศาลี","เมืองนครสวรรค์","แม่เปิน","แม่วงก์","ลาดยาว","หนองบัว"],"นนทบุรี":["ไทรน้อย","บางกรวย","บางบัวทอง","บางใหญ่","ปากเกร็ด","เมืองนนทบุรี"],"น่าน":["เฉลิมพระเกียรติ น่าน","เชียงกลาง","ท่าวังผา","ทุ่งช้าง","นาน้อย","นาหมื่น","บ่อเกลือ","บ้านหลวง","ปัว","ภูเพียง","เมืองน่าน","แม่จริม","เวียงสา","สองแคว","สันติสุข"],"บึงกาฬ":["เซกา","โซ่พิสัย","บึงโขงหลง","บุ่งคล้า","ปากคาด","พรเจริญ","เมืองบึงกาฬ","ศรีวิไล"],"บุรีรัมย์":["กระสัง","คูเมือง","แคนดง","เฉลิมพระเกียรติ บุรีรัมย์","ชำนิ","นางรอง","นาโพธิ์","โนนดินแดง","โนนสุวรรณ","บ้านกรวด","บ้านด่าน","บ้านใหม่ไชยพจน์","ประโคนชัย","ปะคำ","พลับพลาชัย","พุทไธสง","เมืองบุรีรัมย์","ละหานทราย","ลำปลายมาศ","สตึก","หนองกี่","หนองหงส์","ห้วยราช"],"ปทุมธานี":["คลองหลวง","ธัญบุรี","เมืองปทุมธานี","ลาดหลุมแก้ว","ลำลูกกา","สามโคก","หนองเสือ"],"ประจวบคีรีขันธ์":["กุยบุรี","ทับสะแก","บางสะพาน","บางสะพานน้อย","ปราณบุรี","เมืองประจวบคีรีขันธ์","สามร้อยยอด","หัวหิน"],"ปราจีนบุรี":["กบินทร์บุริ","นาดี","บ้านสร้าง","ประจันตคาม","เมืองปราจีนบุรี","ศรีมหาโพธิ","ศรีมโหสถ"],"พระนครศรีอยุธยา":["ท่าเรือ","นครหลวง","บางซ้าย","บางไทร","บางบาล","บางปะหัน","บางปะอิน","บ้านแพรก","ผักไห่","ภาชี","มหาราช","เมืองพระนครศรีอยุธยา","ลาดบัวหลวง","วังน้อย","เสนา","อุทัย"],"พะเยา":["จุน","เชียงคำ","เชียงม่วน","ดอกคำใต้","ปง","ภูกามยาว","ภูซาง","เมืองพะเยา","แม่ใจ"],"พังงา":["กะปง","เกาะยาว","คุระบุรี","ตะกั่วทุ่ง","ตะกั่วป่า","ทับปุด","ท้ายเหมือง","เมืองพังงา"],"พัทลุง":["กงหรา","เขาชัยสน","ควนขนุน","ตะโหมด","บางแก้ว","ปากพะยูน","ป่าบอน","ป่าพะยอม","เมืองพัทลุง","ศรีนครินทร์","ศรีบรรพต"],"พิจิตร":["ดงเจริญ","ตะพานหิน","ทับคล้อ","บางมูลนาก","บึงนาราง","โพทะเล","โพธิ์ประทับช้าง","เมืองพิจิตร","วชิรบารมี","วังทรายพูน","สากเหล็ก","สามง่าม"],"พิษณุโลก":["ชาติตระการ","นครไทย","เนินมะปราง","บางกระทุ่ม","บางระกำ","พรหมพิราม","เมืองพิษณุโลก","วังทอง","วัดโบสถ์"],"เพชรบุรี":["แก่งกระจาน","เขาย้อย","ชะอำ","ท่ายาง","บ้านลาด","บ้านแหลม","เมืองเพชรบุรี","หนองหญ้าปล้อง"],"เพชรบูรณ์":["เขาค้อ","ชนแดน","น้ำหนาว","บึงสามพัน","เมืองเพชรบูรณ์","วังโป่ง","วิเชียรบุรี","ศรีเทพ","หนองไผ่","หล่มเก่า","หล่มสัก"],"แพร่":["เด่นชัย","เมืองแพร่","ร้องกวาง","ลอง","วังชิ้น","สอง","สูงเม่น","หนองม่วงไข่"],"ภูเก็ต":["กะทู้","ถลาง","ป่าตอง","เมืองภูเก็ต"],"มหาสารคาม":["กันทรวิชัย","กุดรัง","แกดำ","โกสุมพิสัย","ชื่นชม","เชียงยืน","นาเชือก","นาดูน","บรบือ","พยัคฆภูมิพิสัย","เมืองมหาสารคาม","ยางสีสุราช","วาปีปทุม"],"มุกดาหาร":["คำชะอี","ดงหลวง","ดอนตาล","นิคมคำสร้อย","เมืองมุกดาหาร","หนองสูง","หว้านใหญ่"],"แม่ฮ่องสอน":["ขุนยวม","ปางมะผ้า","ปาย","เมืองแม่ฮ่องสอน","แม่ลาน้อย","แม่สะเรียง","สบเมย"],"ยโสธร":["กุดชุม","ค้อวัง","คำเขื่อนแก้ว","ทรายมูล","ไทยเจริญ","ป่าติ้ว","มหาชนะชัย","เมืองยโสธร","เลิงนกทา"],"ร้อยเอ็ด":["เกษตรวิสัย","จตุรพักตร์พิมาน","จังหาร","เชียงขวัญ","ทุ่งเขาหลวง","ธวัชบุรี","ปทุมรัตน์","พนมไพร","โพธิ์ชัย","โพนทราย","โพนทอง","เมยวดี","เมืองร้อยเอ็ด","เมืองสรวง","ศรีสมเด็จ","สุวรรณภูมิ","เสลภูมิ","หนองพอก","หนองฮี","อาจสามารถ"],"ระนอง":["กระบุรี","กะเปอร์","เมืองระนอง","ละอุ่น","สุขสำราญ"],"ระยอง":["แกลง","เขาชะเมา","นิคมพัฒนา","บ้านค่าย","บ้านฉาง","ปลวกแดง","เมืองระยอง","วังจันทร์"],"ราชบุรี":["จอมบึง","ดำเนินสะดวก","บางแพ","บ้านคา","บ้านโป่ง","ปากท่อ","โพธาราม","เมืองราชบุรี","วัดเพลง","สวนผึ้ง"],"ลพบุรี":["โคกเจริญ","โคกสำโรง","ชัยบาดาล","ท่าวุ้ง","ท่าหลวง","บ้านหมี่","พัฒนานิคม","เมืองลพบุรี","ลำสนธิ","สระโบสถ์","หนองม่วง"],"ลำปาง":["เกาะคา","งาว","แจ้ห่ม","เถิน","เมืองปาน","เมืองลำปาง","แม่ทะ","แม่พริก","แม่เมาะ","วังเหนือ","สบปราบ","เสริมงาม","ห้างฉัตร"],"ลำพูน":["ทุ่งหัวช้าง","บ้านธิ","บ้านโฮ่ง","ป่าซาง","เมืองลำพูน","แม่ทา","ลี้","เวียงหนองล่อง"],"เลย":["เชียงคาน","ด่านซ้าย","ท่าลี่","นาด้วง","นาแห้ว","ปากชม","ผาขาว","ภูกระดึง","ภูเรือ","ภูหลวง","เมืองเลย","วังสะพุง","หนองหิน","เอราวัณ"],"ศรีสะเกษ":["กันทรลักษ์","กันทรารมย์","ขุขันธ์","ขุนหาญ","น้ำเกลี้ยง","โนนคูณ","บึงบูรพ์","เบญจลักษณ์","ปรางค์กู่","พยุห์","โพธิ์ศรีสุวรรณ","ไพรบึง","ภูสิงห์","เมืองจันทร์","เมืองศรีสะเกษ","ยางชุมน้อย","ราษีไศล","วังหิน","ศรีรัตนะ","ศิลาลาด","ห้วยทับทัน","อุทุมพรพิสัย"],"สกลนคร":["กุดบาก","กุสุมาลย์","คำตากล้า","โคกศรีสุพรรณ","เจริญศิลป์","เต่างอย","นิคมน้ำอูน","บ้านม่วง","พรรณานิคม","พังโคน","โพนนาแก้ว","ภูพาน","เมืองสกลนคร","วานรนิวาส","วาริชภูมิ","สว่างแดนดิน","ส่องดาว","อากาศอำนวย"],"สงขลา":["กระแสสินธุ์","คลองหอยโข่ง","ควนเนียง","จะนะ","เทพา","นาทวี","นาหม่อม","บางกล่ำ","เมืองสงขลา","ระโนด","รัตภูมิ","สทิงพระ","สะเดา","สะบ้าย้อย","สิงหนคร","หาดใหญ่"],"สตูล":["ควนกาหลง","ควนโดน","ท่าแพ","ทุ่งหว้า","มะนัง","เมืองสตูล","ละงู"],"สมุทรปราการ":["บางบ่อ","บางพลี","บางเสาธง","พระประแดง","พระสมุทรเจดีย์","เมืองสมุทรปราการ"],"สมุทรสงคราม":["บางคนที","เมืองสมุทรสงคราม","อัมพวา"],"สมุทรสาคร":["กระทุ่มแบน","บ้านแพ้ว","เมืองสมุทรสาคร"],"สระแก้ว":["เขาฉกรรจ์","คลองหาด","โคกสูง","ตาพระยา","เมืองสระแก้ว","วังน้ำเย็น","วังสมบูรณ์","วัฒนานคร","อรัญประเทศ"],"สระบุรี":["กิ่ง อ.วังม่วง","แก่งคอย","เฉลิมพระเกียรติ สระบุรี","ดอนพุด","บ้านหมอ","พระพุทธบาท","มวกเหล็ก","เมืองสระบุรี","วิหารแดง","เสาไห้","หนองแค","หนองแซง","หนองโดน"],"สิงห์บุรี":["ค่ายบางระจัน","ท่าช้าง","บางระจัน","พรหมบุรี","เมืองสิงห์","อินทร์บุรี"],"สุโขทัย":["กงไกรลาศ","คีรีมาศ","ทุ่งเสลี่ยม","บ้านด่านลานหอย","เมืองสุโขทัย","ศรีนคร","ศรีสัชนาลัย","ศรีสำโรง","สวรรคโลก"],"สุพรรณบุรี":["ดอนเจดีย์","ด่านช้าง","เดิมบางนางบวช","บางปลาม้า","เมืองสุพรรณ","ศรีประจันต์","สองพี่น้อง","สามชุก","หนองหญ้าไซ","อู่ทอง"],"สุราษฎร์ธานี":["กาญจนดิษฐ์","เกาะพะงัน","เกาะสมุย","คีรีรัฐนิคม","เคียนซา","ชัยบุรี","ไชยา","ดอนสัก","ท่าฉาง","ท่าชนะ","บ้านตาขุน","บ้านนาเดิม","บ้านนาส","บ้านนาสาร","พนม","พระแสง","พุนพิน","เมืองสุราษฎร์ธานี","วิภาวดี","เวียงสระ"],"สุรินทร์":["กาบเชิง","เขวาสินรินทร์","จอมพระ","ชุมพลบุรี","ท่าตูม","โนนนารายณ์","บัวเชด","ปราสาท","พนมดงรัก","เมืองสุรินทร์","รัตนบุรี","ลำดวน","ศรีณรงค์","ศีขรภูมิ","สนม","สังขะ","สำโรงทาบ"],"หนองคาย":["ท่าบ่อ","เฝ้าไร่","โพธิ์ตาก","โพนพิสัย","เมืองหนองคาย","รัตนวาปี","ศรีเชียงใหม่","สระใคร่","สังคม"],"หนองบัวลำภู":["นากลาง","นาวัง","โนนสัง","เมืองหนองบัวลำภู","ศรีบุญเรือง","สุวรรณคูหา"],"อ่างทอง":["ไชโย","ป่าโมก","โพธิ์ทอง","เมืองอ่างทอง","วิเศษชัยชาญ","สามโก้","แสวงหา"],"อำนาจเจริญ":["ชานุมาน","ปทุมราชวงศา","พนา","เมืองอำนาจเจริญ","ลืออำนาจ","เสนางคนิคม","หัวตะพาน"],"อุดรธานี":["กุดจับ","กุมภวาปี","กู่แก้ว","ไชยวาน","ทุ่งฝน","นายูง","น้ำโสม","โนนสะอาด","บ้านดุง","บ้านผือ","ประจักษ์ศิลปาคาม","พิบูลย์รักษ์","เพ็ญ","เมืองอุดรธานี","วังสามหมอ","ศรีธาตุ","สร้างคอม","หนองวัวซอ","หนองแสง","หนองหาน"],"อุตรดิตถ์":["ตรอน","ทองแสนขัน","ท่าปลา","น้ำปาด","บ้านโคก","พิชัย","ฟากท่า","เมืองอุตรดิตถ์","ลับแล"],"อุทัยธานี":["ทัพทัน","บ้านไร่","เมืองอุทัยธานี","ลานสัก","สว่างอารมณ์","หนองขาหย่าง","หนองฉาง","ห้วยคต"],"อุบลราชธานี":["กุดข้าวปุ้น","เขมราฐ","เขื่องใน","โขงเจียม","ดอนมดแดง","เดชอุดม","ตระการพืชผล","ตาลสุม","ทุ่งศรีอุดม","นาจะหลวย","นาตาล","นาเยีย","น้ำขุ่น","น้ำยืน","บุณฑริก","พิบูลมังสาหาร","โพธิ์ไทร","ม่วงสามสิบ","เมืองอุบลราชธานี","วารินชำราบ","ศรีเมืองใหม่","สว่างวีระวงศ์","สำโรง","สิรินธร","เหล่าเสือโก้ก"]};
@@ -10212,13 +10156,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   setM=(field,val)=>this.setState(s=>({maintDraft:{...s.maintDraft,[field]:val}}));
   saveMaint=()=>{const m=this.state.maintDraft;if(!m||!m.detail.trim())return;const entry={...m,id:Date.now()};const trucks=this.state.trucks.map(t=>t.plate===this.state.truckSelectedId?{...t,maintenance:[entry,...(t.maintenance||[])]}:t);this.persistTrucks(trucks,this.state.truckSelectedId);this.setState({trucks,maintFormOpen:false,maintDraft:null});};
   deleteMaint=(id)=>{const trucks=this.state.trucks.map(t=>t.plate===this.state.truckSelectedId?{...t,maintenance:(t.maintenance||[]).filter(m=>m.id!==id)}:t);this.persistTrucks(trucks,this.state.truckSelectedId);this.setState({trucks});};
-  // ★ v.2026-09-29k: เลขที่เอกสารอัตโนมัติ (ลูกค้าที่ไม่มีเลขบิลของตัวเอง) — เดิมมีแค่ตอนบันทึกงานรับเข้า จ่ายงานตรงเลยได้ช่องว่าง
-  //   ใส่ไว้ในฟอร์มตั้งแต่เปิด แก้เป็นเลขของลูกค้าได้ทุกเมื่อ (ตอนนี้หรือเปิดแก้ใบงานทีหลัง) · ว่างตอนบันทึก → ออกเลขให้
-  _nextNbNo(dateIso){const S=this.state;const _bd=String(dateIso||'').replace(/-/g,'').slice(2,8)||new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'2-digit',month:'2-digit',day:'2-digit'}).format(new Date()).replace(/-/g,'');
-    const _pfx='NB-'+_bd+'-';const re=new RegExp('^'+_pfx+'(\\d+)$');let _mx=0;const see=(v)=>{const m=String(v||'').trim().match(re);if(m)_mx=Math.max(_mx,parseInt(m[1],10));};
-    (S.orders||[]).forEach(x=>see(x.billNo));(S.jobs||[]).forEach(x=>{if(x.deleted)return;see(x.deliveryNo);(x.shipments||[]).forEach(sp=>see(sp&&sp.bill));});
-    return _pfx+String(_mx+1).padStart(2,'0');}
-  openJobNew=()=>{const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());this.editingJobId=null;const S=this.state;const _ymd=today.replace(/-/g,'').slice(2);const _prefix='JB-'+_ymd+'-';const _seq=S.jobs.filter(x=>String(x.jobNo||'').startsWith(_prefix)).reduce((mx,x)=>{const n=parseInt(String(x.jobNo).slice(_prefix.length),10);return isNaN(n)?mx:Math.max(mx,n);},0)+1;this.setState({jobDraft:{id:null,jobNo:_prefix+String(_seq).padStart(3,'0'),date:today,deliveryNo:this._nextNbNo(today),time:'',driverCode:'',truckPlate:'',origin:'',destination:'',customer:'',weight:'',revenue:'',dispatchPoint:S.jobDpFilter==='all'?'':S.jobDpFilter,status:'รับงาน',fuelLiters:'',fuelBaht:'',toll:'',allowance:'',tire:'',repair:'',police:'',misc:'',remark:'',driverFleet:'',truckDept:'',_originPreset:''},jobIsNew:true,jobView:'form',jobFormError:'',section:'jobs'});this.scrollMain();};
+  openJobNew=()=>{const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());this.editingJobId=null;const S=this.state;const _ymd=today.replace(/-/g,'').slice(2);const _prefix='JB-'+_ymd+'-';const _seq=S.jobs.filter(x=>String(x.jobNo||'').startsWith(_prefix)).reduce((mx,x)=>{const n=parseInt(String(x.jobNo).slice(_prefix.length),10);return isNaN(n)?mx:Math.max(mx,n);},0)+1;this.setState({jobDraft:{id:null,jobNo:_prefix+String(_seq).padStart(3,'0'),date:today,time:'',driverCode:'',truckPlate:'',origin:'',destination:'',customer:'',weight:'',revenue:'',dispatchPoint:S.jobDpFilter==='all'?'':S.jobDpFilter,status:'รับงาน',fuelLiters:'',fuelBaht:'',toll:'',allowance:'',tire:'',repair:'',police:'',misc:'',remark:'',driverFleet:'',truckDept:'',_originPreset:''},jobIsNew:true,jobView:'form',jobFormError:'',section:'jobs'});this.scrollMain();};
   openJobEdit=(id)=>{const j=this.state.jobs.find(x=>x.id===id);if(!j)return;this.editingJobId=id;this._jobOrig={...j};this.setState({jobDraft:{...j},jobIsNew:false,jobView:'form',jobFormError:'',section:'jobs',jobEditDetails:false,jobShowExpenses:false,jobShowTracking:false});this.scrollMain();};
   cancelJobForm=()=>this.setState({jobView:'list',jobFormError:''});
   // ★ v.2026-09-26b: ⚡ จ่ายงานเร็ว (มือถือ) — jobView 'qlist' | 'qform' ใต้ section jobs
@@ -10302,7 +10240,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   openOrderEdit=(id)=>{const o=this.state.orders.find(x=>String(x.id)===String(id));if(!o)return;this._orderOrig={...o};this.editingOrderId=id;this.setState({orderDraft:{...o},orderIsNew:false,orderView:'form',orderFormError:'',orderAddingCustomer:false,section:'orders'});this.scrollMain();};
   cancelOrderForm=()=>this.setState({orderView:'list',orderFormError:''});
   setO(field,val){this.setState(s=>({orderDraft:{...s.orderDraft,[field]:val}}));}
-  saveOrder=()=>{const o=this.state.orderDraft;if(o&&!this._plGuard(o.receivedDate,'order',this.editingOrderId,'งานรับเข้า '+(o.billNo||o.orderNo||''),this.editingOrderId==null))return;if(!o||!String(o.customer||'').trim()){this.setState({orderFormError:'กรุณาเลือกลูกค้า / ผู้ว่าจ้าง'});return;}if(this.state.orderIsNew&&!/^[0-9\-\s+]{9,}$/.test(String(o.webPhone||'').trim())){this.setState({orderFormError:'กรุณาใส่เบอร์โทรลูกค้า (ใช้ยืนยันก่อนเสนอราคา)'});return;}if(String(o.webEmail||'').trim()&&!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(String(o.webEmail).trim())){this.setState({orderFormError:'อีเมลลูกค้าไม่ถูกต้อง'});return;}let _bill=String(o.billNo||'').trim();if(!_bill){_bill=this._nextNbNo(o.receivedDate);}
+  saveOrder=()=>{const o=this.state.orderDraft;if(o&&!this._plGuard(o.receivedDate,'order',this.editingOrderId,'งานรับเข้า '+(o.billNo||o.orderNo||''),this.editingOrderId==null))return;if(!o||!String(o.customer||'').trim()){this.setState({orderFormError:'กรุณาเลือกลูกค้า / ผู้ว่าจ้าง'});return;}if(this.state.orderIsNew&&!/^[0-9\-\s+]{9,}$/.test(String(o.webPhone||'').trim())){this.setState({orderFormError:'กรุณาใส่เบอร์โทรลูกค้า (ใช้ยืนยันก่อนเสนอราคา)'});return;}if(String(o.webEmail||'').trim()&&!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(String(o.webEmail).trim())){this.setState({orderFormError:'อีเมลลูกค้าไม่ถูกต้อง'});return;}let _bill=String(o.billNo||'').trim();if(!_bill){const _bd=String(o.receivedDate||'').replace(/-/g,'').slice(2,8)||new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'2-digit',month:'2-digit',day:'2-digit'}).format(new Date()).replace(/-/g,'');const _pfx='NB-'+_bd+'-';let _mx=0;this.state.orders.forEach(x=>{const m=String(x.billNo||'').match(new RegExp('^'+_pfx+'(\\d+)$'));if(m)_mx=Math.max(_mx,parseInt(m[1],10));});_bill=_pfx+String(_mx+1).padStart(2,'0');}
     // กันคีย์เลขที่บิลซ้ำ (เตือน + ให้ยืนยัน) — เลขที่บิลคือกุญแจเชื่อมไปการจ่ายงาน
     {const _me=String(this.editingOrderId||'');
      const _dup=(this.state.orders||[]).filter(x=>String(x.id)!==_me&&x.status!=='ยกเลิก'&&String(x.billNo||'').trim().toLowerCase()===_bill.toLowerCase());
@@ -11594,7 +11532,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       if(f&&d<f)return false;if(t&&d>t)return false;
       if(!(parseFloat(j.revenue)||0))return false;
       if(code){const jc=String(j.customerCode||'').trim()||((String(j.customer||'').match(/^(\d{2}-\d{3})/)||[])[1]||'');if(jc!==code)return false;}
-      if(S.billGirType&&this._blIsGir()){const c=this._girCat(j);const want=S.billGirType==='40'?'trailer':S.billGirType;if(c&&c!==want)return false;}
       // ซ่อนเฉพาะเที่ยวที่ "วางบิลครบทุกบิลแล้ว" — เที่ยวที่วางไปบางบิลยังต้องเห็นอยู่
       if(!S.billShowBilled&&this._blLines(j).every(l=>this._blLineInv(j,l)))return false;
       // ค้นเลขบิลในใบส่งของด้วย — เดิมค้นได้แค่เลขใบงาน/ทะเบียน/เส้นทาง
@@ -11604,53 +11541,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         if(blob.indexOf(q)<0)return false;}
       return true;
     }).sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.deliveryNo||'').localeCompare(String(b.deliveryNo||'')));
-  }
-  // ===== ใบวางบิลรูปแบบการ์เดียน (GIR, ลูกค้า 30-005) =====
-  // เอกสาร: ใบปะหน้า (ใบแจ้งหนี้ 1 ชุด หัก ณ ที่จ่าย 1%) + ใบวางบิลรายละเอียด (ปกติ / OW / OT) + ใบสรุปวางบิลรวม
-  _blIsGir(){return GIR_CUST_CODES.indexOf(String(this.state.billCustCode||'').trim())>=0;}
-  _blFmt(){const c=String(this.state.billCustCode||'').trim();return GIR_CUST_CODES.indexOf(c)>=0?'gir':(TATA_CUST_CODES.indexOf(c)>=0?'tata':'std');}
-  _girCat(j){const t=(this.state.trucks||[]).find(x=>x.plate===(j&&j.truckPlate));const s=String((t&&t.truckType)||(j&&j.truckType)||'');
-    if(/^06|หก/.test(s))return '6';if(/^10|สิบ/.test(s))return '10';if(/^18|^21|หัวลาก|พ่วง|เทรล/.test(s))return 'trailer';return '';}
-  // สถานที่ส่งสินค้า = ชื่อร้าน + อำเภอ + จังหวัด (ผู้ใช้กำหนด 29 ก.ย.) · ชื่อร้านมีอำเภอ/จังหวัดอยู่แล้ว ไม่ต่อซ้ำ
-  _girPlace(j,l,p,is40,std){const nz=x=>String(x||'').replace(/\s+/g,'');const dest=String(j.destination||(l&&l.dest)||'').trim();
-    const prov=String(j.destProvince||'').trim();const provShow=/^กรุงเทพ/.test(prov)?'กทม.':prov;
-    const add=[String(j.destDistrict||'').trim(),provShow].filter(x=>x&&nz(dest).indexOf(nz(x))<0&&!(x==='กทม.'&&/กรุงเทพ|กทม/.test(dest)));
-    let t=[dest].concat(add).filter(Boolean).join(' ');
-    const sfx=[];if(p&&Number(p.ow))sfx.push('+ นน.');if(p&&Number(p.ot))sfx.push(std?'+ อื่นๆ':(is40?'+ นำแร็คกลับ':'+ รอขึ้นสินค้า'));
-    return sfx.length?(t+' '+sfx.join('')):t;}
-  _girDate(iso){const m=String(iso||'').slice(0,10).match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?(Number(m[3])+'/'+Number(m[2])+'/'+(Number(m[1])+543)):String(iso||'');}
-  _girPref(k,def){const v=this.state[k];if(v!=null)return String(v);try{const x=localStorage.getItem('lf_'+k);return x!=null?x:(def||'');}catch(e){return def||'';}}
-  _blSigner(){const v=this.state.billSigner;if(v!=null)return String(v);try{return localStorage.getItem('lf_bill_signer')||'';}catch(e){return '';}}
-  // แยกค่าขนส่ง 1 บรรทัด → ปกติ / OW (บวกน้ำหนัก) / OT (บวกอื่นๆ + บวกต่อเที่ยว) · รวมสุทธิ = ยอดเดิมของบรรทัดเสมอ
-  _girParts(j,l,n){const r2=x=>Math.round((Number(x)||0)*100)/100;const tot=r2(l&&l.rev);
-    if(n>1)return {normal:tot,ow:0,ot:0,tot:tot};
-    const w=this.jobRateBasis(j)==='trip'?1:this._billWeight(j);
-    const ow=r2(w*(parseFloat(j.rateAddWeight)||0)),ot=r2(w*(parseFloat(j.rateAddOther)||0)+(parseFloat(j.rateAddTrip)||0));
-    return {normal:r2(tot-ow-ot),ow:ow,ot:ot,tot:tot};}
-  _girData(D){
-    const S=this.state;const std=this._blFmt()!=='gir';const typ=std?'':(S.billGirType||'');
-    const items=D.items.slice().sort((a,b)=>String(a.j.date).localeCompare(String(b.j.date))||String((a.l&&a.l.bill)||'').localeCompare(String((b.l&&b.l.bill)||''),'en',{numeric:true}));
-    const rows=[];
-    items.forEach(it=>{const j=it.j,l=it.l;const p=this._girParts(j,l,this._blLines(j).length);
-      const _w=Math.round((Number(l&&l.w)||0)*1000)/1000;const _ton=this.jobRateBasis(j)!=='trip';
-      const _rt=_ton?(Number(l&&l.rate)||0):(_w?Math.round(p.tot/_w*100)/100:0);
-      rows.push({w:_w,rate:_rt,isTon:_ton,note:(l&&l.note)||'',add:(l&&l.note)?(parseFloat(j.rateAddTrip)||0):0,orig:String((l&&l.origin)||j.origin||'').trim(),placeBare:this._girPlace(j,l,null,false,true),no:rows.length+1,type:typ==='40'?GIR_BILL_TYPES['40']:(GIR_BILL_TYPES[this._girCat(j)]||'—'),plate:j.truckPlate||'',
-        date:this._girDate(j.date),bol:(l&&l.bill)||'',place:this._girPlace(j,l,p,typ==='40',std),
-        prov:String(j.destProvince||'').trim(),normal:p.normal,ow:p.ow,ot:p.ot,tot:p.tot});});
-    const sum=k=>Math.round(rows.reduce((a,r)=>a+(Number(r[k])||0),0)*100)/100;
-    const sT=sum('tot');const wht=Math.round(sT*0.01*100)/100;const net=Math.round((sT-wht)*100)/100;
-    let layout='trip';
-    if(std){const pick=S.billStdLayout||'';
-      const cu=(S.customers||[]).find(c=>String(c.code||'').trim()===String(S.billCustCode||'').trim())||{};
-      layout=pick||(cu.rateBasis==='ton'?'ton':(cu.rateBasis==='trip'?'trip':(rows.filter(r=>r.isTon).length*2>=rows.length&&rows.length?'ton':'trip')));}
-    const sW=Math.round(rows.reduce((a,r)=>a+(Number(r.w)||0),0)*1000)/1000;
-    if(std)rows.forEach(r=>{const tgt=layout==='ton'?r.placeBare:r.place;r.place=(r.orig?(r.orig+' → '):'')+tgt;});
-    const sAdd=sum('add');
-    let title=typ?GIR_BILL_TYPES[typ]:'';
-    if(!title){const cnt={};rows.forEach(r=>{cnt[r.type]=(cnt[r.type]||0)+1;});title=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||'';}
-    return {rows:rows,sN:sum('normal'),sOW:sum('ow'),sOT:sum('ot'),sT:sT,wht:wht,net:net,title:title==='—'?'':title,
-      layout:layout,sW:sW,sAdd:sAdd,std:std,colOW:std?'บวกน้ำหนัก':'OW',colOT:std?'บวกอื่นๆ':(typ==='40'?'นำแร็คกลับ':'OT'),desc:String(S.billGirDesc==null?'ค่าขนส่ง LOGISTICS21':S.billGirDesc).trim(),
-      signer:this._blSigner().trim(),words:this._bahtText(sT),netWords:this._bahtText(net)};
   }
   blToggle=(id)=>this.setState(s=>{const m={...(s.billSel||{})};const k=String(id);if(m[k])delete m[k];else m[k]=true;return{billSel:m};});
   // ===== วางบิล "รายบิล" ไม่ใช่รายเที่ยว =====
@@ -11870,8 +11760,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   }
   exportBillingXlsx=(listArg)=>{
     const D=this._blDocData(listArg);if(!D)return;
-    if(this._blFmt()!=='tata'){const G=this._girData(D);const safe=String(D.inv||'draft').replace(/[\\\/:*?"<>|]/g,'-');
-      this._downloadBytes('ใบวางบิล_'+(G.std?'':'GIR_')+safe+'.xlsx',this._xlsxBytes(D.inv||'GIR',this._girXlsxSheet(D,G)),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');return;}
     const safe=String(D.inv||'draft').replace(/[\\\/:*?"<>|]/g,'-');
     this._downloadBytes('ใบวางบิล_'+safe+'.xlsx',this._xlsxBytes(D.inv||'ใบวางบิล',this._blXlsxSheet(D)),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   };
@@ -11918,7 +11806,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   }
   printBillingDoc=(listArg)=>{
     const D=this._blDocData(listArg);if(!D)return;
-    if(this._blFmt()!=='tata')return this._printGirDoc(D);
     let {S,items,list,esc,n2,n3,co,coName,coAddr,coTax,coLine2,cust,custName,custLine,inv,rec,docDate,prod,tt,rows,sumW,sumA,words}=D;
     {const _miss=list.filter(j=>(!String(j.destDistrict||'').trim()||!String(j.destProvince||'').trim()));
      if(_miss.length&&!window.confirm('⚠ มี '+_miss.length+' เที่ยว ที่ยังไม่กรอกอำเภอ/จังหวัดปลายทาง\nคอลัมน์รายละเอียดจะใช้ข้อความปลายทางเดิมแทน\n\nพิมพ์ต่อเลยไหม?'))return;}
@@ -12015,154 +11902,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       },900);
     }
   };
-  _girCss(){return '@page{size:A4;margin:0;}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'body{font-family:"Sarabun","TH Sarabun New",Tahoma,sans-serif;margin:0;color:#161616;background:#fff;}'
-    +'.page{width:210mm;min-height:297mm;margin:0 auto;padding:8mm 8mm;display:flex;flex-direction:column;page-break-after:always;}'
-    +'.page:last-child{page-break-after:auto;}'
-    +'@media print{.page{min-height:0;}}'
-    +'table{border-collapse:collapse;}td,th{border:1px solid #161616;}'
-    +'.co{text-align:center;line-height:1.5;}.co .n{font-weight:700;}'
-    +'.bar{text-align:center;font-weight:700;font-size:16px;border-top:1.5px solid #161616;border-bottom:1.5px solid #161616;padding:4px 0;margin:14px 0;}'
-    +'.cu{font-size:12.5px;line-height:1.8;}.cu .in{padding-left:42px;}'
-    +'.it{width:100%;table-layout:fixed;font-size:12.5px;}.it th{padding:3px 1px;background:#eaeaea;font-weight:600;line-height:1.1;}'
-    +'.it td{padding:3px 3px;vertical-align:middle;word-wrap:break-word;}.it td.c{text-align:center;}.it td.r{text-align:right;white-space:nowrap;}'
-    +'.it tr.tot td{font-weight:800;background:#f3f3f3;font-size:14px;padding:5px 3px;}.it tr.tot td.r{font-size:14px;}'
-    +'tr{page-break-inside:avoid;}';}
-  _girCoBlock(D,big,withRy){const fs=big?12:11;const esc=D.esc;
-    const own=COMPANY_ID==='singthong';
-    const nm=own?GIR_CO.name:esc(D.coName||'');const lines=own?[GIR_CO.hq].concat(withRy?[GIR_CO.ry]:[]):[esc(D.coAddr||''),esc([D.co&&D.co.phone?('โทร. '+D.co.phone):''].filter(Boolean).join(''))].filter(Boolean);
-    const tax=own?GIR_CO.tax:(D.coTax?('เลขประจำตัวผู้เสียภาษี '+esc(D.coTax)):'');
-    return '<div class="co"><div class="n" style="font-size:'+(big?20:19)+'px">'+nm+'</div>'+lines.map(x=>'<div style="font-size:'+fs+'px">'+x+'</div>').join('')
-      +(tax?('<div style="font-size:'+fs+'px;'+(big?'font-weight:700;':'')+'">'+tax+'</div>'):'');}
-  _girCust(D){const esc=D.esc;return '<div class="cu"><div><b>ลูกค้า</b>&nbsp;&nbsp;'+esc(D.custName||'')+'</div>'
-    +'<div class="in">'+esc(D.cust.address||'')+'</div><div class="in">เลขประจำตัวผู้เสียภาษี '+esc(D.cust.taxId||'')+'</div></div>';}
-  _printGirDoc(D){
-    const G=this._girData(D);const esc=D.esc,n2=D.n2;const date=this._girDate(D.docDate);
-    const B='border:1px solid #161616;';
-    const empty='<tr><td style="padding:4px 6px;height:26px">&nbsp;</td><td></td><td></td><td></td></tr>';
-    // ใบปะหน้า — ใบแจ้งหนี้ (ตามแบบเอกสารจริงทุกตำแหน่ง · ไม่มีช่องเซ็น)
-    const cover='<div class="page" style="padding:6mm 6mm">'
-      +'<div style="text-align:right;font-weight:700;font-size:12.5px;margin-bottom:20px">Invoice number :&nbsp;'+esc(D.inv||'')+'</div>'
-      +'<div style="margin-bottom:14px">'+this._girCoBlock(D,true,true)+'<div style="font-size:15px;font-weight:700;margin-top:8px">ใบแจ้งหนี้</div></div></div>'
-      +'<div style="display:flex;justify-content:flex-end;margin:0 0 10px"><table style="font-size:12.5px;font-weight:700"><tr><td style="padding:2px 10px">วันที่</td><td style="padding:2px 16px;min-width:30mm;text-align:center">'+esc(date)+'</td></tr></table></div>'
-      +'<div class="cu" style="margin-bottom:16px">'+this._girCust(D).replace(/^<div class="cu">/,'')
-      +'<table style="width:100%;table-layout:fixed;font-size:12.5px"><thead><tr>'
-      +'<th style="width:13%;padding:5px 3px;font-weight:700">จำนวน</th><th style="width:55%;padding:5px 3px;font-weight:700">รายการ</th><th style="width:16%;padding:5px 3px;font-weight:700">ราคา</th><th style="width:16%;padding:5px 3px;font-weight:700">จำนวนเงิน</th></tr></thead><tbody>'
-      +'<tr><td style="padding:4px 6px;text-align:center">1 ชุด</td><td style="padding:4px 6px">'+esc(G.desc)+'</td><td style="padding:4px 6px"></td><td style="padding:4px 6px;text-align:right">'+n2(G.sT)+'</td></tr>'
-      +empty+empty+empty+empty+empty+empty
-      +'<tr><td style="padding:4px 6px;font-weight:600">&nbsp;</td><td></td><td style="padding:4px 6px;text-align:center;font-weight:600">Total</td><td style="padding:4px 6px;text-align:right;font-weight:600">'+n2(G.sT)+'</td></tr>'
-      +'<tr><td></td><td></td><td style="padding:4px 6px;text-align:center;line-height:1.2">Deduct W/H<br>tax 1%</td><td style="padding:4px 6px;text-align:right">'+n2(G.wht)+'</td></tr>'
-      +'<tr style="font-weight:700"><td colspan="2" style="padding:4px 6px;text-align:center">'+esc(G.netWords)+'</td><td style="padding:4px 6px;text-align:center">Net Pay</td><td style="padding:4px 6px;text-align:right">'+n2(G.net)+'</td></tr>'
-      +'</tbody></table></div>';
-    // ใบวางบิลรายละเอียด — หน้าละ 24 แถว (หน้าสุดท้าย 18 เผื่อแถวรวม + ช่องเซ็น)
-    // คอลัมน์สถานที่ส่ง ~38mm ≈ 21 ตัวอักษร/บรรทัด · จังหวัด ~11mm ≈ 5 ตัวอักษร · บรรทัดละ ~5.2mm
-    const _ln=(r)=>Math.max(1,Math.ceil(String(r.place||'').length/22),Math.ceil(String(r.prov||'').length/5),Math.ceil(String(r.date||'').length/10));
-    const _mm=(r)=>1.7+_ln(r)*4.35;   // วัดจริง 29 ก.ย.: 2 บรรทัด = 10.3mm · 3 บรรทัด = 14.6mm
-    const FIT=176,FIT_LAST=138;   // A4 297 − ขอบ 12 − หัวเอกสาร/ลูกค้า 86 − หัวตาราง 9 − เลขหน้า ~10 (วัดจริง) · หน้าสุดท้ายเหลือที่ให้แถวรวม+ช่องเซ็น
-    const chunks=[];{let cur=[],h=0;G.rows.forEach(r=>{const rh=_mm(r);if(cur.length&&h+rh>FIT){chunks.push(cur);cur=[];h=0;}cur.push(r);h+=rh;});
-      if(cur.length)chunks.push(cur);}
-    if(!chunks.length)chunks.push([]);
-    if(chunks[chunks.length-1].reduce((a,r)=>a+_mm(r),0)>FIT_LAST)chunks.push([]);   // แถวรวม+ช่องเซ็นไม่พอ → ยกไปหน้าใหม่
-    const TON=G.layout==='ton';
-    const W=TON?[4,7,8,9,11,20.5,7,8.5,8,7,10]:[3.5,5.5,8,9.5,12,19.5,6,10.5,7.5,7.5,10.5];
-    const PL=G.std?'รายการ ต้นทาง → สถานที่ส่งสินค้า':'รายการ สถานที่ส่งสินค้า';
-    const H=TON?['ลำดับ','ประเภท','ทะเบียน','วันที่ส่งสินค้า','เลขที่บิล',PL,'จังหวัด','น้ำหนัก (ตัน)','ค่าขนส่ง ต่อตัน','บวกเพิ่ม','รวมสุทธิ (บาท)']
-      :['ลำดับ','ประเภท','ทะเบียน','วันที่ส่งสินค้า',G.std?'เลขที่บิล':'BOL NO.',PL,'จังหวัด','ค่าขนส่ง ปกติ',G.colOW,G.colOT,'รวมสุทธิ (บาท)'];
-    const thead='<thead><tr>'+H.map((h,i)=>'<th style="width:'+W[i]+'%'+(i===5?';padding:3px 2px':'')+'">'+esc(h)+'</th>').join('')+'</tr></thead>';
-    const f0=(v)=>{const x=Math.round((Number(v)||0)*100)/100;return Number.isInteger(x)?x.toLocaleString('en-US'):n2(x);};
-    const z=(v)=>(Number(v)||0)?f0(v):'';
-    const w3=(v)=>(Number(v)||0).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
-    const bodyTon=(ch)=>ch.map(r=>'<tr><td class="c">'+r.no+'</td><td class="c">'+esc(r.type)+'</td><td class="c">'+esc(r.plate)+'</td><td class="c">'+esc(r.date)+'</td><td class="c">'+esc(r.bol)+'</td><td>'+esc(r.place)+'</td><td class="c">'+esc(r.prov)+'</td>'
-      +'<td class="r">'+(r.w?w3(r.w):'')+'</td><td class="r">'+(r.rate?n2(r.rate):'')+'</td><td class="r" style="font-size:11px">'+z(r.add)+'</td><td class="r" style="font-weight:700;font-size:13.5px">'+f0(r.tot)+'</td></tr>').join('');
-    const totRowTon='<tr class="tot"><td colspan="7" style="padding:3px 6px;text-align:center">( '+esc(G.words)+' )</td><td class="r">'+w3(G.sW)+'</td><td></td><td class="r">'+z(G.sAdd)+'</td><td class="r">'+f0(G.sT)+'</td></tr>';
-    const body=(ch)=>ch.map(r=>'<tr><td class="c">'+r.no+'</td><td class="c">'+esc(r.type)+'</td><td class="c">'+esc(r.plate)+'</td><td class="c">'+esc(r.date)+'</td><td class="c">'+esc(r.bol)+'</td><td>'+esc(r.place)+'</td><td class="c">'+esc(r.prov)+'</td>'
-      +'<td class="r">'+z(r.normal)+'</td><td class="r" style="font-size:11px">'+z(r.ow)+'</td><td class="r" style="font-size:11px">'+z(r.ot)+'</td><td class="r" style="font-weight:700;font-size:13.5px">'+f0(r.tot)+'</td></tr>').join('');
-    const totRow='<tr class="tot"><td colspan="7" style="padding:3px 6px;text-align:center">( '+esc(G.words)+' )</td><td class="r">'+z(G.sN)+'</td><td class="r">'+z(G.sOW)+'</td><td class="r">'+z(G.sOT)+'</td><td class="r">'+f0(G.sT)+'</td></tr>';
-    const sign='<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;font-size:12px">'
-      +'<div style="line-height:1.9"><div>ขอรับรองว่าถูกต้อง</div><div style="margin-top:18px">( '+esc(G.signer||'............................................')+' )</div><div>ฝ่ายบัญชี</div></div>'
-      +'<div style="text-align:center;line-height:1.9"><div>ลงชื่อ ............................................ ผู้รับบิล</div><div style="margin-top:8px">วันที่ ........./.........../...........</div></div></div>';
-    const pages=chunks.map((ch,i)=>'<div class="page" style="padding:6mm 6mm">'
-      +'<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><div style="font-size:11px;line-height:1.8;min-width:58mm">'
-      +'<div>Invoice number : <b>'+esc(D.inv||'')+'</b></div><div>Invoice date : <b>'+esc(date)+'</b></div><div>เลขที่ใบเสร็จรับเงิน : <b>'+esc(D.rec||'')+'</b></div></div></div>'
-      +'<div style="margin-bottom:14px">'+this._girCoBlock(D,false,true)+'</div></div>'
-      +'<div class="bar">ใบวางบิล / ใบแจ้งหนี้</div>'
-      +'<div style="margin-bottom:14px">'+this._girCust(D)+'</div>'
-      +'<table class="it">'+thead+'<tbody>'+(TON?bodyTon(ch):body(ch))+(i===chunks.length-1?(TON?totRowTon:totRow):'')+'</tbody></table>'
-      +(i===chunks.length-1?sign:'')
-      +'<div style="text-align:right;font-size:11px;color:#555;margin-top:12px">หน้าที่ '+(i+1)+' ของ '+chunks.length+'</div></div>').join('');
-    const html='<!doctype html><html><head><meta charset="utf-8"><title>ใบวางบิล '+esc(D.inv||'')+'</title>'
-      +'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet"><style>'+this._girCss()+'</style></head><body>'
-      +(G.std?'':cover)+pages+'</body></html>';
-    this._printHtml(html);
-    const items=D.items,inv=D.inv,rec=D.rec;
-    if(inv&&!items.every(it=>this._blLineInv(it.j,it.l)===inv)){
-      setTimeout(()=>{
-        if(window.confirm('พิมพ์แล้ว — ทำเครื่องหมายว่า '+items.length+' บิลนี้วางบิลแล้ว (เลข '+inv+') เพื่อกันวางบิลซ้ำ?'))
-          this._blStampLines(items,inv,rec);
-      },900);
-    }
-  }
-  _girXlsxSheet(D,G){
-    const S_=(v,st)=>({v:v,t:'s',s:st||0}),N_=(v,st)=>({v:v,t:'n',s:st});const R=[];const M=[];
-    R.push([S_(COMPANY_ID==='singthong'?GIR_CO.name:D.coName,2)]);M.push('A1:K1');
-    R.push([S_(COMPANY_ID==='singthong'?(GIR_CO.hq+'  '+GIR_CO.tax):[D.coAddr,D.coLine2].filter(Boolean).join('  '),11)]);M.push('A2:K2');
-    R.push([]);
-    R.push([S_('ใบวางบิล / ใบแจ้งหนี้'+(G.title?(' — '+G.title):''),2)]);M.push('A4:K4');
-    R.push([S_('ลูกค้า '+(D.custName||'—'),1)]);M.push('A5:K5');
-    R.push([S_([D.cust.address||'',D.cust.taxId?('เลขประจำตัวผู้เสียภาษี '+D.cust.taxId):''].filter(Boolean).join('  '),11)]);M.push('A6:K6');
-    R.push([S_('Invoice number : '+(D.inv||'—'),1),null,null,null,S_('Invoice date : '+this._blShortDate(D.docDate),1),null,null,S_('เลขที่ใบเสร็จรับเงิน : '+(D.rec||'—'),1)]);M.push('A7:D7','E7:G7','H7:K7');
-    R.push([]);
-    R.push(['ลำดับ','ประเภท','ทะเบียน','วันที่ส่งสินค้า',G.std?'เลขที่บิล':'BOL NO.',G.std?'รายการ ต้นทาง → สถานที่ส่งสินค้า':'รายการ สถานที่ส่งสินค้า','จังหวัด','ค่าขนส่ง ปกติ',G.colOW,G.colOT,'รวมสุทธิ (บาท)'].map(h=>S_(h,3)));
-    if(G.layout==='ton'){R.pop();R.push(['ลำดับ','ประเภท','ทะเบียน','วันที่ส่งสินค้า','เลขที่บิล','รายการ ต้นทาง → สถานที่ส่งสินค้า','จังหวัด','น้ำหนัก (ตัน)','ค่าขนส่ง ต่อตัน','บวกเพิ่ม','รวมสุทธิ (บาท)'].map(h=>S_(h,3)));
-      G.rows.forEach(r=>R.push([N_(r.no,9),S_(r.type,9),S_(r.plate,9),S_(r.date,9),S_(r.bol,4),S_(r.place,4),S_(r.prov,4),N_(r.w,5),N_(r.rate,6),N_(r.add,6),N_(r.tot,6)]));
-      const tr2=R.length+1;R.push([S_('('+G.words+')',10),S_('',10),S_('',10),S_('',10),S_('',10),S_('',10),S_('',10),N_(G.sW,8),S_('',10),N_(G.sAdd,7),N_(G.sT,7)]);M.push('A'+tr2+':G'+tr2);
-      return {cols:[7,11,12,12,15,36,14,13,13,11,15],rows:R,merges:M,heights:{4:24}};}
-    G.rows.forEach(r=>R.push([N_(r.no,9),S_(r.type,9),S_(r.plate,9),S_(r.date,9),S_(r.bol,4),S_(r.place,4),S_(r.prov,4),N_(r.normal,6),N_(r.ow,6),N_(r.ot,6),N_(r.tot,6)]));
-    const tr=R.length+1;
-    R.push([S_('('+G.words+')',10),S_('',10),S_('',10),S_('',10),S_('',10),S_('',10),S_('',10),N_(G.sN,7),N_(G.sOW,7),N_(G.sOT,7),N_(G.sT,7)]);M.push('A'+tr+':G'+tr);
-    if(G.std)return {cols:[7,11,12,12,15,30,14,14,11,11,15],rows:R,merges:M,heights:{4:24}};
-    R.push([]);
-    const k=R.length+1;
-    R.push([null,null,null,null,null,null,null,null,S_('Total',1),null,N_(G.sT,7)]);
-    R.push([null,null,null,null,null,null,null,null,S_('Deduct W/H tax 1%',1),null,N_(G.wht,7)]);
-    R.push([S_('('+G.netWords+')',1),null,null,null,null,null,null,null,S_('Net Pay',1),null,N_(G.net,7)]);M.push('A'+(k+2)+':G'+(k+2));
-    return {cols:[7,11,12,12,15,30,14,14,11,11,15],rows:R,merges:M,heights:{4:24}};
-  }
-  // ใบสรุปวางบิลรวม — ทุกใบแจ้งหนี้ GIR ที่ออกแล้วในช่วงวันที่ที่เลือก (จากทะเบียนใบวางบิล)
-  printGirSummary=()=>{
-    const S=this.state;const code=String(S.billCustCode||'').trim();const f=S.billFrom||'',t=S.billTo||'';
-    const list=this._blInvRegister().filter(g=>String(g.code||'').trim()===code&&(!f||g.to>=f)&&(!t||g.from<=t))
-      .sort((a,b)=>String(a.from).localeCompare(String(b.from))||String(a.inv).localeCompare(String(b.inv),'en',{numeric:true}));
-    if(!list.length){window.alert('ยังไม่มีใบแจ้งหนี้ที่ออกแล้วของลูกค้านี้ในช่วงวันที่ที่เลือก — ออกเลขใบแจ้งหนี้และทำเครื่องหมายวางบิลก่อน');return;}
-    const esc=(x)=>String(x==null?'':x).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));const n2=(n)=>_LFB2(n);
-    const r2=x=>Math.round((Number(x)||0)*100)/100;
-    const cust=(S.customers||[]).find(c=>String(c.code||'').trim()===code)||{};
-    const custName=(cust.name||'')+(cust.branch?(' ('+cust.branch+')'):'');
-    const period=this._girPref('billGirPeriod','')||((f||t)?(this._girDate(f||list[0].from)+' - '+this._girDate(t||list[list.length-1].to)):'');
-    const payDate=this._girDate(S.billDocDate||this._blToday());
-    const to=this._girPref('billGirTo','');
-    const rows=list.map((g,i)=>({i:i+1,inv:g.inv,rec:g.rec||'',tot:r2(g.total),tr:r2(r2(g.total)*0.99)}));
-    const gT=r2(rows.reduce((a,r)=>a+r.tot,0)),gW=r2(gT*0.01),gR=r2(gT*0.99);
-    const P='padding:5px 3px;background:#eaeaea;font-weight:600';
-    const html='<!doctype html><html><head><meta charset="utf-8"><title>ใบสรุปวางบิล GIR</title>'
-      +'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet"><style>'+this._girCss()+'</style></head><body>'
-      +'<div class="page" style="padding:8mm 6mm">'
-      +'<div class="co" style="line-height:1.34"><div class="n" style="font-size:19px">'+GIR_CO.name+'</div><div style="font-size:11px">'+GIR_CO.hq+'</div><div style="font-size:11px">'+GIR_CO.tax+'</div></div>'
-      +'<div class="bar" style="padding:3px 0;margin:8px 0">ใบสรุปวางบิล</div>'
-      +'<div style="font-size:13px;line-height:1.9;margin-bottom:10px"><div><b>งวดรับชำระเงิน</b>&nbsp;&nbsp;'+esc(period)+'</div><div><b>งวดชำระเงิน</b>&nbsp;&nbsp;'+esc(payDate)+'</div><div><b>ส่ง</b>&nbsp;&nbsp;'+esc(to)+'</div><div><b>ลูกค้า</b>&nbsp;&nbsp;'+esc(custName)+'</div></div>'
-      +'<table style="width:100%;table-layout:fixed;font-size:12.5px"><thead><tr><th style="width:8%;'+P+'">ลำดับ</th><th style="width:20%;'+P+'">วันที่ขนส่ง</th><th style="width:17%;'+P+'">เลขที่ใบแจ้งหนี้</th><th style="width:18%;'+P+'">เลขที่ใบเสร็จรับเงิน</th><th style="width:13%;'+P+'">จำนวนเงิน</th><th style="width:9%;'+P+'">WHT 1%</th><th style="width:15%;'+P+'">ยอดโอน</th></tr></thead><tbody>'
-      +rows.map(r=>'<tr><td style="padding:4px 3px;text-align:center">'+r.i+'</td><td style="padding:4px 6px">'+esc(period)+'</td><td style="padding:4px 6px">'+esc(r.inv)+'</td><td style="padding:4px 6px;text-align:center">'+esc(r.rec)+'</td><td style="padding:4px 6px;text-align:right">'+n2(r.tot)+'</td><td style="padding:4px 6px;text-align:center">1%</td><td style="padding:4px 6px;text-align:right">'+n2(r.tr)+'</td></tr>').join('')
-      +'<tr style="font-weight:700;background:#f3f3f3"><td colspan="4" style="padding:5px 6px;text-align:center">( '+esc(this._bahtText(gT))+' )</td><td style="padding:5px 6px;text-align:right">'+n2(gT)+'</td><td style="padding:5px 6px;text-align:right">'+n2(gW)+'</td><td style="padding:5px 6px;text-align:right">'+n2(gR)+'</td></tr></tbody></table>'
-      +'<div style="display:flex;justify-content:flex-end;margin-top:10px"><table style="font-size:13px;min-width:78mm">'
-      +'<tr><td style="padding:5px 12px">รวมเป็นเงิน</td><td style="padding:5px 12px;text-align:right;min-width:34mm">'+n2(gT)+'</td></tr>'
-      +'<tr><td style="padding:5px 12px">หัก ณ ที่จ่าย 1%</td><td style="padding:5px 12px;text-align:right">'+n2(gW)+'</td></tr>'
-      +'<tr style="font-weight:700"><td style="padding:5px 12px">ยอดโอนสุทธิ</td><td style="padding:5px 12px;text-align:right">'+n2(gR)+'</td></tr></table></div>'
-      +'<div style="display:flex;justify-content:space-around;margin-top:34px;font-size:13px;text-align:center;line-height:2">'
-      +'<div><div>( …......................................... )</div><div>ผู้วางบิล</div><div>วันที่ ......./.........../...........</div></div>'
-      +'<div><div>( …......................................... )</div><div>ผู้รับวางบิล</div><div>วันที่ ......./.........../...........</div></div></div>'
-      +'</div></body></html>';
-    this._printHtml(html);
-  };
   _csAgg(from,to,q){
     const S=this.state;const cust=S.customers||[];
     const byCode={};cust.forEach(c=>{const k=String(c.code||'').trim();if(k)byCode[k]=c;});
@@ -12258,8 +11997,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   deleteDispatcherName=(name)=>{name=String(name||'').trim();if(!name)return;if(!window.confirm('ลบ "'+name+'" ออกจากรายชื่อผู้จ่ายงาน?'))return;const list=(this.state.dispatchers||[]).filter(n=>n!==name);try{localStorage.setItem('dispatcherReg_v1',JSON.stringify(list));}catch(e){}this.setState(s=>({dispatchers:list,jobDraft:(s.jobDraft&&s.jobDraft.dispatcher===name)?{...s.jobDraft,dispatcher:''}:s.jobDraft}));};
   _issueDriverLink(job,driverName,kind){const base=(this.state.qrBaseUrl&&this.state.qrBaseUrl.trim())?this.state.qrBaseUrl.trim().replace(/\/+$/,'')+'/':'https://lionflowapp.com/';sbCreateJobToken(job.id,14).then(token=>{const url=base+(LF_ENV==='staging'?'driver-staging.html':'driver.html')+'?t='+encodeURIComponent(token)+(LF_ENV==='staging'?'&env=staging':'');const img='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(url);if(kind==='saved')this.setState({savedJobQrImgUrl:img,savedJobQrText:url,savedJobDriver:driverName});else this.setState({jobQrImgUrl:img,jobQrText:url});}).catch(err=>{const m='⚠ สร้างลิงก์ไม่สำเร็จ: '+((err&&err.message)||'');if(kind==='saved')this.setState({savedJobQrText:m});else this.setState({jobQrText:m});});}
   saveJob=()=>{{const _pg=this.state.jobDraft||{};if(!this._plGuard(_pg.date,'job',this.editingJobId,'ใบงาน '+(_pg.deliveryNo||_pg.jobNo||'')+' '+(_pg.date||''),this.editingJobId==null))return;}const _jd0=this.state.jobDraft;if(_jd0&&!String(_jd0.customerCode||'').trim()&&String(_jd0.customer||'').trim()){const _lbl=String(_jd0.customer).trim();const _hit=(this.state.customers||[]).find(c=>{const cd=String(c.code||'').trim();return cd&&(_lbl===(cd+' '+(c.name||''))||_lbl.indexOf(cd)===0);});if(_hit)_jd0.customerCode=String(_hit.code).trim();}const j=this.state.jobDraft;if(!j||!j.date){this.setState({jobFormError:'กรุณาเลือกวันที่'});return;}
-    if(this.state.jobIsNew&&!(j.shipments||[]).some(sp=>sp&&String(sp.bill||'').trim())){const _dn=String(j.deliveryNo||'').trim();const _m=_dn.match(/^NB-(\d{6})-\d+$/);
-      if(!_dn||(_m&&_m[1]!==String(j.date).replace(/-/g,'').slice(2,8)))j.deliveryNo=this._nextNbNo(j.date);}
     let _askedDup=false;
     {const _bn=String(j.deliveryNo||'').trim();
       // ★ v.2026-09-03j: กันสร้างใบซ้ำ — วันที่+ทะเบียน+เลขบิลเดียวกัน (เทียบแบบขึ้นต้นเหมือนกัน) → ชี้ให้เปิดใบเดิม
@@ -13273,7 +13010,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       if(S.effSettleStatus!=='all')settleList=settleList.filter(j=>settleStat(j)===S.effSettleStatus);
       const _drvNm=(code)=>{const d=S.drivers.find(x=>String(x.code)===String(code));return d?d.name:(code||'—');};
       const _fmtThD=(iso)=>{if(!iso)return '—';const p=String(iso).slice(0,10).split('-');return (+p[2])+' '+THM[parseInt(p[1])-1]+' '+((+p[0])+543);};
-      out.settleRows=settleList.map(j=>{const st=settleStat(j);const _tp=this.jobRateBasis(j)==='trip';return{id:j.id,addWPh:_tp?'+นน./เที่ยว':'+นน./ตัน',addOPh:_tp?'+อื่น/เที่ยว':'+อื่น/ตัน',ratePh:(this.jobRateBasis(j)==='trip'?'ต่อเที่ยว':'ฐาน/ตัน'),rateKey:j.id+'|r|'+String(j.ratePerTon||''),rateAddWeightKey:j.id+'|w|'+String(j.rateAddWeight||''),rateAddOtherKey:j.id+'|o|'+String(j.rateAddOther||''),rateAddTripKey:j.id+'|t|'+String(j.rateAddTrip||''),rateAddTripRaw:(j.rateAddTrip===0||j.rateAddTrip)?String(j.rateAddTrip):'',onRateAddTripCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddTrip',e.target.value),onPrint:()=>this.printTripDetail(j.id),onReopen:()=>this.reopenJobFromEff(j.id),date:_fmtThD(j.date),jobNo:j.jobNo||'—',bill:j.deliveryNo||'—',plate:j.truckPlate||'—',driver:_drvNm(j.driverCode),customer:j.customer||'—',route:this._routeFull(j),revenue:j.revenue?fmt(parseFloat(j.revenue)||0):'—',revenueRaw:(j.revenue===0||j.revenue)?String(j.revenue):'',onRevenueCommit:(e)=>this.setSettleRowRevenue(j.id,e.target.value),rateRaw:(j.ratePerTon===0||j.ratePerTon)?String(j.ratePerTon):'',onRateCommit:(e)=>this.setSettleRowRateField(j.id,'ratePerTon',e.target.value),rateAddWeightRaw:(j.rateAddWeight===0||j.rateAddWeight)?String(j.rateAddWeight):'',onRateAddWeightCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddWeight',e.target.value),rateAddOtherRaw:(j.rateAddOther===0||j.rateAddOther)?String(j.rateAddOther):'',onRateAddOtherCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddOther',e.target.value),effRateText:(()=>{const b=parseFloat(j.ratePerTon)||0,aw=parseFloat(j.rateAddWeight)||0,ao=parseFloat(j.rateAddOther)||0,at=parseFloat(j.rateAddTrip)||0;const _u=this.jobRateBasis(j)==='trip'?'/เที่ยว':'/ตัน';return ((aw||ao)?('รวม '+(Math.round((b+aw+ao)*100)/100)+_u):'')+(at?(((aw||ao)?' ':'')+'+'+(Math.round(at*100)/100)+'/เที่ยว'):'');})(),weightText:j.weight?((parseFloat(j.weight)||0)+' ตัน'):'—',distanceText:j.distance?((parseFloat(j.distance)||0)+' กม.'):'',revenueText:j.revenue?fmt(parseFloat(j.revenue)||0):'—',expense:expSum(j)>0?fmt(expSum(j)):'—',statusLabel:_sMeta[st].label,statusStyle:_sMeta[st].style,onOpen:()=>this.openSettle(j.id)};});
+      out.settleRows=settleList.map(j=>{const st=settleStat(j);return{id:j.id,ratePh:(this.jobRateBasis(j)==='trip'?'ต่อเที่ยว':'ฐาน/ตัน'),rateKey:j.id+'|r|'+String(j.ratePerTon||''),rateAddWeightKey:j.id+'|w|'+String(j.rateAddWeight||''),rateAddOtherKey:j.id+'|o|'+String(j.rateAddOther||''),rateAddTripKey:j.id+'|t|'+String(j.rateAddTrip||''),rateAddTripRaw:(j.rateAddTrip===0||j.rateAddTrip)?String(j.rateAddTrip):'',onRateAddTripCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddTrip',e.target.value),onPrint:()=>this.printTripDetail(j.id),onReopen:()=>this.reopenJobFromEff(j.id),date:_fmtThD(j.date),jobNo:j.jobNo||'—',bill:j.deliveryNo||'—',plate:j.truckPlate||'—',driver:_drvNm(j.driverCode),customer:j.customer||'—',route:this._routeFull(j),revenue:j.revenue?fmt(parseFloat(j.revenue)||0):'—',revenueRaw:(j.revenue===0||j.revenue)?String(j.revenue):'',onRevenueCommit:(e)=>this.setSettleRowRevenue(j.id,e.target.value),rateRaw:(j.ratePerTon===0||j.ratePerTon)?String(j.ratePerTon):'',onRateCommit:(e)=>this.setSettleRowRateField(j.id,'ratePerTon',e.target.value),rateAddWeightRaw:(j.rateAddWeight===0||j.rateAddWeight)?String(j.rateAddWeight):'',onRateAddWeightCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddWeight',e.target.value),rateAddOtherRaw:(j.rateAddOther===0||j.rateAddOther)?String(j.rateAddOther):'',onRateAddOtherCommit:(e)=>this.setSettleRowRateField(j.id,'rateAddOther',e.target.value),effRateText:(()=>{const b=parseFloat(j.ratePerTon)||0,aw=parseFloat(j.rateAddWeight)||0,ao=parseFloat(j.rateAddOther)||0,at=parseFloat(j.rateAddTrip)||0;const _u=this.jobRateBasis(j)==='trip'?'/เที่ยว':'/ตัน';return ((aw||ao)?('รวม '+(Math.round((b+aw+ao)*100)/100)+_u):'')+(at?(((aw||ao)?' ':'')+'+'+(Math.round(at*100)/100)+'/เที่ยว'):'');})(),weightText:j.weight?((parseFloat(j.weight)||0)+' ตัน'):'—',distanceText:j.distance?((parseFloat(j.distance)||0)+' กม.'):'',revenueText:j.revenue?fmt(parseFloat(j.revenue)||0):'—',expense:expSum(j)>0?fmt(expSum(j)):'—',statusLabel:_sMeta[st].label,statusStyle:_sMeta[st].style,onOpen:()=>this.openSettle(j.id)};});
       out.settleEmpty=settleList.length===0;out.settleRowCount=settleList.length;
       const sd=S.settleDraft;out.settleModalOpen=!!S.settleModalOpen;
       if(sd){
@@ -13285,9 +13022,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
            +'ยอดรวมทั้งเที่ยว ไม่ใช่ของบิลใดบิลหนึ่ง · ส่วนแบ่งรายบิลดูได้ที่หน้าใบวางบิล';}
         out.sdDriver=_drvNm(sd.driverCode);out.sdRoute=this._routeFull(sd);out.sdCustomer=sd.customer||'—';
         out.sdWeightText=(function(){const _w=parseFloat(sd.weight)||0;if(!sd.weight)return '— (ไม่มีน้ำหนัก)';const _bw=this._billWeight(sd);return _bw!==_w?(_w+' ตัน → คิด '+_bw+' ตัน (ขั้นต่ำตามข้อตกลงลูกค้า)'):(_w+' ตัน');}).call(this);out.sdDistanceText=sd.distance?((parseFloat(sd.distance)||0)+' กม.'):'—';out.sdRevenueText=sd.revenue?fmt(parseFloat(sd.revenue)||0):'฿0';
-        {const _rb=parseFloat(sd.ratePerTon)||0,_rw=parseFloat(sd.rateAddWeight)||0,_ro=parseFloat(sd.rateAddOther)||0;const _eff=_rb+_rw+_ro;let _bd=String(_rb);if(_rw)_bd+=' + '+_rw+' (น้ำหนัก)';if(_ro)_bd+=' + '+_ro+' (อื่นๆ)';const _trip=this.jobRateBasis(sd)==='trip';_bd+=' = '+(Math.round(_eff*100)/100)+(_trip?' /เที่ยว':' /ตัน');out.sdEffRateText=_bd;
-        // ★ v.2026-09-28k: คิดต่อเที่ยว → ช่องบวกเพิ่มเป็น /เที่ยว (คำนวณถูกอยู่แล้ว แค่ป้ายชื่อผิด) · ช่องบวกอื่นๆ/เที่ยว แยกซ่อนเพราะซ้ำ เว้นแต่มีค่าเดิม
-        out.sdAddWLabel=_trip?'+ บวกน้ำหนัก/เที่ยว':'+ บวกน้ำหนัก/ตัน';out.sdAddOLabel=_trip?'+ บวกอื่นๆ/เที่ยว':'+ บวกอื่นๆ/ตัน';out.sdShowAddTrip=!_trip||(parseFloat(sd.rateAddTrip)||0)!==0;out.sdRateAddWeight=(sd.rateAddWeight!=null?String(sd.rateAddWeight):'');out.sdRateAddOther=(sd.rateAddOther!=null?String(sd.rateAddOther):'');out.sdRateAddTrip=(sd.rateAddTrip!=null?String(sd.rateAddTrip):'');{const _at=parseFloat(sd.rateAddTrip)||0;if(_at)out.sdEffRateText+=' · + '+(Math.round(_at*100)/100)+' /เที่ยว';}}
+        {const _rb=parseFloat(sd.ratePerTon)||0,_rw=parseFloat(sd.rateAddWeight)||0,_ro=parseFloat(sd.rateAddOther)||0;const _eff=_rb+_rw+_ro;let _bd=String(_rb);if(_rw)_bd+=' + '+_rw+' (น้ำหนัก)';if(_ro)_bd+=' + '+_ro+' (อื่นๆ)';_bd+=' = '+(Math.round(_eff*100)/100)+' /ตัน';out.sdEffRateText=_bd;out.sdRateAddWeight=(sd.rateAddWeight!=null?String(sd.rateAddWeight):'');out.sdRateAddOther=(sd.rateAddOther!=null?String(sd.rateAddOther):'');out.sdRateAddTrip=(sd.rateAddTrip!=null?String(sd.rateAddTrip):'');{const _at=parseFloat(sd.rateAddTrip)||0;if(_at)out.sdEffRateText+=' · + '+(Math.round(_at*100)/100)+' /เที่ยว';}}
         out.sdRateLabel=(this.jobRateBasis(sd)==='trip')?'💰 เรทต่อเที่ยว':'💰 เรทฐาน/ตัน';
         out.onSettleRate=(e)=>this.setSettleRateField('ratePerTon',e.target.value);
         out.onSettleAddWeight=(e)=>this.setSettleRateField('rateAddWeight',e.target.value);
@@ -14605,17 +14340,6 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       out.blDocDate=S.billDocDate||this._blToday();out.onBlDocDate=(e)=>this.setState({billDocDate:e.target.value});
       out.blProdCode=S.billProdCode==null?'':S.billProdCode;out.onBlProdCode=(e)=>this.setState({billProdCode:e.target.value});
       out.blTruckType=S.billTruckType==null?'18W_LARGE':S.billTruckType;out.onBlTruckType=(e)=>this.setState({billTruckType:e.target.value});
-      // ★ v.2026-09-29a: ลูกค้าการ์เดียน → ฟอร์มใบวางบิลรูปแบบ GIR (ช่องรหัสลูกค้า/ประเภทรถแบบทาทาซ่อน)
-      out.blIsGir=this._blIsGir();out.blNotGir=!out.blIsGir;{const _f=this._blFmt();out.blIsTata=_f==='tata';out.blIsStd=_f==='std';}
-      out.blGirType=S.billGirType||'';out.onBlGirType=(e)=>this.setState({billGirType:e.target.value,billSel:{}});
-      out.blGirTypeOpts=[{value:'',label:'ทุกประเภท'}].concat(Object.keys(GIR_BILL_TYPES).map(k=>({value:k,label:GIR_BILL_TYPES[k]+(k==='40'?' (OT = นำแร็คกลับ)':'')})));
-      out.blGirDesc=S.billGirDesc==null?'ค่าขนส่ง LOGISTICS21':S.billGirDesc;out.onBlGirDesc=(e)=>this.setState({billGirDesc:e.target.value});
-      out.blSigner=this._blSigner();out.onBlSigner=(e)=>{const v=e.target.value;try{localStorage.setItem('lf_bill_signer',v);}catch(_){}this.setState({billSigner:v});};
-      out.onBlGirSummary=()=>this.printGirSummary();
-      out.blStdLayout=S.billStdLayout||'';out.onBlStdLayout=(e)=>this.setState({billStdLayout:e.target.value});
-      {const _cu=_cust.find(c=>String(c.code||'').trim()===String(S.billCustCode||'').trim())||{};out.blStdAutoText=_cu.rateBasis==='ton'?'อัตโนมัติ (ลูกค้ารายนี้คิดต่อตัน)':(_cu.rateBasis==='trip'?'อัตโนมัติ (ลูกค้ารายนี้คิดต่อเที่ยว)':'อัตโนมัติ (ดูจากใบงานที่เลือก)');}
-      out.blGirPeriod=this._girPref('billGirPeriod','');out.onBlGirPeriod=(e)=>{const v=e.target.value;try{localStorage.setItem('lf_billGirPeriod',v);}catch(_){}this.setState({billGirPeriod:v});};
-      out.blGirTo=this._girPref('billGirTo','');out.onBlGirTo=(e)=>{const v=e.target.value;try{localStorage.setItem('lf_billGirTo',v);}catch(_){}this.setState({billGirTo:v});};
       const _bc=_cust.find(c=>String(c.code||'').trim()===String(S.billCustCode||'').trim());
       out.blCustAddr=(_bc&&_bc.address)||'';
       out.onBlCustAddr=(e)=>{if(_bc)this.setCustomerField(_bc.id,'address',e.target.value);};
