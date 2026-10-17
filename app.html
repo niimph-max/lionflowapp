@@ -224,7 +224,7 @@
       </div>
       </sc-if>
       <div style="margin-top:14px;text-align:center;font-size:11px;color:#aab4c0;">ขับเคลื่อนโดย <span style="font-family:'Sora',sans-serif;font-weight:700;color:#16263a;">Lion<span style="color:#E8A33D;">Flow</span></span> · lionflowapp.com</div>
-      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-10-16a · admin พร้อมใช้</div>
+      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-10-17k · admin พร้อมใช้</div>
     </div>
   </div>
   </sc-if>
@@ -504,7 +504,7 @@
         <span style="font-size:11px;color:#7c90a4;">{{ syncText }}</span>
         <button onClick="{{ onSync }}" style="margin-left:auto;background:none;border:none;color:#6b8299;font-size:15px;cursor:pointer;padding:0;line-height:1;" title="รีเฟรชข้อมูล">↻</button>
       </div>
-      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-10-16a</div>
+      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-10-17k</div>
       <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ onFlushPending }}" title="มีข้อมูลที่ยังไม่ขึ้น cloud — แตะเพื่อดันขึ้นทันที" style="margin-top:7px;width:100%;display:flex;align-items:center;gap:6px;background:rgba(240,120,90,.14);border:1px solid rgba(240,120,90,.4);border-radius:8px;color:#f0a58e;font-size:11px;padding:7px 9px;cursor:pointer;text-align:left;line-height:1.35;">⚠️ ยังไม่ขึ้น cloud: {{ pendingCount }} รายการ — แตะเพื่อดันขึ้น</button>
       </sc-if>
@@ -5649,6 +5649,10 @@
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">เลขบัตรประชาชนเจ้าของรถ</label>
             <input value="{{ draft.ownerIdCard }}" onInput="{{ onOwnerIdCard }}" placeholder="เลข 13 หลัก" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;background:#fff;">
           </div>
+          <div style="grid-column:1 / -1;">
+            <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">ที่อยู่เจ้าของรถ <span style="color:#98a2b3;font-weight:400;">(ใช้พิมพ์ในใบรับเงิน)</span></label>
+            <input value="{{ draft.ownerAddress }}" onInput="{{ onOwnerAddress }}" placeholder="เช่น 22/3 หมู่ 2 ต.วัดสุวรรณ อ.บ่อทอง จ.ชลบุรี" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;font-family:inherit;box-sizing:border-box;">
+          </div>
           <div>
             <label style="display:block;font-size:12px;color:#475467;font-weight:600;margin-bottom:5px;">เลขที่บัญชีธนาคาร</label>
             <input value="{{ draft.account }}" onInput="{{ onAccount }}" style="width:100%;padding:9px 11px;border:1px solid #d0d5dd;border-radius:8px;font-size:14px;color:#1d2b3a;background:#fff;">
@@ -7551,12 +7555,20 @@
                     <button onClick="{{ d.onRemove }}" title="ลบ" style="width:30px;height:30px;flex:none;background:#fff;border:1px solid #f0c9c4;border-radius:8px;color:#b42318;font-size:14px;cursor:pointer;">×</button>
                   </div>
                 </sc-for>
+                <div style="font-size:11.5px;color:#98a2b3;line-height:1.7;margin-top:2px;">ภาษีหัก ณ ที่จ่าย คิดอัตโนมัติ 1% ของค่าขนส่งจ่ายรถร่วม · พิมพ์ทับได้ ถ้าลบให้ว่างจะกลับไปคิดอัตโนมัติ · ค่าโอนตั้งต้น 15 บาท ลบออกได้</div>
                 <div style="display:flex;align-items:center;justify-content:flex-end;gap:24px;margin-top:12px;padding-top:12px;border-top:1px dashed #e4e7ec;">
                   <div style="font-size:12.5px;color:#667085;">รวมหัก <span style="font-weight:700;color:#b54708;">{{ mo.dedSumText }}</span></div>
                   <div style="font-size:14px;font-weight:700;color:#16263a;">ยอดจ่ายจริง <span style="font-size:18px;font-weight:800;color:#067647;">{{ mo.netPayText }}</span></div>
                 </div>
               </div>
               <div style="padding:16px;background:#fdfaf4;border-top:1px solid #f0e6d6;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <label style="font-size:12.5px;color:#475467;">เลขที่เอกสาร</label>
+                  <div style="display:flex;align-items:center;border:1px solid #d0d5dd;border-radius:8px;overflow:hidden;background:#fff;">
+                    <span style="padding:8px 9px;background:#f1f5f9;border-right:1px solid #d0d5dd;font-size:13px;font-weight:700;color:#16263a;">PA</span>
+                    <input value="{{ mo.subDocNo }}" onInput="{{ mo.onSubDocNo }}" placeholder="69/197" style="width:104px;padding:8px 10px;border:none;outline:none;font-size:13px;color:#16263a;">
+                  </div>
+                </div>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <label style="font-size:12.5px;color:#475467;">นัดวันจ่าย</label>
                   <input type="date" value="{{ mo.subPayDate }}" onInput="{{ mo.onSubPayDate }}" style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:8px;font-size:13px;color:#16263a;">
@@ -8409,7 +8421,7 @@ function normTruck(t){
   const boolParse=(v)=>v===true||v==='true'||v==='TRUE';
   // normalize date fields: ตัด timestamp ออก เหลือแค่ YYYY-MM-DD
   const normDate=(v)=>toBkkDate(v);
-  const r={plate:'',truckType:'',fuel:'',dept:'',fleet:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',bedHFront:'',bedHMid:'',bedHRear:'',bedWidth:'',bedLength:'',totalLength:'',gps:'',gpsDeviceId:'',phoneTrack:false,owner:'',ecaccVendor:'',ownerIdCard:'',ownerPhone:'',ownerLine:'',account:'',trailerPlate:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',socialSecurity:'',fuelRateLoaded:'',fuelRateEmpty:'',makerOther:'',regFee:'',regRenew:'',actRenew:'',insRenew:'',cargoRenew:'',regNoRenew:false,actNoRenew:false,insNoRenew:false,cargoNoRenew:false,...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate),regRenew:normDate(t.regRenew),actRenew:normDate(t.actRenew),insRenew:normDate(t.insRenew),cargoRenew:normDate(t.cargoRenew)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม','รถผู้บริหาร',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
+  const r={plate:'',truckType:'',fuel:'',dept:'',fleet:'',maker:'',model:'',year:'',color:'',chassis:'',engine:'',weight:'',loadWeight:'',bedHFront:'',bedHMid:'',bedHRear:'',bedWidth:'',bedLength:'',totalLength:'',gps:'',gpsDeviceId:'',phoneTrack:false,owner:'',ecaccVendor:'',ownerIdCard:'',ownerAddress:'',ownerPhone:'',ownerLine:'',account:'',trailerPlate:'',remark:'',maintenance:[],photo:null,contractDate:'',regExpiry:'',hasRegFile:false,insuranceExpiry:'',hasInsuranceFile:false,ownerIdExpiry:'',hasOwnerIdFile:false,cargoInsExpiry:'',hasCargoInsFile:false,hasContractFile:false,salary:'',installment:'',socialSecurity:'',fuelRateLoaded:'',fuelRateEmpty:'',makerOther:'',regFee:'',regRenew:'',actRenew:'',insRenew:'',cargoRenew:'',regNoRenew:false,actNoRenew:false,insNoRenew:false,cargoNoRenew:false,...t,maintenance:maint,hasRegFile:boolParse(t.hasRegFile),hasInsuranceFile:boolParse(t.hasInsuranceFile),hasOwnerIdFile:boolParse(t.hasOwnerIdFile),hasCargoInsFile:boolParse(t.hasCargoInsFile),hasContractFile:boolParse(t.hasContractFile),regExpiry:normDate(t.regExpiry),insuranceExpiry:normDate(t.insuranceExpiry),ownerIdExpiry:normDate(t.ownerIdExpiry),cargoInsExpiry:normDate(t.cargoInsExpiry),contractDate:normDate(t.contractDate),regRenew:normDate(t.regRenew),actRenew:normDate(t.actRenew),insRenew:normDate(t.insRenew),cargoRenew:normDate(t.cargoRenew)};if(r.dept&&r.dept.startsWith('01'))r.dept='รถบริษัท';else if(r.dept&&!['รถบริษัท','รถร่วม','รถผู้บริหาร',''].includes(r.dept))r.dept='รถร่วม';if(!Array.isArray(r.maintenance)){try{const p=JSON.parse(r.maintenance);r.maintenance=Array.isArray(p)?p:[];}catch(e){r.maintenance=[];}}return r;}
 function toBkkDate(v){if(!v)return '';const s=String(v);if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const d=new Date(s);if(isNaN(d))return s.slice(0,10);try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);}catch(e){return s.slice(0,10);}}
 function _LFB2(n){return (Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function normJob(j){const o=_normJob0(j);if(Array.isArray(o.miscItems)&&o.miscItems.length){const ms=o.miscItems.reduce((a,m)=>a+(parseFloat(m.amount)||0),0);o.misc=ms?String(Math.round(ms*100)/100):'';}if(Array.isArray(o.fuelRefills)&&o.fuelRefills.length){const s=o.fuelRefills.reduce((a,r)=>a+(parseFloat(r.baht)||0),0);const l=o.fuelRefills.reduce((a,r)=>a+(parseFloat(r.liters)||0),0);if(s)o.fuelBaht=String(Math.round(s*100)/100);if(l)o.fuelLiters=String(Math.round(l*100)/100);}return o;}
@@ -8419,6 +8431,10 @@ function _tirePosRaw(p){return String(p||'').replace(/^\(\d+\)\s*/,'');}
 function _tirePosLabel(p){const r=_tirePosRaw(p);if(!r)return '';const n=_TIRE_POS_NO[r];return n?('('+n+') '+r):r;}
 const DISPATCHERS=['ปกรณ์ ลิ้นทอง','วารี ภักดีวาณิช','นันทนา สุขศิลา','สมศักดิ์ ชนะวงษ์','จารพรรณ ขาวสุข','คศิมาภรณ์ ชนะวงศ์','อื่นๆ'];
 const SUB_DED_DEFAULTS=['หักภาษี ณ ที่จ่าย','ค่าน้ำมัน','ค่าประกันสินค้า','ค่า GPS','ค่าโอน'];
+const SUB_WHT_LABEL='หักภาษี ณ ที่จ่าย';   // คิดอัตโนมัติ 1% ของค่าขนส่งจ่ายรถร่วม
+const SUB_WHT_PCT=1;
+const SUB_TRANSFER_FEE=15;                  // ค่าโอน ตั้งต้น 15 บาท ลบออกได้
+const SUB_DED_FROM='2026-10';               // เริ่มใช้ค่าตั้งต้นนี้ตั้งแต่ ต.ค. 2569 เดือนก่อนหน้าไม่แตะ (ผู้ใช้กำหนด 17 ต.ค. 2569)
 const ORDER_CHANNELS=['อีเมล','ไลน์','โทรศัพท์','เว็บไซต์','อื่นๆ'];
 const ORDER_TRUCK_TYPES=['รถปิคอัพ','รถหกล้อ','รถสิบล้อ','รถพ่วง','รถหัวลาก/เทรลเลอร์','อื่นๆ'];
 // ★ v.2026-09-27g: ใบเสนอราคางานจากเว็บ — สถานะก่อน "รอจัดรถ" + ทางออกที่ไม่ได้งาน
@@ -9218,10 +9234,24 @@ class Component extends DCLogic {
       .then(()=>{this.setState({syncStatus:'ok'});})
       .catch(()=>this.setState({syncStatus:'error'}));
   }
+  // ชุดข้อมูลทั้งหมดที่ต้องมีในไฟล์สำรอง — ใช้ร่วมกันทั้งปุ่ม Export และ autoBackup
+  // v.2026-10-17b: ของเดิมสำรองแค่ตารางหลัก 13 ชุด ชุดที่เก็บในตาราง events ตกหล่นหมด
+  // (ค่าน้ำมัน PT · รายการหักรถร่วม · ปิดงวดบัญชี · หนังสือออก · ประกาศ · ตรวจประวัติ พขร. · ค่าตั้งต้นบริษัท)
+  _backupPayload(){
+    const S=this.state;
+    return {version:3,exportedAt:new Date().toISOString(),
+      drivers:S.drivers,trucks:S.trucks,jobs:S.jobs,office:S.office,officeDepts:S.officeDepts,
+      customers:S.customers,orders:S.orders,origins:S.origins,tirePatches:S.tirePatches,
+      tireMoves:S.tireMoves,inspections:S.inspections,
+      workOrders:(S.workOrders!==undefined?S.workOrders:this._getWO()),
+      company:S.company,fleets:S.fleets,dispatchers:S.dispatchers,dpoints:S.dpoints,
+      news:S.news,letters:S.letters,drvChk:S.drvChk,fuelCr:S.fuelCr,periodLock:S.periodLock,
+      kv:Object.keys(this._kvKeys()).reduce((o,k)=>{o[k]=S[k]||{};return o;},{})};
+  }
   autoBackup(){
     try{
       const S=this.state;
-      const payload={version:2,exportedAt:new Date().toISOString(),drivers:S.drivers,trucks:S.trucks,jobs:S.jobs,office:S.office,officeDepts:S.officeDepts,customers:S.customers,orders:S.orders,origins:S.origins,tirePatches:S.tirePatches,tireMoves:S.tireMoves,inspections:S.inspections,workOrders:(S.workOrders!==undefined?S.workOrders:this._getWO())};
+      const payload=this._backupPayload();
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');
@@ -11414,9 +11444,35 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   closeLightbox=()=>this.setState({lightboxUrl:''});
   setFixedOverride=(plate,month,field,val)=>{const k=plate+'|'+month;const cur={...(this.state.fixedOverrides||{})};cur[k]={...(cur[k]||{}),[field]:val};try{localStorage.setItem('fixedOverrides_v1',JSON.stringify(cur));}catch(e){}this._kvTouch('fixedOverrides',k,cur);this.setState({fixedOverrides:cur});};
   clearFixedOverride=(plate,month)=>{const k=plate+'|'+month;const cur={...(this.state.fixedOverrides||{})};delete cur[k];try{localStorage.setItem('fixedOverrides_v1',JSON.stringify(cur));}catch(e){}this._kvTouch('fixedOverrides',k,cur);this.setState({fixedOverrides:cur});};
-  _subDedList(plate,month){const k=plate+'|'+month;const saved=(this.state.subMonthDeducts||{})[k];if(Array.isArray(saved))return saved;return SUB_DED_DEFAULTS.map(l=>({label:l,amount:''}));}
+  _subGrossOf(plate,month){
+    if(!plate||!month)return 0;
+    return (this.state.jobs||[]).filter(j=>j&&!j.deleted&&!j._deleted&&j.truckPlate===plate&&String(j.date||'').slice(0,7)===month)
+      .reduce((a,j)=>a+(this._ecSubCalc(j).gross||0),0);
+  }
+  // ภาษีหัก ณ ที่จ่าย 1% ของค่าขนส่งจ่ายรถร่วมทั้งเดือน ปัดทศนิยม 2 ตำแหน่ง
+  _subWhtAmount(plate,month){const g=this._subGrossOf(plate,month);return g>0?String(Math.round(g*SUB_WHT_PCT)/100):'';}
+  _subDedList(plate,month){
+    const k=plate+'|'+month;const saved=(this.state.subMonthDeducts||{})[k];
+    // เดือนที่จ่ายเงินไปแล้ว ไม่ยัดค่าตั้งต้นย้อนหลัง ยอดเดิมจะได้ไม่ขยับ
+    const paid=!!(((this.state.subMonthMeta||{})[k]||{}).paid);
+    const old=String(month||'')<SUB_DED_FROM;   // เดือนเก่ากว่าที่เริ่มใช้ = พฤติกรรมเดิมทุกอย่าง
+    const skip=paid||old;
+    if(Array.isArray(saved)){
+      if(skip)return saved;
+      // แถวภาษีที่ยังเป็นโหมดอัตโนมัติ ให้คิดใหม่ตามค่าขนส่งล่าสุดเสมอ (เพิ่มเที่ยวทีหลังยอดก็ตาม)
+      return saved.map(d=>(d&&d.auto&&String(d.label||'').trim()===SUB_WHT_LABEL)?{...d,amount:this._subWhtAmount(plate,month)}:d);
+    }
+    if(skip)return SUB_DED_DEFAULTS.map(l=>({label:l,amount:''}));
+    return SUB_DED_DEFAULTS.map(l=>{
+      if(l===SUB_WHT_LABEL)return {label:l,amount:this._subWhtAmount(plate,month),auto:true};
+      if(l==='ค่าโอน')return {label:l,amount:String(SUB_TRANSFER_FEE)};
+      return {label:l,amount:''};
+    });
+  }
   _saveSubDeds(k,list){const cur={...(this.state.subMonthDeducts||{})};cur[k]=list;try{localStorage.setItem('subMonthDeducts_v1',JSON.stringify(cur));}catch(e){}this._kvTouch('subMonthDeducts',k,cur);this.setState({subMonthDeducts:cur});}
-  setSubMonthDeduct=(plate,month,i,field,val)=>{const k=plate+'|'+month;const list=this._subDedList(plate,month).map(x=>({...x}));if(!list[i])list[i]={label:'',amount:''};list[i][field]=val;this._saveSubDeds(k,list);};
+  setSubMonthDeduct=(plate,month,i,field,val)=>{const k=plate+'|'+month;const list=this._subDedList(plate,month).map(x=>({...x}));if(!list[i])list[i]={label:'',amount:''};list[i][field]=val;
+    if(field==='amount'&&String(list[i].label||'').trim()===SUB_WHT_LABEL)list[i].auto=(String(val==null?'':val).trim()==='');
+    this._saveSubDeds(k,list);};
   addSubMonthDeduct=(plate,month)=>{const k=plate+'|'+month;const list=this._subDedList(plate,month).map(x=>({...x}));list.push({label:'',amount:''});this._saveSubDeds(k,list);};
   removeSubMonthDeduct=(plate,month,i)=>{const k=plate+'|'+month;const list=this._subDedList(plate,month).map(x=>({...x}));list.splice(i,1);this._saveSubDeds(k,list);};
   setSubMonthMeta=(plate,month,field,val)=>{const k=plate+'|'+month;const cur={...(this.state.subMonthMeta||{})};cur[k]={...(cur[k]||{}),[field]:val};try{localStorage.setItem('subMonthMeta_v1',JSON.stringify(cur));}catch(e){}this._kvTouch('subMonthMeta',k,cur);this.setState({subMonthMeta:cur});};
@@ -11837,23 +11893,23 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     else if(monthArg)months=[monthArg];
     else{const from=this.state.effTripFrom||'',to=this.state.effTripTo||'';const set={};this.state.jobs.forEach(j=>{if(j.truckPlate!==plate||!j.date||!(j.documentTime||j.docsClosed)||j.deleted||j._deleted)return;if((from&&j.date<from)||(to&&j.date>to))return;set[String(j.date).slice(0,7)]=1;});months=Object.keys(set).sort();}
     const now=new Date();const printTs=sd(now.toISOString())+' เวลา '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-    const docNo='RJ-'+plate.replace(/[^0-9A-Za-z]/g,'')+'-'+(months[0]||'').replace('-','');
+
     let grandNet=0,grandGross=0,grandDed=0,grandTrips=0;let anyDate='',anyStatus=false,statusSet=false;
+    let grandTon=0;const grandDedMap={};   // น้ำหนักรวม + ยอดหักแยกตามชื่อรายการ ใช้ในแผ่นใบรับเงิน
     const sections=months.map(mk=>{
       const jobs=this.state.jobs.filter(j=>j.truckPlate===plate&&j.date&&String(j.date).slice(0,7)===mk&&(j.documentTime||j.docsClosed)&&!j.deleted&&!j._deleted).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.id-b.id));
+      jobs.forEach(j=>{grandTon+=(parseFloat(j.weight)||0);});
       let grossT=0;const trs=jobs.map((j,i)=>{const g=subCalc(j);grossT+=g;return '<tr><td class="c">'+(i+1)+'</td><td>'+esc(sd(j.date))+'</td><td>'+esc(j.deliveryNo||j.jobNo||'—')+'</td><td>'+esc((j.origin||'—')+' → '+(j.destination||'—'))+'</td><td class="n">'+(j.distance?((parseFloat(j.distance)||0).toLocaleString()+''):'—')+'</td><td class="n">'+(j.weight?((parseFloat(j.weight)||0)+''):'—')+'</td><td class="n b">'+fmt(g)+'</td></tr>';}).join('');
       const deds=this._subDedList(plate,mk).filter(d=>(parseFloat(d.amount)||0)!==0||String(d.label||'').trim());
-      let dedSum=0;const dedHtml=deds.map(d=>{const a=parseFloat(d.amount)||0;dedSum+=a;return '<tr class="ded"><td class="c"></td><td colspan="5" style="text-align:right;">หัก — '+esc(d.label||'รายการหัก')+'</td><td class="n">−'+fmt(a)+'</td></tr>';}).join('');
+      let dedSum=0;deds.forEach(d=>{const a=parseFloat(d.amount)||0;dedSum+=a;
+        const _dl=String(d.label||'รายการหัก').trim();grandDedMap[_dl]=(grandDedMap[_dl]||0)+a;});
       const net=grossT-dedSum;grandNet+=net;grandGross+=grossT;grandDed+=dedSum;grandTrips+=jobs.length;
       const meta=(this.state.subMonthMeta||{})[plate+'|'+mk]||{};if(meta.payDate&&!anyDate)anyDate=meta.payDate;if(!statusSet){anyStatus=!!meta.paid;statusSet=true;}else anyStatus=anyStatus&&!!meta.paid;
       return '<div class="sec"><div class="sech">ประจำเดือน '+esc(mLabel(mk))+' <span>'+jobs.length+' เที่ยว</span></div>'+
         '<table><thead><tr><th class="c">#</th><th>วันที่</th><th>เลขที่บิล</th><th>เส้นทาง</th><th class="n">ระยะทาง (กม.)</th><th class="n">น้ำหนัก (ตัน)</th><th class="n">ค่าขนส่งจ่ายรถร่วม</th></tr></thead>'+
         '<tbody>'+(trs||'<tr><td colspan="7" class="empty">ไม่มีรายการ</td></tr>')+'</tbody>'+
-        '<tfoot><tr class="sub"><td class="c"></td><td colspan="5" style="text-align:right;">รวมค่าขนส่งจ่ายรถร่วม</td><td class="n b">'+fmt(grossT)+'</td></tr>'+dedHtml+
-        (deds.length?('<tr class="net"><td class="c"></td><td colspan="5" style="text-align:right;">ยอดจ่ายสุทธิเดือนนี้</td><td class="n b">'+fmt(net)+'</td></tr>'):'')+'</tfoot></table></div>';
+        '<tfoot><tr class="sub"><td class="c"></td><td colspan="5" style="text-align:right;">รวมค่าขนส่งจ่ายรถร่วม</td><td class="n b">'+fmt(grossT)+'</td></tr></tfoot></table></div>';
     }).join('');
-    const multi=months.length>1;
-    const netForText=multi?grandNet:grandNet;
     const css='@page{size:A4;margin:0;}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{font-family:"Sarabun","TH Sarabun New",system-ui,sans-serif;margin:0;color:#1f2a37;background:#fff;}'
       +'.page{width:210mm;min-height:297mm;margin:0 auto;padding:16mm 15mm 14mm;}'
       +'.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #16263a;padding-bottom:14px;}'
@@ -11879,11 +11935,100 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       +'.sign{margin-top:30px;display:flex;justify-content:space-between;gap:20px;}'
       +'.sign .s{flex:1;text-align:center;font-size:11.5px;color:#475467;}.sign .ln{margin:34px 12px 6px;border-top:1px dotted #98a2b3;}.sign .r{font-size:10.5px;color:#98a2b3;margin-top:3px;}'
       +'.foot{margin-top:20px;border-top:1px solid #eaedf0;padding-top:8px;font-size:10px;color:#98a2b3;display:flex;justify-content:space-between;}'
+      +'.cs{page-break-before:always;display:flex;flex-direction:column;color:#000;}'
+      +'.cs .hf{flex:1;display:flex;flex-direction:column;}'
+      +'.cs .cut{border-top:1px dashed #000;margin:4mm 0;position:relative;}'
+      +'.cs .cut i{position:absolute;left:0;top:-7px;background:#fff;padding-right:8px;font-size:9px;font-style:normal;color:#667085;}'
+      +'.cs .ttl{position:relative;text-align:center;margin-bottom:7px;min-height:22px;}'
+      +'.cs .ttl .t{font-size:15.5px;font-weight:800;}'
+      +'.cs .ttl .for{position:absolute;right:0;top:0;border:1px solid #000;padding:2px 10px;font-size:10.5px;}'
+      +'.cs .ttl .no{position:absolute;left:0;top:3px;font-size:10.5px;}'
+      +'.cs .ln{font-size:11px;line-height:1.9;}'
+      +'.cs .ln b{font-weight:700;}'
+      +'.cs .ln u{display:inline-block;width:16px;text-decoration:none;}'
+      +'.cs .r3{display:flex;gap:4px;align-items:stretch;margin-top:5px;}'
+      +'.cs table{border-collapse:collapse;font-size:11px;width:100%;}'
+      +'.cs th,.cs td{border:1px solid #000;padding:4px 7px;vertical-align:top;}'
+      +'.cs th{text-align:center;font-weight:700;background:#fff;color:#000;font-size:11px;}'
+      +'.cs td.n,.cs th.n{text-align:right;white-space:nowrap;}'
+      +'.cs td.fl{height:26mm;}'
+      +'.cs .tA{flex:1.3;}.cs .tB{flex:1;}'
+      +'.cs .tC{flex:none;width:30mm;display:flex;flex-direction:column;}'
+      +'.cs .tC .sp{flex:1;}'
+      +'.cs .tC .bx{border:1px solid #000;}'
+      +'.cs .tC .bx .h{border-bottom:1px solid #000;text-align:center;font-weight:700;font-size:11px;padding:4px;}'
+      +'.cs .tC .bx .v{text-align:center;font-size:11px;padding:5px 4px;}'
+      +'.cs .tC .bx .v.big{font-size:13px;font-weight:800;}'
+      +'.cs .ftb{margin-top:-1px;}'
+      +'.cs .ftb td{font-size:11px;}'
+      +'.cs .warn{font-size:10px;line-height:1.75;margin-top:5px;}'
+      +'.cs .sgn{display:flex;gap:4px;margin-top:auto;}'
+      +'.cs .sgn .g{flex:1;border:1px solid #000;padding:7px 8px 9px;text-align:center;font-size:11px;}'
+      +'.cs .sgn .g .l{font-weight:700;}'
+      +'.cs .sgn .g .d{margin-top:13mm;font-size:10.5px;}'
       +'@media print{.page{margin:0;}}';
+    // ===== แผ่นใบรับเงิน (หน้า 2) — ตัดครึ่ง: บนเก็บที่เจ้าของรถ ล่างเก็บเข้าบริษัท =====
+    const rcDate=anyDate||(new Date()).toISOString().slice(0,10);
+    const sd2=(iso)=>{const q=String(iso).slice(0,10).split('-');return q[2]+'/'+q[1]+'/'+((+q[0])+543);};
+    const _rcTyped=String((((this.state.subMonthMeta||{})[plate+'|'+(months[0]||'')])||{}).rcNo||'').trim();
+    const rcBlankNo='PA'+(_rcTyped||' ....................');   // เลขที่ที่กรอกไว้ ถ้าไม่กรอกเว้นช่องเขียนมือ
+    const mNum=months.map(mk=>{const q=mk.split('-');return q[1]+'/'+((+q[0])+543);}).join(', ')||'—';
+    const incLabel='ค่าขนส่ง'+(grandTrips?(' ('+grandTrips+' เที่ยว)'):'');
+    const incQty=grandTon>0?grandTon.toFixed(3):'';
+    const dedKeys=Object.keys(grandDedMap).filter(k=>grandDedMap[k]);
+    const dedRows=dedKeys.map(k=>'<tr><td>'+esc(k)+'</td><td class="n">'+_LFB2(grandDedMap[k])+'</td></tr>').join('')
+      ||'<tr><td>—</td><td class="n">0.00</td></tr>';
+    const rcHead=(title,forWho,no)=>'<div class="ttl">'+(no?('<div class="no">เลขที่ '+esc(no)+'</div>'):'')
+      +'<div class="t">'+title+'</div><div class="for">- '+forWho+' -</div></div>';
+    const dateBox=(label,val,big)=>'<div class="bx"><div class="h">'+label+'</div><div class="v'+(big?' big':'')+'">'+esc(val)+'</div></div>';
+    const sgn=(t)=>'<div class="g"><div class="l">'+t+'</div><div class="d">วันที่ ........./........./.........</div></div>';
+    const receipt='<div class="page cs">'
+      // ---- ครึ่งบน: ใบสรุปรับ-จ่าย เก็บไว้ที่เจ้าของรถ ----
+      +'<div class="hf">'
+      +rcHead('ใบสรุปรับ-จ่ายค่าขนส่ง','สำหรับเจ้าของรถ','')
+      +'<div class="ln">'+esc(co||'บริษัทขนส่ง')+'</div>'
+      +'<div class="ln">ทะเบียนรถ <b>'+esc(plate)+'</b><u></u>เจ้าของรถ <b>'+esc(owner||'—')+'</b><u></u>'
+        +(tk.truckType?('ประเภท <b>'+esc(tk.truckType)+'</b><u></u>'):'')+'งวดเดือน/ปี <b>'+esc(mNum)+'</b></div>'
+      +'<div class="r3">'
+      +'<table class="tA"><thead><tr><th>รายได้</th><th style="width:21mm;">จำนวน (ตัน)</th><th style="width:26mm;">จำนวนเงิน</th></tr></thead>'
+        +'<tbody><tr><td>'+esc(incLabel)+'</td><td class="n">'+esc(incQty)+'</td><td class="n">'+_LFB2(grandGross)+'</td></tr>'
+        +'<tr><td class="fl"></td><td></td><td></td></tr></tbody>'
+        +'<tfoot><tr><td class="n" colspan="2"><b>รวมรายได้</b></td><td class="n"><b>'+_LFB2(grandGross)+'</b></td></tr></tfoot></table>'
+      +'<table class="tB"><thead><tr><th>รายการหัก</th><th style="width:26mm;">จำนวนเงิน</th></tr></thead>'
+        +'<tbody>'+dedRows+'<tr><td class="fl"></td><td></td></tr></tbody>'
+        +'<tfoot><tr><td class="n"><b>รวมรายการหัก</b></td><td class="n"><b>'+_LFB2(grandDed)+'</b></td></tr></tfoot></table>'
+      +'<div class="tC">'+dateBox('วันที่',sd2(rcDate),false)+'<div class="sp"></div>'+dateBox('เงินรับสุทธิ',_LFB2(grandNet),true)+'</div>'
+      +'</div>'
+      +'<table class="ftb"><tr><td style="width:42mm;">งวดเดือน/ปี &nbsp;<b>'+esc(mNum)+'</b></td>'
+        +'<td>'+(acct?('บริษัทฯ จะนำเงินจำนวนดังกล่าวเข้าบัญชี '+esc(acct)):'&nbsp;')+'</td></tr></table>'
+      +'<div class="warn">หากรายการไม่ถูกต้อง กรุณาแจ้งฝ่ายบัญชีก่อนครบกำหนดจ่ายงวดถัดไป มิฉะนั้นจะถือว่ารายการถูกต้อง<br>'
+        +'โปรดตรวจสอบวันหมดอายุ ใบขับขี่ · ทะเบียนรถ · พ.ร.บ./ประกันรถ · ประกันสินค้า เพื่อให้พร้อมทำงานตามระเบียบของบริษัทคู่ค้า</div>'
+      +'</div>'
+      +'<div class="cut"><i>✂ ตัดตามรอยประ</i></div>'
+      // ---- ครึ่งล่าง: ใบรับเงิน เก็บเข้าบริษัท ----
+      +'<div class="hf">'
+      +rcHead('ใบรับเงิน','สำหรับกิจการ',rcBlankNo)
+      +'<div class="ln">ข้าพเจ้า <b>'+esc(owner||'.....................................')+'</b><u></u>ทะเบียนรถ <b>'+esc(plate)+'</b><u></u>'
+        +'เลขที่บัตรประชาชน <b>'+esc(ownerTax||'.............................')+'</b></div>'
+      +'<div class="ln">ที่อยู่ <b>'+esc(tk.ownerAddress||'.............................................................................')+'</b></div>'
+      +'<div class="ln">ได้รับเงินจาก <b>'+esc(co||'บริษัทขนส่ง')+'</b> ดังต่อไปนี้</div>'
+      +'<div class="r3">'
+      +'<table class="tA"><thead><tr><th>รายการ</th><th style="width:21mm;">จำนวน (ตัน)</th><th style="width:26mm;">จำนวนเงิน</th></tr></thead>'
+        +'<tbody><tr><td>'+esc(incLabel)+'</td><td class="n">'+esc(incQty)+'</td><td class="n">'+_LFB2(grandGross)+'</td></tr>'
+        +'<tr><td class="fl"></td><td></td><td></td></tr></tbody>'
+        +'<tfoot><tr><td class="n" colspan="2"><b>รวมเงิน</b></td><td class="n"><b>'+_LFB2(grandGross)+'</b></td></tr></tfoot></table>'
+      +'<div class="tC">'+dateBox('วันที่',sd2(rcDate),false)+'<div class="sp"></div></div>'
+      +'</div>'
+      +'<table class="ftb"><tr><td style="width:42mm;">งวดเดือน/ปี &nbsp;<b>'+esc(mNum)+'</b></td>'
+        +'<td>จำนวนเงิน (ตัวอักษร) &nbsp;<b>'+esc(this._bahtText(grandGross))+'</b></td></tr>'
+        +'<tr><td>หมายเหตุ</td><td>'+(acct?('โอนเข้าบัญชี '+esc(acct)):'&nbsp;')+'</td></tr></table>'
+      +'<div class="sgn">'+sgn('ลงชื่อผู้ตรวจสอบ')+sgn('ลงชื่อผู้จ่ายเงิน')+sgn('ลงชื่อผู้รับเงิน')+'</div>'
+      +'</div>'
+      +'</div>';
     const html=('<!doctype html><html><head><meta charset="utf-8"><title>ใบสรุปจ่ายเงินรถร่วม '+esc(plate)+'</title>'
       +'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet"><style>'+css+'</style></head><body><div class="page">'
       +'<div class="top"><div class="brand"><div class="cn">'+esc(co||'บริษัทขนส่ง')+'</div><div class="ci">'+(coAddr?esc(coAddr)+'<br>':'')+(coTax?('เลขประจำตัวผู้เสียภาษี '+esc(coTax)):'')+'</div></div>'
-      +'<div class="doc"><div class="t">ใบสรุปจ่ายเงินรถร่วม</div><div class="d">เลขที่ '+esc(docNo)+'<br>พิมพ์เมื่อ '+esc(printTs)+'</div></div></div>'
+      +'<div class="doc"><div class="t">ใบสรุปจ่ายเงินรถร่วม</div><div class="d">เลขที่ '+esc(rcBlankNo)+'<br>พิมพ์เมื่อ '+esc(printTs)+'</div></div></div>'
       +'<div class="info">'
       +'<div class="cell"><div class="k">ทะเบียนรถ</div><div class="v">'+esc(plate)+(tk.truckType?(' · '+esc(tk.truckType)):'')+'</div></div>'
       +'<div class="cell"><div class="k">เจ้าของรถ / ผู้รับเงิน</div><div class="v">'+esc(owner||'—')+'</div></div>'
@@ -11895,16 +12040,11 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       +'</div>'
       +sections
       +'<div class="grand"><div class="box">'
-      +'<div class="row"><span>รวมค่าขนส่งจ่ายรถร่วม</span><span>'+fmt(grandGross)+'</span></div>'
-      +(grandDed>0?('<div class="row"><span>หัก รายการทั้งหมด</span><span style="color:#b54708;">−'+fmt(grandDed)+'</span></div>'):'')
-      +'<div class="row tot"><span>ยอดจ่ายสุทธิให้เจ้าของรถ</span><span class="a">'+fmt(grandNet)+'</span></div>'
+      +'<div class="row tot"><span>รวมค่าขนส่งจ่ายรถร่วม</span><span class="a">'+fmt(grandGross)+'</span></div>'
       +'</div></div>'
-      +'<div class="words">จำนวนเงินสุทธิ: <b>('+esc(this._bahtText(netForText))+')</b></div>'
-      +'<div class="sign"><div class="s"><div class="ln"></div>ผู้จัดทำ<div class="r">วันที่ ......../......../........</div></div>'
-      +'<div class="s"><div class="ln"></div>ผู้อนุมัติจ่าย<div class="r">วันที่ ......../......../........</div></div>'
-      +'<div class="s"><div class="ln"></div>ผู้รับเงิน (เจ้าของรถ)<div class="r">วันที่ ......../......../........</div></div></div>'
-      +'<div class="foot"><span>เอกสารสรุปจากระบบ LionFlow · lionflowapp.com</span><span>'+esc(docNo)+'</span></div>'
-      +'</div></body></html>');
+      +'<div class="words">จำนวนเงิน (ตัวอักษร): <b>('+esc(this._bahtText(grandGross))+')</b></div>'
+      +'<div class="foot"><span>เอกสารสรุปจากระบบ LionFlow · lionflowapp.com</span><span>'+esc(plate+' · '+mNum)+'</span></div>'
+      +'</div>'+receipt+'</body></html>');
     this._printHtml(html);
   };
   // ===== ส่งออกเข้าโปรแกรมบัญชี (Ecacc) =====
@@ -14169,7 +14309,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     out.onTruckBack=this.onTruckBack;
     out.onExportData=()=>{
       const S=this.state;
-      const payload={version:2,exportedAt:new Date().toISOString(),drivers:S.drivers,trucks:S.trucks,jobs:S.jobs,office:S.office,officeDepts:S.officeDepts,customers:S.customers,orders:S.orders,origins:S.origins,tirePatches:S.tirePatches,tireMoves:S.tireMoves,inspections:S.inspections,workOrders:(S.workOrders!==undefined?S.workOrders:this._getWO())};
+      const payload=this._backupPayload();
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');
@@ -14228,9 +14368,37 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
           try{sbUpsertColl('inspections',inspections);}catch(e){}
           try{localStorage.setItem('lf_wo_v1',JSON.stringify(workOrders));}catch(e){}
           try{sbUpsertColl('work_orders',workOrders);}catch(e){}
+          // ---- ชุดข้อมูลในตาราง events (v.2026-10-17b) ----
+          [['news','news_v1','__news__'],['letters','letters_v1','__letters__'],
+           ['drvChk','drvChk_v1','__drvchk__'],['fuelCr','fuelCr_v1','__fuelcr__']].forEach(pair=>{
+            const sk=pair[0],ls=pair[1],mid=pair[2];
+            if(!Array.isArray(data[sk]))return;
+            try{localStorage.setItem(ls,JSON.stringify(data[sk]));}catch(e){}
+            this.setState({[sk]:data[sk]});
+            try{sbUpsert('events','company_id,id',[{company_id:COMPANY_ID,id:mid,data:{items:data[sk]}}]).catch(function(){});}catch(e){}
+          });
+          if(data.periodLock&&typeof data.periodLock==='object'){
+            try{localStorage.setItem('periodLock_v1',JSON.stringify(data.periodLock));}catch(e){}
+            this.setState({periodLock:data.periodLock});
+            try{sbUpsert('events','company_id,id',[{company_id:COMPANY_ID,id:'__periodlock__',data:data.periodLock}]).catch(function(){});}catch(e){}
+          }
+          // รายการหักรถร่วม / จ่ายเบี้ยเลี้ยง / ค่าคงที่รายเดือน — ตีตราเวลาใหม่ ของจากไฟล์จะได้ชนะบนเครื่องอื่น
+          if(data.kv&&typeof data.kv==='object'){
+            const _kk=this._kvKeys();
+            Object.keys(_kk).forEach(sk=>{const m=data.kv[sk];if(!m||typeof m!=='object')return;
+              try{localStorage.setItem(_kk[sk],JSON.stringify(m));}catch(e){}
+              this.setState({[sk]:m});
+              try{Object.keys(m).forEach(k2=>this._kvTouch(sk,k2,m));}catch(e){}
+            });
+          }
+          if(Array.isArray(data.fleets)&&data.fleets.length){try{this._saveNameList('__fleets__','fleetReg_v1',data.fleets);this.setState({fleets:data.fleets});}catch(e){}}
+          if(Array.isArray(data.dpoints)&&data.dpoints.length){try{this._saveNameList('__dpoints__','dpointReg_v1',data.dpoints);this.setState({dpoints:data.dpoints});}catch(e){}}
+          if(Array.isArray(data.dispatchers)&&data.dispatchers.length){try{localStorage.setItem('dispatcherReg_v1',JSON.stringify(data.dispatchers));}catch(e){}this.setState({dispatchers:data.dispatchers});}
+          const _coRestore=(data.company&&typeof data.company==='object'&&String(data.company.name||'').trim())?{...(this.state.company||{}),...data.company}:null;
+          if(_coRestore){try{localStorage.setItem('companyProfile_v1',JSON.stringify({..._coRestore,_cid:COMPANY_ID}));}catch(e){}this.setState({company:_coRestore});}
           const _keep={drivers:new Set(drivers.map(d=>String(d.code))),trucks:new Set(trucks.map(t=>String(t.plate))),office:new Set(office.map(o=>String(o.code))),customers:new Set(customers.map(c=>String(c.id))),orders:new Set(orders.map(o=>String(o.id))),origins:new Set(origins.map(o=>String(o.id))),tirePatches:new Set(tirePatches.map(r=>String(r.id))),tireMoves:new Set(tireMoves.map(r=>String(r.id))),inspections:new Set(inspections.map(r=>String(r.id))),workOrders:new Set(workOrders.map(r=>String(r.id))),jobs:new Set(jobs.map(j=>String(j.id)))};
           const _bl=Date.now();try{localStorage.setItem('fleet_baseline',String(_bl));}catch(e){}
-          this._importPushProgress(jobs).then(()=>this._replaceCloudSurplus(_keep)).then(res=>{try{sbSaveCompany({...(this.state.company||{}),_baseline:_bl});}catch(e){}let msg;if(res&&res.noSession){msg='⚠️ Import ลงเครื่องนี้แล้ว แต่ cloud ยังไม่ถูกล้างส่วนเกิน!\n\n'+res.err+'\n\nขั้นตอน: ออกจากระบบ → login ใหม่ → Import ไฟล์เดิมอีกครั้ง';}else if(res&&res.ok===false&&res.err){msg='❌ ล้าง cloud ล้มเหลว: '+res.err;}else{const r=res.report||{};const tried=r.tried||{};const fail=r.fail||{};const triedStr=Object.keys(tried).filter(k=>tried[k]>0).map(k=>k+':'+tried[k]).join(', ')||'(ไม่มีส่วนเกิน)';const failStr=Object.keys(fail).filter(k=>fail[k]>0).map(k=>k+':'+fail[k]).join(', ');const bf=r.before||{};const af=r.after||{};msg=(res.noEffect?'⚠️ ลบไม่สำเร็จ (ยอดไม่ลด = สิทธิ์/session มีปัญหา)\n':'🧹 ล้างส่วนเกินบน cloud\n')+'พยายามลบ → '+triedStr+'\nลบไม่ผ่าน → '+(failStr||'ไม่มี ✅')+(r.status?(' (HTTP '+r.status+')'):'')+'\nรถ cloud: '+bf.trucks+' → '+af.trucks+' | พขร.: '+bf.drivers+' → '+af.drivers;}alert(msg);});
+          this._importPushProgress(jobs).then(()=>this._replaceCloudSurplus(_keep)).then(res=>{try{sbSaveCompany({...(_coRestore||this.state.company||{}),_baseline:_bl});}catch(e){}let msg;if(res&&res.noSession){msg='⚠️ Import ลงเครื่องนี้แล้ว แต่ cloud ยังไม่ถูกล้างส่วนเกิน!\n\n'+res.err+'\n\nขั้นตอน: ออกจากระบบ → login ใหม่ → Import ไฟล์เดิมอีกครั้ง';}else if(res&&res.ok===false&&res.err){msg='❌ ล้าง cloud ล้มเหลว: '+res.err;}else{const r=res.report||{};const tried=r.tried||{};const fail=r.fail||{};const triedStr=Object.keys(tried).filter(k=>tried[k]>0).map(k=>k+':'+tried[k]).join(', ')||'(ไม่มีส่วนเกิน)';const failStr=Object.keys(fail).filter(k=>fail[k]>0).map(k=>k+':'+fail[k]).join(', ');const bf=r.before||{};const af=r.after||{};msg=(res.noEffect?'⚠️ ลบไม่สำเร็จ (ยอดไม่ลด = สิทธิ์/session มีปัญหา)\n':'🧹 ล้างส่วนเกินบน cloud\n')+'พยายามลบ → '+triedStr+'\nลบไม่ผ่าน → '+(failStr||'ไม่มี ✅')+(r.status?(' (HTTP '+r.status+')'):'')+'\nรถ cloud: '+bf.trucks+' → '+af.trucks+' | พขร.: '+bf.drivers+' → '+af.drivers;}alert(msg);});
           this.setState({drivers,trucks,jobs,office,officeDepts,customers,orders,origins,tirePatches,tireMoves,inspections,workOrders,view:'list',section:'jobs',jobView:'list'});
           alert('✅ นำเข้าข้อมูลสำเร็จ! (replace)\nพนักงาน '+drivers.length+' คน | รถ '+trucks.length+' คัน | ใบงาน '+jobs.length+' ใบ\nรับงาน '+orders.length+' | ลูกค้า '+customers.length+' | ตรวจสภาพ '+inspections.length+' | ยาง '+(tirePatches.length+tireMoves.length)+' | ใบสั่งซ่อม '+workOrders.length+'\n\nกำลังลบข้อมูลส่วนเกินบน cloud… (เสร็จใน ~1 นาที)');
         }catch(err){alert('เกิดข้อผิดพลาด: '+err.message);}
@@ -14349,6 +14517,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     out.onPhoneTrack=(e)=>this.setT('phoneTrack',!!e.target.checked);   // v.2026-08-28d: ติดตามผ่านมือถือ พขร. เฉพาะคันที่ติ๊ก
     out.onOwner=(e)=>this.setT('owner',e.target.value);
     out.onOwnerIdCard=(e)=>this.setT('ownerIdCard',e.target.value);
+    out.onOwnerAddress=(e)=>this.setT('ownerAddress',e.target.value);
     out.truckIsSub=String((this.state.truckDraft||{}).dept||'')==='รถร่วม';
     out.onEcaccVendor=(e)=>this.setT('ecaccVendor',e.target.value);
     out.ecaccVendorHint=String((this.state.truckDraft||{}).plate||'').replace(/\D/g,'');
@@ -14711,7 +14880,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         const netT=grossT-_dedSum;
         this._capSubTripRows=rows;
         const _meta=(S.subMonthMeta||{})[selPlate+'|'+m]||{};
-        return{key:m,monthLabel:_thMonsFull[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,tripsText:(jobs.length?(jobs.length+' เที่ยว'):'ไม่มีเที่ยววิ่ง · มีเฉพาะค่าใช้จ่าย'),rows:rows,subPayTotal:fmt(grossT),dedRows:dedRows,dedSumText:fmt(_dedSum),netPayText:fmt(netT),onAddDed:()=>this.addSubMonthDeduct(selPlate,m),subPayDate:_meta.payDate||'',onSubPayDate:(e)=>this.setSubMonthMeta(selPlate,m,'payDate',e.target.value),subPaid:!!_meta.paid,onSubPaid:(e)=>this.setSubMonthMeta(selPlate,m,'paid',e.target.checked),subDone:!!_meta.done,onSubDone:(e)=>this.setSubMonthMeta(selPlate,m,'done',e.target.checked),onSubPayDoc:()=>this.printSubMonthPay(selPlate,m)};
+        return{key:m,monthLabel:_thMonsFull[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,tripsText:(jobs.length?(jobs.length+' เที่ยว'):'ไม่มีเที่ยววิ่ง · มีเฉพาะค่าใช้จ่าย'),rows:rows,subPayTotal:fmt(grossT),dedRows:dedRows,dedSumText:fmt(_dedSum),netPayText:fmt(netT),onAddDed:()=>this.addSubMonthDeduct(selPlate,m),subDocNo:_meta.rcNo||'',onSubDocNo:(e)=>this.setSubMonthMeta(selPlate,m,'rcNo',String(e.target.value||'').replace(/^s*[Pp][Aa]s*/,'')),subPayDate:_meta.payDate||'',onSubPayDate:(e)=>this.setSubMonthMeta(selPlate,m,'payDate',e.target.value),subPaid:!!_meta.paid,onSubPaid:(e)=>this.setSubMonthMeta(selPlate,m,'paid',e.target.checked),subDone:!!_meta.done,onSubDone:(e)=>this.setSubMonthMeta(selPlate,m,'done',e.target.checked),onSubPayDoc:()=>this.printSubMonthPay(selPlate,m)};
       });
       // ---- DRIVER PAY (จ่ายเบี้ยเลี้ยง/ค่าใช้จ่าย พขร. ทุก 15 วัน) ----
       {const _dpMonth=S.effPayMonth||S.effMonth;const _dpMode=S.effPayMode||'1';
