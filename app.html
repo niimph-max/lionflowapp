@@ -224,7 +224,7 @@
       </div>
       </sc-if>
       <div style="margin-top:14px;text-align:center;font-size:11px;color:#aab4c0;">ขับเคลื่อนโดย <span style="font-family:'Sora',sans-serif;font-weight:700;color:#16263a;">Lion<span style="color:#E8A33D;">Flow</span></span> · lionflowapp.com</div>
-      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-10-21b · admin พร้อมใช้</div>
+      <div style="margin-top:6px;text-align:center;font-size:10px;color:#cfd6de;letter-spacing:.04em;">v.2026-10-21n · admin พร้อมใช้</div>
     </div>
   </div>
   </sc-if>
@@ -509,7 +509,7 @@
         <span style="font-size:11px;color:#7c90a4;">{{ syncText }}</span>
         <button onClick="{{ onSync }}" style="margin-left:auto;background:none;border:none;color:#6b8299;font-size:15px;cursor:pointer;padding:0;line-height:1;" title="รีเฟรชข้อมูล">↻</button>
       </div>
-      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-10-21b</div>
+      <div style="font-size:10px;color:#5b6f83;letter-spacing:.03em;margin-top:6px;">v.2026-10-21n</div>
       <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ onFlushPending }}" title="มีข้อมูลที่ยังไม่ขึ้น cloud — แตะเพื่อดันขึ้นทันที" style="margin-top:7px;width:100%;display:flex;align-items:center;gap:6px;background:rgba(240,120,90,.14);border:1px solid rgba(240,120,90,.4);border-radius:8px;color:#f0a58e;font-size:11px;padding:7px 9px;cursor:pointer;text-align:left;line-height:1.35;">⚠️ ยังไม่ขึ้น cloud: {{ pendingCount }} รายการ — แตะเพื่อดันขึ้น</button>
       </sc-if>
@@ -2944,10 +2944,17 @@
         <div style="padding:13px 17px;background:#fbfcfe;border-bottom:1px solid #eef1f4;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;position:sticky;left:0;">
           <div style="font-size:13.5px;font-weight:800;color:#16263a;">ทะเบียนใบวางบิลที่ออกแล้ว</div>
           <div style="font-size:11.5px;color:#98a2b3;">{{ blRegCount }} ใบ · เรียงจากใหม่ไปเก่า</div>
+          <div style="flex:1;min-width:8px;"></div>
+          <sc-if value="{{ blRegHasSel }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;font-weight:700;color:#2f6fb0;">เลือกไว้ {{ blRegSelCount }} ใบ</div>
+            <button onClick="{{ onBlRegClear }}" style="padding:5px 11px;background:#fff;color:#667085;border:1px solid #e4e7ec;border-radius:7px;font-family:inherit;font-size:12px;cursor:pointer;">ล้างที่เลือก</button>
+          </sc-if>
+          <button onClick="{{ onBlSendAllForm }}" style="padding:6px 14px;background:#2f6fb0;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;">📤 ส่งใบที่เลือก เข้าฟอร์มพิเศษ</button>
         </div>
         <sc-for list="{{ blRegRows }}" as="r" hint-placeholder-count="0">
-          <div style="display:grid;grid-template-columns:minmax(100px,1fr) minmax(150px,1.4fr) 132px 84px 112px 176px;align-items:center;border-bottom:1px solid #f4f6f8;min-width:840px;font-size:12.5px;color:#475467;">
-            <div style="padding:12px 17px;font-size:13.5px;font-weight:700;color:#16263a;">{{ r.inv }}</div>
+          <div style="display:grid;grid-template-columns:38px minmax(100px,1fr) minmax(150px,1.4fr) 132px 84px 112px 176px;align-items:center;border-bottom:1px solid #f4f6f8;min-width:880px;font-size:12.5px;color:#475467;">
+            <div style="padding:12px 0 12px 15px;"><input type="checkbox" checked="{{ r.sel }}" onChange="{{ r.onSel }}" title="เลือกเพื่อส่งเข้าฟอร์มพิเศษ" style="width:15px;height:15px;cursor:pointer;"></div>
+            <div style="padding:12px 8px;font-size:13.5px;font-weight:700;color:#16263a;">{{ r.inv }}</div>
             <div style="padding:12px 10px;">{{ r.cust }}</div>
             <div style="padding:12px 10px;font-size:12px;">{{ r.range }}</div>
             <div style="padding:12px 10px;text-align:right;">{{ r.lines }} บรรทัด</div>
@@ -7398,6 +7405,7 @@
                   <div style="font-size:11.5px;color:#98a2b3;">ค่าขนส่ง <span style="font-weight:700;color:#475467;">{{ f.gross }}</span></div>
                   <div style="font-size:11.5px;color:#98a2b3;">หัก <span style="font-weight:700;color:#b54708;">{{ f.ded }}</span></div>
                   <div style="font-size:13.5px;font-weight:800;color:#067647;">{{ f.net }}</div>
+                  <button onClick="{{ f.onPrintWht }}" title="พิมพ์หนังสือรับรองหักภาษี ณ ที่จ่าย ทุกคันในฟลีตนี้ เรียงเป็นชุด" style="padding:5px 12px;background:#fff;color:#16263a;border:1px solid #d0d5dd;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">🧾 50 ทวิ ทั้งฟลีต</button>
                 </div>
               </div>
               <div style="overflow-x:auto;">
@@ -7724,6 +7732,7 @@
                   <input type="checkbox" checked="{{ mo.subPaid }}" onChange="{{ mo.onSubPaid }}" style="width:17px;height:17px;cursor:pointer;"> จ่ายเงินแล้ว
                 </label>
                 <button onClick="{{ mo.onSubPayDoc }}" style="margin-left:auto;padding:10px 18px;background:#16263a;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">📄 ออกเอกสารจ่ายเงินรถร่วม</button>
+                <button onClick="{{ mo.onSubWhtDoc }}" title="หนังสือรับรองการหักภาษี ณ ที่จ่าย (50 ทวิ) ของรถคันนี้" style="padding:10px 16px;background:#fff;color:#16263a;border:1px solid #d0d5dd;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">🧾 50 ทวิ</button>
                 <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:#16263a;">
                   <input type="checkbox" checked="{{ mo.subDone }}" onChange="{{ mo.onSubDone }}" style="width:17px;height:17px;cursor:pointer;"> ✓ คิดบัญชีรถร่วมครบแล้ว
                 </label>
@@ -8565,6 +8574,8 @@ const TYPE_MAP={'GIR6':'หกล้อ','GIR10':'สิบล้อ','GIRTL':'�
 // ★ v.2026-09-10: ปลายทางตามสัญญา GIR (ลูกค้า 30-005) — จังหวัด → อำเภอ/เขต ตามตารางค่าขนส่ง 125 ปลายทาง
 const GIR_CUST_CODES=['30-005'];
 // ★ v.2026-09-29a: ใบวางบิลรูปแบบการ์เดียน — 1 ใบแจ้งหนี้ต่อ 1 ประเภทรถ (ตามแอป STT Invoice เดิม)
+// ลายเซ็นผู้มีหน้าที่หักภาษี ณ ที่จ่าย (ใช้ในหนังสือรับรอง 50 ทวิ) — สแกนจากลายเซ็นจริง พื้นหลังโปร่งใส
+const LF_SIGN_IMG='data:image/png;base64,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';
 const GIR_BILL_TYPES={'6':'6 ล้อ','10':'10 ล้อ','trailer':'เทรเลอร์','40':'40 GP'};
 // ★ v.2026-09-29h: รูปแบบใบวางบิล — ทาทามีแบบของตัวเอง · การ์เดียนมีใบปะหน้า · ลูกค้าอื่นใช้ใบรายละเอียดแบบการ์เดียนเป็นมาตรฐาน
 const TATA_CUST_CODES=['30-015'];
@@ -11237,6 +11248,112 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
   // ===== ระบบออกใบวางบิลพิเศษ (v.2026-10-21b) =====
   // ฟอร์มของลูกค้า GIR/TATA เป็นหน้าแยกบนเว็บเดียวกัน (เหมือน driver.html) — เปิดจากเมนูได้เลย
   // ไม่ต้องส่งไฟล์โปรแกรมไปให้พนักงานต่างจังหวัดอีก และได้เวอร์ชันล่าสุดเสมอ
+  // แถวของฟอร์ม GIR: [ทะเบียน, วันที่, เลขที่บิล, สถานที่ส่ง, จังหวัด, ค่าขนส่งปกติ, OW, OT]
+  _girFormRows(items,ty){
+    const std=false;   // ใช้กับฟอร์มการ์เดียนเท่านั้น คำต่อท้ายจึงเป็นแบบ GIR เสมอ
+    return items.slice().sort((a,b)=>String(a.j.date).localeCompare(String(b.j.date))
+        ||String((a.l&&a.l.bill)||'').localeCompare(String((b.l&&b.l.bill)||''),'en',{numeric:true}))
+      .map(it=>{const j=it.j,l=it.l;const q=this._girParts(j,l,this._blLines(j).length);
+        return [String(j.truckPlate||''),this._girDate(j.date),String((l&&l.bill)||''),
+          String(this._girPlace(j,l,q,ty==='40',std)||''),String(j.destProvince||'').trim(),
+          Number(q.normal)||0,Number(q.ow)||0,Number(q.ot)||0];});
+  }
+  // ใบที่ติ๊กเลือกไว้ในทะเบียนใบวางบิล → ลิงก์เดียว เรียงตามเลขที่ใบวางบิล
+  _billFormPayloadAll(){
+    const S=this.state;const sel=S.blRegSel||{};
+    const list=this._blInvRegister().filter(g=>sel[g.inv])
+      .sort((a,b)=>String(a.inv).localeCompare(String(b.inv),'en',{numeric:true}));
+    if(!list.length){window.alert('ยังไม่ได้เลือกใบวางบิล'+String.fromCharCode(10)+String.fromCharCode(10)+'ติ๊กช่องหน้าเลขที่ใบวางบิลในตาราง "ทะเบียนใบวางบิลที่ออกแล้ว" ที่ต้องการส่ง แล้วกดปุ่มนี้อีกครั้ง');return null;}
+    // ฟอร์มไหน ดูจากรหัสลูกค้าของใบที่ติ๊ก (ไม่ใช่ตัวกรองบนหน้าจอ) และต้องเป็นลูกค้ารายเดียว
+    const NL=String.fromCharCode(10);
+    const codes=[...new Set(list.map(g=>String(g.code||'').trim()))];
+    if(codes.length>1){window.alert('เลือกใบของลูกค้าหลายรายพร้อมกันไม่ได้'+NL+NL+'ที่เลือกไว้: '+codes.join(' · ')+NL+'ฟอร์มพิเศษเป็นคนละแบบของแต่ละลูกค้า — ติ๊กทีละลูกค้าแล้วส่งทีละรอบ');return null;}
+    const code=codes[0]||'';
+    const gir=GIR_CUST_CODES.indexOf(code)>=0;
+    if(!gir&&TATA_CUST_CODES.indexOf(code)<0){window.alert('ลูกค้ารายนี้ยังไม่มีฟอร์มพิเศษ'+NL+NL+'ตอนนี้มีเฉพาะ ฟอร์ม GIR (การ์เดียน) และ ฟอร์ม TATA (ทาทา สตีล)'+NL+'ใบของลูกค้ารายอื่นให้ใช้ปุ่มพิมพ์ใบวางบิลของ LionFlow ตามปกติ');return null;}
+    const sets=list.map(g=>{
+      // ประเภทรถของใบนั้น: ใช้ค่าที่ล็อกไว้ตอนออกใบก่อน ใบเก่าที่ยังไม่มีค่าล็อก ดูจากทะเบียนรถในใบแทน
+      const ty=(()=>{
+        const t0=String(g.gty||'').trim();if(GIR_BILL_TYPES[t0])return t0;
+        const t1=String(g.tt||'').trim();if(GIR_BILL_TYPES[t1])return t1;
+        const cnt={};(g.items||[]).forEach(it=>{const c=this._girCat(it.j);if(c)cnt[c]=(cnt[c]||0)+1;});
+        const ks=Object.keys(cnt);
+        return ks.length?ks.sort((a,b)=>cnt[b]-cnt[a]||String(a).localeCompare(String(b)))[0]:'6';
+      })();
+      if(gir)return {typeKey:ty,invNo:g.inv,invDate:(g.d?this._girDate(g.d):''),
+        receiptNo:g.rec||'',coverDesc:String(g.pc||'')||undefined,rows:this._girFormRows(g.items,ty)};
+      return {invNo:g.inv,invDate:(g.d?this._girDate(g.d):''),receiptNo:g.rec||'',
+        rows:(this._blDocData(g.items)||{rows:[]}).rows.map(r=>({bol:String(r.bill||''),desc:String(r.detail||''),
+          qty:Number(r.w)||0,amount:Number(r.rev)||0,price:Number(r.rate)||0,date:String(r.date||''),note:String(r.note||'')}))};
+    }).filter(x=>x.rows.length);
+    if(!sets.length)return null;
+    return {v:1,fmt:gir?'gir':'tata',file:gir?'GIR.html':'TATA.html',sets:sets,
+      rows:sets[0].rows,invNo:sets[0].invNo};
+  }
+  // ข้อมูลใบวางบิลในรูปที่ฟอร์มพิเศษรับได้ (ชุดเดียวกับที่ใช้พิมพ์ ตัวเลขจึงตรงกันเสมอ)
+  _billFormPayload(){
+    const D=this._blDocData();if(!D)return null;
+    const S=this.state;const inv=String(S.billInvNo||'').trim();
+    const invDate=this._girDate(S.billDocDate||this._blToday());
+    if(this._blFmt()==='gir'){
+      const G=this._girData(D);
+      const ty=String(S.billGirType||'').trim();
+      // ฟอร์ม GIR คิดแบบ 1 ใบ = 1 ประเภทรถ ถ้าเลือก 'ทุกประเภท' ไว้ จะได้ใบที่ติดป้ายผิด
+      if(!GIR_BILL_TYPES[ty]){window.alert('เลือก "ประเภทรถ" ก่อนส่งเข้าฟอร์ม'+String.fromCharCode(10)+String.fromCharCode(10)+'ฟอร์มการ์เดียนออกใบละ 1 ประเภทรถ (6 ล้อ · 10 ล้อ · เทรเลอร์ · 40 GP)');return null;}
+      return {v:1,fmt:'gir',file:'GIR.html',typeKey:(GIR_BILL_TYPES[ty]?ty:'6'),invNo:inv,invDate:invDate,
+        coverDesc:String(G.desc||''),receiptNo:String(S.billRecNo||'').trim(),
+        rows:G.rows.map(r=>[String(r.plate||''),String(r.date||''),String(r.bol||''),String(r.place||''),
+          String(r.prov||''),Number(r.normal)||0,Number(r.ow)||0,Number(r.ot)||0])};
+    }
+    return {v:1,fmt:'tata',file:'TATA.html',invNo:inv,invDate:invDate,receiptNo:String(S.billRecNo||'').trim(),
+      rows:(D.rows||[]).map(r=>({bol:String(r.bill||''),desc:String(r.detail||''),qty:Number(r.w)||0,
+        amount:Number(r.rev)||0,price:Number(r.rate)||0,date:String(r.date||''),note:String(r.note||'')}))};
+  }
+  async _billFormLink(plArg){
+    const pl=plArg||this._billFormPayload();if(!pl)return null;
+    if(!pl.rows.length){window.alert('ยังไม่ได้เลือกบิลที่จะส่งเข้าฟอร์ม');return null;}
+    const bytes=new TextEncoder().encode(JSON.stringify(pl));
+    let out=bytes,gz='0';
+    if(typeof CompressionStream!=='undefined'){
+      try{
+        const cs=new CompressionStream('gzip');const w=cs.writable.getWriter();w.write(bytes);w.close();
+        out=new Uint8Array(await new Response(cs.readable).arrayBuffer());gz='1';
+      }catch(e){out=bytes;gz='0';}
+    }
+    let bin='';for(let i=0;i<out.length;i++)bin+=String.fromCharCode(out[i]);
+    const b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const base=String(location.href).replace(/[?#].*$/,'').replace(/[^\/]*$/,'');
+    return base+pl.file+'#lf='+gz+b64;
+  }
+  // ส่งเข้าฟอร์มพิเศษ — ข้อมูลเดินทางไปในลิงก์เอง ไม่ต้องผ่านไฟล์ Excel
+  async _billFormShare(pl,what){
+    const link=await this._billFormLink(pl);if(!link)return;
+    const NL=String.fromCharCode(10);
+    let copied=false;try{await navigator.clipboard.writeText(link);copied=true;}catch(e){}
+    const msg='📋 '+what+NL+NL
+      +(copied?('คัดลอก "ลิงก์เปิดฟอร์ม" ไว้ในคลิปบอร์ดแล้ว'+NL+'→ ไปที่ไลน์/อีเมลของพนักงาน แล้วกดวาง (Ctrl+V) ส่งไปได้เลย')
+             :('คัดลอกลิงก์นี้ส่งให้พนักงาน:'+NL+link))+NL+NL
+      +'พนักงานกดลิงก์ → ฟอร์มเปิดขึ้นมาพร้อมข้อมูลครบ → ตรวจ/แก้ไข → สั่งพิมพ์ส่งลูกค้า'+NL
+      +'(ไม่ต้องส่งไฟล์ Excel อีกแล้ว)'+NL+NL
+      +'กด OK ถ้าอยากเปิดฟอร์มดูเองตอนนี้ · กด Cancel ถ้าจะส่งลิงก์อย่างเดียว';
+    if(window.confirm(msg))window.open(link,'_blank','noopener');
+  }
+  blRegToggle=(inv)=>this.setState(s=>{const m={...(s.blRegSel||{})};if(m[inv])delete m[inv];else m[inv]=1;return {blRegSel:m};});
+  blRegClear=()=>this.setState({blRegSel:{}});
+  // ส่งเฉพาะบิลที่ติ๊กไว้ตอนนี้ (1 ชุด)
+  billSendToForm=async()=>{
+    try{const pl=this._billFormPayload();if(!pl)return;
+      await this._billFormShare(pl,'เตรียมใบวางบิล 1 ใบ · '+pl.rows.length+' รายการ');
+    }catch(e){window.alert('ส่งเข้าฟอร์มไม่สำเร็จ: '+((e&&e.message)||e));}
+  };
+  // ส่งทุกใบที่ออกแล้วในช่วงวันที่ (ครบทุกประเภทรถในลิงก์เดียว)
+  billSendAllToForm=async()=>{
+    try{const pl=this._billFormPayloadAll();if(!pl)return;
+      const n=pl.sets.reduce((a,x)=>a+x.rows.length,0);
+      await this._billFormShare(pl,'เตรียมใบวางบิล '+pl.sets.length+' ใบ · '+n+' รายการ'+String.fromCharCode(10)
+        +'('+pl.sets.map(x=>x.invNo||'—').join(' · ')+')');
+    }catch(e){window.alert('ส่งเข้าฟอร์มไม่สำเร็จ: '+((e&&e.message)||e));}
+  };
   openBillForm=(file)=>{
     try{
       const base=String(location.href).replace(/[^\/]*$/,'');
@@ -11627,7 +11744,9 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       .reduce((a,j)=>a+(this._ecSubCalc(j).gross||0),0);
   }
   // ภาษีหัก ณ ที่จ่าย 1% ของค่าขนส่งจ่ายรถร่วมทั้งเดือน ปัดทศนิยม 2 ตำแหน่ง
-  _subWhtAmount(plate,month){const g=this._subGrossOf(plate,month);return g>0?String(Math.round(g*SUB_WHT_PCT)/100):'';}
+  // ปัดเศษแบบที่บริษัทใช้มาตลอด: เศษ 5 ลงมาปัดลง มากกว่า 5 ปัดขึ้น (654.435 → 654.43)
+  _round5down(n){const t=(Number(n)||0);const f=t-Math.floor(t);return (f<=0.5+1e-9?Math.floor(t):Math.ceil(t));}
+  _subWhtAmount(plate,month){const g=this._subGrossOf(plate,month);return g>0?String(this._round5down(g*SUB_WHT_PCT)/100):'';}
   // ยังไม่มีค่าขนส่ง = ยังไม่มีเงินให้โอน จึงไม่ตั้งค่าโอนไว้
   _subFeeAmount(plate,month){return this._subGrossOf(plate,month)>0?String(SUB_TRANSFER_FEE):'';}
   _subDedList(plate,month){
@@ -11640,11 +11759,14 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       if(skip)return saved;
       // แถวภาษี/ค่าโอน ที่ยังเป็นโหมดอัตโนมัติ ให้คิดใหม่ตามค่าขนส่งล่าสุดเสมอ (เพิ่มเที่ยวทีหลังยอดก็ตาม)
       const _fee=this._subFeeAmount(plate,month);
+      // รายการที่บันทึกไว้ก่อนรุ่นคิดอัตโนมัติ (17 ต.ค. 2569) ไม่มีป้าย auto และยอดมักเป็นว่าง/0
+      // ถือว่ายังไม่เคยกรอกเอง ให้คิดอัตโนมัติให้ · ถ้ามีตัวเลขที่พิมพ์ไว้จริงจะไม่แตะ
+      const _blank=(d)=>{const v=String(d.amount==null?'':d.amount).trim();return v===''||Number(v)===0;};
+      const _isAuto=(d)=>d.auto===true||(d.auto===undefined&&_blank(d));
       return saved.map(d=>{
         if(!d)return d;const l=String(d.label||'').trim();
-        if(l===SUB_WHT_LABEL&&d.auto)return {...d,amount:this._subWhtAmount(plate,month)};
-        // แถวค่าโอนที่ยังไม่เคยถูกพิมพ์ทับ (เก่ากว่ารุ่นนี้จะไม่มีป้าย auto แต่ยอดเท่าค่าตั้งต้น)
-        if(l===SUB_TRANSFER_LABEL&&(d.auto||String(d.amount==null?'':d.amount).trim()===String(SUB_TRANSFER_FEE)))return {...d,amount:_fee,auto:true};
+        if(l===SUB_WHT_LABEL&&_isAuto(d))return {...d,amount:this._subWhtAmount(plate,month),auto:true};
+        if(l===SUB_TRANSFER_LABEL&&(_isAuto(d)||String(d.amount==null?'':d.amount).trim()===String(SUB_TRANSFER_FEE)))return {...d,amount:_fee,auto:true};
         return d;
       });
     }
@@ -12194,6 +12316,121 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       +'</body></html>';
     this._printHtml(html);
   };
+  // ===== หนังสือรับรองการหักภาษี ณ ที่จ่าย (50 ทวิ) =====
+  // เลขที่ W + ปีเดือนวันของวันที่จ่ายเงิน (พ.ศ. 2 หลัก) + ลำดับในชุด เช่น W691028-01
+  _whtNoFor(payIso,seq){
+    const q=String(payIso||'').slice(0,10).split('-');
+    const yy=q[0]?String((parseInt(q[0],10)||0)+543).slice(-2):'00';
+    return 'W'+yy+(q[1]||'00')+(q[2]||'00')+'-'+String(seq||1).padStart(2,'0');
+  }
+  // ข้อมูล 1 ใบ จากทะเบียนรถ + งวดที่จ่าย
+  _whtRec(plate,month,seq){
+    const S=this.state;
+    const tk=(S.trucks||[]).find(x=>x.plate===plate)||{};
+    const meta=(S.subMonthMeta||{})[plate+'|'+month]||{};
+    const pay=String(meta.payDate||'').slice(0,10)||this._blToday();
+    const gross=Math.round(this._subGrossOf(plate,month)*100)/100;
+    const dw=(this._subDedList(plate,month)||[]).find(d=>String(d.label||'').trim()===SUB_WHT_LABEL);
+    const tax=this._round5down((((dw?parseFloat(dw.amount):0)||(gross*SUB_WHT_PCT/100))*100))/100;
+    const no=String(meta.whtNo||'').trim()||this._whtNoFor(pay,seq||1);
+    return {plate:plate,month:month,no:no,pay:pay,gross:gross,tax:tax,
+      owner:String(tk.owner||''),vendor:String(tk.ecaccVendor||''),
+      addr:String(tk.ownerAddress||''),idCard:String(tk.ownerIdCard||'')};
+  }
+  _whtHalf(r,copyNo,co){
+    const esc=(x)=>String(x==null?'':x).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    const d2=(iso)=>{const q=String(iso||'').slice(0,10).split('-');return q[2]?((+q[2])+'/'+(+q[1])+'/'+((+q[0])+543)):'';};
+    const B=(n)=>_LFB2(n);
+    const payee=[r.plate,r.owner,r.vendor].filter(Boolean).join(' ');
+    const kinds=['ภ.ง.ด. 1 ก','ภ.ง.ด. 1 ก (พิเศษ)','ภ.ง.ด. 2','ภ.ง.ด. 2 ก','ภ.ง.ด. 3','ภ.ง.ด. 53'];
+    const conds=['ออกให้ครั้งเดียว','ออกให้ตลอดไป','หักภาษี ณ ที่จ่าย','อื่นๆ'];
+    const box=(t)=>'<span class="bx">☐</span>'+esc(t);
+    const LINES=['1. เงินเดือน ค่าจ้าง เบี้ยเลี้ยง โบนัส ฯลฯ ตามมาตรา 40 (1)',
+      '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ ตามมาตรา 40 (2)',
+      '3. ค่าแห่งลิขสิทธิ์ ฯลฯ ตามมาตรา 40 (3)',
+      '4. (1) ค่าดอกเบี้ย ฯลฯ ตามมาตรา 40 (4) (ก)',
+      '&nbsp;&nbsp;&nbsp;&nbsp;(2) เงินปันผล เงินส่วนแบ่งกำไร ฯลฯ ตามมาตรา 40 (4) (ข)',
+      '5. การจ่ายเงินได้ที่ต้องหักภาษี ณ ที่จ่าย ตามคำสั่งกรมสรรพากรที่ออกตาม มาตรา 3 เตรส เช่น ค่าเช่า ค่าโฆษณา ค่าขนส่ง ฯลฯ'];
+    return '<div class="half">'
+      +'<div class="box"><div class="wm">'+(copyNo===1?'ต้นฉบับ':'สำเนา')+'</div>'
+      +'<div class="hd">หนังสือรับรองการหักภาษี ณ ที่จ่าย ตามมาตรา 50 ทวิ แห่งประมวลรัษฎากร</div>'
+      +'<div class="sub"><span>ฉบับที่ '+copyNo+' ('+(copyNo===1?'สำหรับผู้ถูกหักภาษี ณ ที่จ่าย ใช้แนบพร้อมกับแบบแสดงรายการภาษี':'สำหรับผู้ถูกหักภาษี ณ ที่จ่าย เก็บไว้เป็นหลักฐาน')+')</span>'
+        +'<span class="no">เลขที่ <u>&nbsp;'+esc(r.no)+'&nbsp;</u></span></div>'
+      +'<table class="t"><tr>'
+      +'<td class="c1"><div class="ti">1. ชื่อ ที่อยู่ และ เลขประจำตัวผู้เสียภาษีอากร<br>ของผู้มีหน้าที่หักภาษี ณ ที่จ่าย</div>'
+        +'<div class="pv">'+esc(co.name)+'<br>'+esc(co.addr)+'<br>เลขประจำตัวผู้เสียภาษี '+esc(co.tax)+'</div>'
+        +'<div class="ti" style="margin-top:9px;">2. ชื่อ ที่อยู่ และ เลขประจำตัวผู้เสียภาษีอากร<br>ของผู้ถูกหักภาษี ณ ที่จ่าย</div>'
+        +'<div class="pv">'+esc(payee)+'<br>'+esc(r.addr)+'<br>เลขประจำตัวผู้เสียภาษี '+esc(r.idCard)+'</div></td>'
+      +'<td class="c2"><div class="cw"><div class="ch">เงินได้ที่จ่าย</div><div class="bd">'
+        +LINES.map(x=>'<div class="ln">'+(x.indexOf('&nbsp;')===0?x:esc(x))+'</div>').join('')
+        +'<div class="ln f">6. <u>&nbsp;ค่าขนส่ง&nbsp;</u></div><div class="ln f">7. <u>&nbsp;&nbsp;</u></div><div class="ln f">8. <u>&nbsp;&nbsp;</u></div>'
+        +'</div></div></td>'
+      +'<td class="c3"><div class="cw"><div class="ch">วัน เดือน ปี<br>ที่จ่ายเงินได้</div><div class="bd v">'+esc(d2(r.pay))+'</div></div></td>'
+      +'<td class="c4"><div class="cw"><div class="ch">จำนวนเงินที่จ่าย</div><div class="bd v n">'+B(r.gross)+'</div></div></td>'
+      +'<td class="c5"><div class="cw"><div class="ch">จำนวนเงินภาษีที่หักไว้</div><div class="bd v n">'+B(r.tax)+'</div></div></td>'
+      +'</tr><tr>'
+      +'<td colspan="3" class="wd">'+esc(this._bahtText(r.tax))+'</td>'
+      +'<td class="wl">รวมเงินภาษีที่หักไว้</td><td class="wn">'+B(r.tax)+'</td>'
+      +'</tr></table>'
+      +'<div class="bt"><span class="k">ลำดับที่ <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> ในแบบ</span>'+kinds.map(box).join('')+'</div>'
+      +'<div class="bt"><span class="k">เงื่อนไขการหักภาษี ณ ที่จ่าย</span>'+conds.map(box).join('')+'</div>'
+      +'<div class="cf">ขอรับรองว่าข้อความและตัวเลขดังกล่าวข้างต้นถูกต้องตรงกับความเป็นจริงทุกประการ</div>'
+      +'<div class="sg"><div class="sgi"><img src="'+LF_SIGN_IMG+'" alt=""></div>'
+        +'<div class="l">ลงชื่อ ..................................................... ผู้มีหน้าที่หักภาษี ณ ที่จ่าย</div>'
+        +'<div class="l">'+esc(d2(r.pay))+'</div><div class="l s">วัน เดือน ปี ที่ออกหนังสือรับรอง</div></div>'
+      +'</div>'
+      +'<div class="fn">หมายเหตุ : ช่องเงินได้ที่จ่าย ให้กรอกรายการและระบุเรียงลำดับประเภทเงินได้ เงินได้ประเภทใดที่มิได้จ่ายจะไม่ระบุรายการนั้นไว้ในแบบก็ได้</div>'
+      +'</div>';
+  }
+  _whtCss(){
+    return '@page{size:A4;margin:6mm;}*{box-sizing:border-box;}'
+      +'body{font-family:"Sarabun","TH Sarabun New",system-ui,sans-serif;margin:0;color:#000;font-size:10px;}'
+      +'.pg{page-break-after:always;}.pg:last-child{page-break-after:auto;}'
+      +'.half{height:139mm;display:flex;flex-direction:column;}'
+      +'.box{border:1px solid #000;padding:5px 7px 7px;flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;}'
+      +'.fn{font-size:8px;margin-top:2px;flex:none;}'
+      +'.cut{border-top:1px dashed #000;margin:1mm 0 2mm;}'
+      +'.wm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-20deg);font-size:58px;font-weight:700;color:#ededed;letter-spacing:.2em;pointer-events:none;white-space:nowrap;}'
+      +'.hd{text-align:center;font-weight:700;font-size:12px;position:relative;}'
+      +'.sub{display:flex;justify-content:space-between;align-items:flex-end;font-size:9px;margin:1px 0 5px;position:relative;}'
+      +'.sub .no{font-size:10.5px;}.sub u{text-decoration:underline;}'
+      +'.t{width:100%;border-collapse:collapse;flex:1;position:relative;}'
+      +'.t td{border:1px solid #000;vertical-align:top;padding:3px 4px;height:1px;}'
+      +'.c1{width:26%;}.c2{width:40%;}.c3{width:11.5%;}.c4{width:12%;}.c5{width:10.5%;}'
+      +'.ti{font-size:9px;line-height:1.4;}'
+      +'.pv{font-size:9.5px;line-height:1.55;margin-top:3px;}'
+      +'.cw{height:100%;display:flex;flex-direction:column;}'
+      +'.ch{text-align:center;font-size:9px;line-height:1.3;flex:none;}'
+      +'.ch{height:27px;border-bottom:1px solid #000;margin:-3px -4px 4px;padding:3px 4px 0;}'
+      +'.bd{flex:1;padding-top:3px;}'
+      +'.bd.v{display:flex;align-items:flex-start;justify-content:center;font-size:10.5px;padding-top:26mm;}'
+      +'.bd.v.n{justify-content:flex-end;padding-right:2px;}'
+      +'.ln{font-size:9px;line-height:1.5;}'
+      +'.ln.f u{display:inline-block;min-width:62%;border-bottom:1px solid #000;text-decoration:none;}'
+      +'.wd{text-align:center;font-size:10px;}'
+      +'.wl{text-align:center;font-size:9.5px;}'
+      +'.wn{text-align:right;font-weight:700;font-size:11px;}'
+      +'.bt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:9px;margin-top:4px;}'
+      +'.bt .k{min-width:100px;}.bx{margin-right:2px;}'
+      +'.cf{text-align:center;font-size:9px;margin-top:6px;}'
+      +'.sg{text-align:center;font-size:9px;line-height:1.75;margin-top:2px;position:relative;}'
+      +'.sgi{height:0;overflow:visible;position:relative;z-index:2;}'
+      +'.sgi img{width:26mm;margin-top:-4mm;margin-right:28mm;}'
+      +'.sg .s{font-size:8.5px;}';
+  }
+  // พิมพ์ 50 ทวิ หลายใบในชุดเดียว (เรียงตามลำดับที่ส่งมา)
+  printWhtBatch(recs){
+    if(!recs||!recs.length){window.alert('ไม่มีใบหักภาษี ณ ที่จ่าย ที่จะพิมพ์');return;}
+    const S=this.state;const c=S.company||{};
+    const co={name:String(c.name||''),addr:String(c.address||c.addr||''),tax:String(c.taxId||c.taxid||'')};
+    const pages=recs.map(r=>'<div class="pg">'+this._whtHalf(r,1,co)+'<div class="cut"></div>'+this._whtHalf(r,2,co)+'</div>').join('');
+    this._printHtml('<!doctype html><html><head><meta charset="utf-8"><title>หนังสือรับรองการหักภาษี ณ ที่จ่าย</title>'
+      +'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">'
+      +'<style>'+this._whtCss()+'</style></head><body>'+pages+'</body></html>');
+    // จำเลขที่ไว้กับงวดนั้น พิมพ์ซ้ำจะได้เลขเดิม
+    recs.forEach(r=>{const k=r.plate+'|'+r.month;const m=(this.state.subMonthMeta||{})[k]||{};
+      if(!String(m.whtNo||'').trim())this.setSubMonthMeta(r.plate,r.month,'whtNo',r.no);});
+  }
   printSubMonthPay=(plate,monthArg)=>{
     plate=plate||this._capSubPlate||this.state.effTruckFilter||'';
     if(!plate){alert('กรุณาเลือกรถร่วมก่อนออกเอกสาร');return;}
@@ -12736,7 +12973,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         if(!g.from||d<g.from)g.from=d;if(!g.to||d>g.to)g.to=d;
         if(!g.rec)g.rec=this._blLineRec(j,l);
         {const _m=(j.billLines&&typeof j.billLines==='object')?(j.billLines[String(l.bill||'').trim()]||{}):{};
-         ['d','tt','pc','sg','pd','gt','gp'].forEach(f=>{if(!g[f]&&_m[f])g[f]=_m[f];});}
+         ['d','tt','pc','sg','pd','gt','gp','gty'].forEach(f=>{if(!g[f]&&_m[f])g[f]=_m[f];});}
         if(!g.code)g.code=String(j.customerCode||'').trim();
         if(!g.cust)g.cust=String(j.customer||'').replace(/^\d{2}-\d{3}\s*/,'').trim();
         const _k=String(l.bill||'').trim();
@@ -12762,6 +12999,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
     const st={billInvNo:g.inv,billRecNo:g.rec||'',billCustCode:g.code||''};
     if(g.d)st.billDocDate=g.d;
     if(g.tt)st.billTruckType=g.tt;
+    if(g.gty)st.billGirType=g.gty;
     if(g.pc!=null&&g.pc!=='')st.billProdCode=g.pc;
     if(g.sg)st.billSigner=g.sg;
     if(g.pd)st.billGirPayDate=g.pd;
@@ -13760,7 +13998,8 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
       const _snap=inv?{d:String(S0.billDocDate||'').slice(0,10),tt:String(S0.billTruckType==null?'':S0.billTruckType),
         pc:String(S0.billProdCode==null?'':S0.billProdCode),sg:String(this._blSigner()||''),
         pd:String(S0.billGirPayDate||'').slice(0,10),gt:String(this._girPref('billGirTo','')||''),
-        gp:String(this._girPref('billGirPeriod','')||'')}:{};
+        gp:String(this._girPref('billGirPeriod','')||''),
+        gty:String(S0.billGirType||'')}:{};   // ประเภทรถของฟอร์มการ์เดียน (คนละช่องกับ billTruckType ของทาทา)
       picked.forEach(k=>{if(k)m[k]={inv:inv||'',rec:rec||'',at:inv?now:'',..._snap};});
       // ถ้าทุกบิลในเที่ยวลงเลขเดียวกันหมด เก็บค่าระดับเที่ยวไว้ด้วย ให้ส่วนอื่นของระบบอ่านได้เหมือนเดิม
       const vals=lines.map(l=>String((m[String(l.bill||'').trim()]||{}).inv||''));
@@ -15158,6 +15397,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         unpaidStyle:'font-size:11.5px;font-weight:700;color:'+(d.unpaid?'#ffd59e':'#7cf0b0')+';',
         fleets:d.fleets.map(f=>({
           fleet:f.fleet,count:f.rows.length,gross:B(f.gross),ded:B(f.ded),net:B(f.net),
+          onPrintWht:()=>this.printWhtBatch(f.rows.map((r,i)=>this._whtRec(r.plate,r.month,i+1))),
           rows:f.rows.map((r,i)=>({
             plate:r.plate,owner:r.owner||'—',monthLabel:this._thMonthLabel(r.month),docNo:r.docNo||'—',
             trips:r.trips,gross:B(r.gross),
@@ -15416,7 +15656,7 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
         const netT=grossT-_dedSum;
         this._capSubTripRows=rows;
         const _meta=(S.subMonthMeta||{})[selPlate+'|'+m]||{};
-        return{key:m,monthLabel:_thMonsFull[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,tripsText:(jobs.length?(jobs.length+' เที่ยว'):'ไม่มีเที่ยววิ่ง · มีเฉพาะค่าใช้จ่าย'),rows:rows,subPayTotal:fmt(grossT),dedRows:dedRows,dedSumText:fmt(_dedSum),netPayText:fmt(netT),onAddDed:()=>this.addSubMonthDeduct(selPlate,m),subDocNo:_meta.rcNo||'',onSubDocNo:(e)=>this.setSubMonthMeta(selPlate,m,'rcNo',String(e.target.value||'').replace(/^s*[Pp][Aa]s*/,'')),subPayDate:_meta.payDate||'',onSubPayDate:(e)=>this.setSubMonthMeta(selPlate,m,'payDate',e.target.value),subPaid:!!_meta.paid,onSubPaid:(e)=>this.setSubMonthMeta(selPlate,m,'paid',e.target.checked),subDone:!!_meta.done,onSubDone:(e)=>this.setSubMonthMeta(selPlate,m,'done',e.target.checked),onSubPayDoc:()=>this.printSubMonthPay(selPlate,m)};
+        return{key:m,monthLabel:_thMonsFull[parseInt(mo)]+' '+(parseInt(yr)+543),trips:jobs.length,tripsText:(jobs.length?(jobs.length+' เที่ยว'):'ไม่มีเที่ยววิ่ง · มีเฉพาะค่าใช้จ่าย'),rows:rows,subPayTotal:fmt(grossT),dedRows:dedRows,dedSumText:fmt(_dedSum),netPayText:fmt(netT),onAddDed:()=>this.addSubMonthDeduct(selPlate,m),subDocNo:_meta.rcNo||'',onSubDocNo:(e)=>this.setSubMonthMeta(selPlate,m,'rcNo',String(e.target.value||'').replace(/^s*[Pp][Aa]s*/,'')),subPayDate:_meta.payDate||'',onSubPayDate:(e)=>this.setSubMonthMeta(selPlate,m,'payDate',e.target.value),subPaid:!!_meta.paid,onSubPaid:(e)=>this.setSubMonthMeta(selPlate,m,'paid',e.target.checked),subDone:!!_meta.done,onSubDone:(e)=>this.setSubMonthMeta(selPlate,m,'done',e.target.checked),onSubPayDoc:()=>this.printSubMonthPay(selPlate,m),onSubWhtDoc:()=>this.printWhtBatch([this._whtRec(selPlate,m,1)])};
       });
       // ---- DRIVER PAY (จ่ายเบี้ยเลี้ยง/ค่าใช้จ่าย พขร. ทุก 15 วัน) ----
       {const _dpMonth=S.effPayMonth||S.effMonth;const _dpMode=S.effPayMode||'1';
@@ -17170,10 +17410,14 @@ const p=s.slice(0,10).split('-');if(p.length!==3)return null;if(+p[0]<=0||+p[1]<
        out.blSelCount=Object.keys(_jset).length;out.blSumWeight=_n3(_sw)+' ตัน';out.blSumAmt='฿'+_b2(_sa);out.blSelLineCount=_ln;}
       {const _reg=this._blInvRegister();
        out.blRegCount=_reg.length;out.blHasReg=_reg.length>0;
-       out.blRegRows=_reg.slice(0,40).map(g=>({inv:g.inv,cust:(g.code?(g.code+' · '):'')+(g.cust||'—'),
+       const _rsel=S.blRegSel||{};
+       out.blRegSelCount=_reg.filter(g=>_rsel[g.inv]).length;out.blRegHasSel=out.blRegSelCount>0;
+       out.onBlRegClear=this.blRegClear;
+       out.blRegRows=_reg.slice(0,40).map(g=>({inv:g.inv,sel:!!_rsel[g.inv],onSel:()=>this.blRegToggle(g.inv),cust:(g.code?(g.code+' · '):'')+(g.cust||'—'),
          range:this._blShortDate(g.from)+(g.to!==g.from?(' – '+this._blShortDate(g.to)):''),
          lines:g.lines,total:'฿'+_b2(g.total),onReprint:()=>this.blReprint(g.inv),onXlsx:()=>this.blReprintXlsx(g.inv),onCancelInv:()=>this.blCancelInv(g.inv)}));}
       out.onBlPrint=()=>this.printBillingDoc();out.onBlXlsx=()=>this.exportBillingXlsx();
+      out.onBlSendAllForm=this.billSendAllToForm;   // ปุ่มส่งมีปุ่มเดียว: ติ๊กเลือกในทะเบียนใบวางบิล
       out.onBlMark=()=>this.blMark();
       out.onBlUnmark=()=>this.blUnmark();
     }
